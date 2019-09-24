@@ -1,0 +1,345 @@
+# Microsoft Developer Studio Generated Dependency File, included by dos.mak
+
+.\Canvas.cpp : \
+    ".\assert.h"\
+    ".\Canvas.h"\
+    ".\common.h"\
+    ".\file.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\ClipBoard.cpp : \
+    ".\assert.h"\
+    ".\ClipBoard.h"\
+    ".\common.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\CmdExe.cpp : \
+    ".\assert.h"\
+    ".\CmdExe.h"\
+    ".\common.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\CmdParser.cpp : \
+    ".\assert.h"\
+    ".\CmdParser.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\MemStk.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\ctoken.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\ctoken.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\dirmgr.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\dirmgr.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\MemStk.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\dos.cpp : \
+    ".\_header.h"\
+    ".\assert.h"\
+    ".\Canvas.h"\
+    ".\CmdExe.h"\
+    ".\CmdParser.h"\
+    ".\common.h"\
+    ".\ctoken.h"\
+    ".\dirmgr.h"\
+    ".\Encoder.h"\
+    ".\file.h"\
+    ".\filebase.h"\
+    ".\HtmReader.h"\
+    ".\HttpClient.h"\
+    ".\IndexFile.h"\
+    ".\Internet.h"\
+    ".\intstk.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\MemStk.h"\
+    ".\Misc.h"\
+    ".\MyTime.H"\
+    ".\NetSpider.h"\
+    ".\serial.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    ".\Tcp.H"\
+    ".\WindowFinder.h"\
+    
+
+.\Encoder.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\Encoder.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\file.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\file.h"\
+    ".\filebase.h"\
+    ".\mem_tool.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\filebase.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\HtmReader.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\HtmReader.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\MemStk.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\HttpClient.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\HttpClient.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\Misc.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    ".\Tcp.H"\
+    
+
+.\IndexFile.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\IndexFile.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\Internet.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\Internet.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\intstk.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\intstk.h"\
+    ".\mem_tool.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\mem.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\mem_tool.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\mem_tool.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\memfile.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\MemStk.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\MemStk.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\Misc.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\Misc.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\MyTime.cpp : \
+    ".\common.h"\
+    ".\MyTime.H"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\NetSpider.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\HtmReader.h"\
+    ".\HttpClient.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\MemStk.h"\
+    ".\NetSpider.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    ".\Tcp.H"\
+    
+
+.\serial.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\serial.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\StdAfx.cpp : \
+    ".\StdAfx.h"\
+    
+
+.\Stp.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\dirmgr.h"\
+    ".\file.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\MemStk.h"\
+    ".\StdAfx.h"\
+    ".\Stp.h"\
+    ".\syslog.h"\
+    
+
+.\syslog.cpp : \
+    ".\common.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    
+
+.\tcp.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\Misc.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    ".\Tcp.H"\
+    
+
+.\WindowFinder.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    ".\WindowFinder.h"\
+    
+
+.\Xml.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\file.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\MemStk.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    ".\Xml.h"\
+    ".\XmlReader.h"\
+    
+
+.\XmlReader.cpp : \
+    ".\assert.h"\
+    ".\common.h"\
+    ".\filebase.h"\
+    ".\mem.h"\
+    ".\mem_tool.h"\
+    ".\memfile.h"\
+    ".\MemStk.h"\
+    ".\StdAfx.h"\
+    ".\syslog.h"\
+    ".\XmlReader.h"\
+    

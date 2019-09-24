@@ -1,0 +1,10 @@
+release
+debug
+*.ncb
+*.opt
+*.plg
+*.aps
+*.exe
+*.d
+*.o
+.vscode

@@ -1,0 +1,558 @@
+// Xml.cpp: implementation of the CXml class.
+//
+//////////////////////////////////////////////////////////////////////
+#include "xml.h"
+#include "syslog.h"
+#include "mem_tool.h"
+//////////////////////////////////////////////////////////////////////
+// Construction/Destruction
+//////////////////////////////////////////////////////////////////////
+CXmlNode::CXmlNode()
+{
+    WEAK_REF_ID_INIT();    
+    this->next = NULL;
+}
+CXmlNode::~CXmlNode()
+{
+    WEAK_REF_ID_CLEAR();
+    this->Destroy();
+}
+status_t CXmlNode::Init()
+{    
+    this->mf_attrib = NULL;
+    this->mf_value = NULL;
+    this->mem_name = NULL;
+    NEW(this->mem_name,CMem);
+    this->mem_name->Init();
+    this->mem_name->Malloc(1024);
+
+    this->next=NULL;
+    this->child = NULL;
+    this->parent = NULL;
+    this->value_type = VALUE_TYPE_NORMAL;
+    return OK;
+}
+status_t CXmlNode::Destroy()
+{
+    DEL(this->mem_name);
+    DEL(this->mf_attrib);
+    DEL(this->mf_value);
+    return OK;
+}
+status_t CXmlNode::Print()
+{
+    CXmlNode *p;
+    static fsize_t l=0;
+    fsize_t i;
+    
+    for(i=0;i<2*l;i++)
+        syslog_printf(" ");
+
+    syslog_printf("<%s>\n",this->mem_name->CStr());
+    l++;
+    /////////////
+    p = this->child;
+    while(p)
+    {
+        p -> Print();
+        p = p->next;
+    }
+    l--;
+    for(i=0;i<2*l;i++)
+        syslog_printf(" ");
+
+    syslog_printf("</%s>\n",this->mem_name->CStr());
+
+    return OK;
+}
+CXmlNode * CXmlNode::Alloc()
+{
+    CXmlNode *p;
+    NEW(p,CXmlNode);
+    p->Init();
+    return p;
+}
+
+status_t CXmlNode::Free(CXmlNode *node)
+{
+    CXmlNode *p , *q;
+
+    if(node == NULL)
+        return OK;
+
+    p = node->child;
+    if( p ) q = p->next;
+    while(p)
+    {
+        p->Destroy();
+        CXmlNode::Free(p);
+        p = q;
+        if(q != NULL)
+            q = q->next;
+    }
+    node->Destroy();
+    DEL( node );
+    return OK;
+}
+status_t CXmlNode::AddChild(CXmlNode *node)
+{
+    if(node == NULL)
+        return ERROR;
+    if(this->child == NULL)
+    {
+        this->child = node;
+        node->next = NULL;
+    }
+    else
+    {
+        node->next = this->child;
+        this->child = node;
+    }
+    node->parent = this;
+    return OK;
+}
+CXmlNode * CXmlNode:: GetChild(int i)
+{
+    int c = 0;
+    CXmlNode *p;
+    if(i < 0)
+        return NULL;
+
+    p = this->child;
+    while(p)
+    {
+        if(c == i)
+            return p;
+        c++;
+        p = p->next;
+    }
+    return NULL;
+}
+
+CXmlNode *CXmlNode::GetChild()
+{
+    return this->child;
+}
+
+CXmlNode *CXmlNode::GetNext()
+{
+    return this->next;
+}
+
+CXmlNode *CXmlNode::GetParent()
+{
+    return this->parent;
+}
+status_t CXmlNode::AddAttrib(CFileBase *file)
+{
+    ASSERT(file);
+    if(this->mf_attrib == NULL)
+    {
+        NEW(this->mf_attrib,CMemFile);
+        this->mf_attrib->Init(1024,10);
+    }
+    this->mf_attrib->WriteFile(file);
+    return OK;
+}
+status_t CXmlNode::AddAttrib(const char *attrib, const char *val)
+{
+    if(this->mf_attrib == NULL)
+    {
+        NEW(this->mf_attrib,CMemFile);
+        this->mf_attrib->Init(1024,10);
+    }
+    this->mf_attrib->Puts(attrib);
+    this->mf_attrib->Puts("=\"");
+    this->mf_attrib->Puts(val);
+    this->mf_attrib->Puts("\"\r\n");
+    return OK;
+}
+
+status_t CXmlNode::SetName(CMem *name)
+{
+    ASSERT(name);
+    ASSERT(this->mem_name);
+    this->mem_name->SetSize(0);
+    this->mem_name->Puts(name);
+    return OK;
+}
+
+status_t CXmlNode::SetName(const char *name)
+{
+    CMem mem(name);
+    return SetName(&mem);
+}
+status_t CXmlNode::AddValueData(const char *str)
+{
+    CMem mem(str);
+    return this->AddValueData(&mem);
+}
+status_t CXmlNode::AddValueData(CFileBase *file)
+{
+    char ch;
+    fsize_t start,end;
+    ASSERT(file);
+    file->Seek(0);
+    while( !file->IsEnd() )
+    {
+        ch = file->Getc();
+        if(!CFileBase::IsEmptyChar(ch))
+            break;
+    }
+
+    start = file->GetOffset() - 1;
+    file->SeekEnd();
+    while( file->GetOffset() > 0 )
+    {
+        ch = file->UnGetc();
+        if(!CFileBase::IsEmptyChar(ch))
+            break;
+    }
+    end = file->GetOffset() + 1;
+    if(end - start > 0)
+    {
+        if(this->mf_value == NULL)
+        {
+            NEW(this->mf_value,CMemFile);
+            this->mf_value->Init(1024,1024);
+            this->mf_value->Seek(0);
+        }
+        this->mf_value->WriteFile(file,start,end-start);
+    }
+
+    return OK;
+}
+status_t CXmlNode::SetValueType(int type)
+{
+    this->value_type = type;
+    return OK;
+}
+status_t CXmlNode::WriteToFile(CFileBase *file)
+{
+    ASSERT(file);
+
+    CXmlNode *p;
+    LOCAL_MEM(mem_buf);
+
+    file->Puts("\r\n<");
+    file->Puts(this->mem_name->CStr());
+
+    if(this->mf_attrib)
+    {
+        file->Putc(' ');
+        this->mf_attrib->Seek(0);
+        while(this->mf_attrib->ReadLine(&mem_buf))
+        {
+            if(mem_buf.C(0) == 0) continue;
+            file->Puts(&mem_buf);
+            file->Putc(' ');
+        }
+    }
+    file->Puts(">\r\n");
+    if(this->value_type == VALUE_TYPE_CDATA)
+    {
+        if(this->mf_value)
+        {
+            file->Puts("<![CDATA[\r\n");
+            file->WriteFile(this->mf_value);
+            file->Puts("\r\n]]>");
+        }
+    }
+    if(this->value_type == VALUE_TYPE_NORMAL)
+    {
+        if(this->mf_value)
+        {
+            file->WriteFile(this->mf_value);
+        }
+    }
+    /////////////
+    p = this->child;
+    while(p)
+    {
+        p->WriteToFile(file);
+        p = p->next;
+    }
+    file->Puts("\r\n</");
+    file->Puts(this->mem_name->CStr());
+    file->Puts(">\r\n");
+    return OK;
+}
+status_t CXmlNode::GetPathToStk(CMemStk *ss)
+{
+    CXmlNode *p;
+    ASSERT(ss);
+    ss->Clear();
+    p = this;
+    while(p)
+    {
+        ss->Push(p->mem_name);
+        p = p->GetParent();
+    }
+    return OK;
+}
+status_t CXmlNode::GetPath(CFileBase *path)
+{
+    CMemStk ss;
+    CMem *pstr;
+    ASSERT(path);
+    ss.Init(256);
+    path->SetSize(0);
+
+    this->GetPathToStk(&ss);
+    if(ss.IsEmpty())
+    {
+        path->Putc('/');
+    }
+    pstr = ss.GetTopPtr();
+    while(pstr)
+    {
+        if(pstr->GetRawBuf())
+        {
+            path->Putc('/');
+            path->Puts(pstr->CStr());
+        }
+        else
+        {
+            break;
+        }
+        ss.DelTop();
+        pstr = ss.GetTopPtr();
+    }
+    return OK;
+}
+CXmlNode * CXmlNode::GetNodeByPath(const char *path)
+{
+    CXmlNode *p,*pret;
+    LOCAL_MEM(mem_buf);
+    ASSERT(path);
+    this->GetPath(&mem_buf);
+    if(mem_buf.StrCmp(path) == 0)
+        return this;
+    p = this->child;
+    while(p)
+    {
+        pret = p->GetNodeByPath(path);
+        if(pret) return pret;
+        p = p->next;
+    }
+    return NULL;
+}
+const char *CXmlNode::GetName()
+{
+    ASSERT(this->mem_name);
+    return this->mem_name->CStr();
+}
+status_t CXmlNode::GetAttrib(const char *name, CFileBase *val)
+{
+    ASSERT(name && val);
+
+    val->SetSize(0);
+
+    if(this->mf_attrib == NULL)
+        return ERROR;
+
+    LOCAL_MEM(mem);
+
+    this->mf_attrib->Seek(0);
+    while(!mf_attrib->IsEnd())
+    {
+        this->GetNextAttrib(&mem,val);
+        if(mem.StrCmp(name) == 0)
+        {
+            return OK;
+        }
+    }
+
+    val->SetSize(0);
+    return ERROR;
+}
+status_t CXmlNode::GetNextAttrib(CFileBase *name, CFileBase *val)
+{
+    ASSERT(name && val);
+
+    LOCAL_MEM(mem);
+    LOCAL_MEM(mem_temp);
+
+    val->SetSize(0);
+    name->SetSize(0);
+    if(this->mf_attrib == NULL)
+        return ERROR;
+
+    if(!this->mf_attrib->ReadLine(&mem))
+        return ERROR;
+
+    if(mem.C(0) == 0)
+        return ERROR;
+
+    mem.Trim();
+    mem.Seek(0);
+    mem.ReadWord(name);
+    mem.ReadWord(&mem_temp);
+    mem.ReadWord(&mem_temp);
+    ASSERT(mem_temp.C(0) == '\"');
+    if(!mem.ReadCStr(val))
+    {
+        return ERROR;
+    }
+    return OK;
+}
+CXmlNode * CXmlNode::GetChildByName(const char *child_name)
+{
+    ASSERT(child_name);
+    CXmlNode *px;
+    px = this->GetChild(0);
+    while(px)
+    {
+        if(strcmp(px->GetName(),child_name) == 0)
+            return px;
+        px = px->next;
+    }
+    return NULL;
+}
+
+CMemFile *CXmlNode::GetValue()
+{
+    return mf_value;
+}
+
+status_t CXmlNode::GetStringValue(CMem *val)
+{
+    ASSERT(val);
+    
+    val->SetSize(0);
+
+    if(this->GetValue() != NULL)
+    {
+        val->Copy(this->GetValue());
+        return OK;
+    }    
+    return OK;
+}
+/*=======================================================*/
+CXml::CXml()
+{
+    WEAK_REF_ID_INIT();
+    this->root = NULL;
+}
+CXml::~CXml()
+{
+    WEAK_REF_ID_CLEAR();
+    Destroy();
+}
+status_t CXml::Init()
+{    
+    this->root = NULL;
+    return OK;
+}
+status_t  CXml::Destroy()
+{
+    if( this->root == NULL)
+        return OK;
+    CXmlNode::Free(this->root);
+    this->root = NULL;
+
+    return OK;
+}
+CXmlNode * CXml:: GetRoot()
+{
+    return this->root;
+}
+status_t CXml:: AddRoot(CXmlNode *node)
+{
+    if(this->root != NULL)
+        return ERROR;
+    this->root = node;
+    return OK;
+}
+status_t CXml::LoadXml(CFileBase *file)
+{
+    status_t ret;
+    CXmlNode *px = NULL,*parent = NULL;
+    CXmlReader xml_reader;
+    CMem *pstr;
+    ASSERT(this->root==NULL);
+    ASSERT(file);
+
+    file->Seek(0);
+    xml_reader.Init();
+    xml_reader.SetXmlFile(file);
+    while((ret = xml_reader.EnterNextItem()))
+    {
+        pstr = xml_reader.mem_stk->GetTopPtr();
+        if(pstr == NULL)
+            break;
+        if(ret == XML_RET_ENTER || ret == XML_RET_SINGLE)
+        {
+            NEW(px,CXmlNode);
+            px->Init();
+            if(this->root == NULL)
+                this->root = px;
+
+            if( ! xml_reader.IsFileEmpty(xml_reader.mf_attrib))
+            {
+                px->AddAttrib(xml_reader.mf_attrib);
+            }
+            px->SetName(pstr);
+            px->parent = parent;
+
+            if(parent)
+                parent->AddChild(px);
+            if(ret == XML_RET_ENTER)
+                parent = px;
+            if(ret == XML_RET_SINGLE)
+            {
+                px = px->parent;
+                xml_reader.mem_stk->DelTop();
+            }
+        }
+        else if(ret == XML_RET_LEAVE)
+        {
+            if(px == NULL)
+                break;
+            if( !xml_reader.IsFileEmpty(xml_reader.mf_value))
+            {
+                px->AddValueData(xml_reader.mf_value);
+                px->SetValueType(xml_reader.value_type);
+            }
+
+            parent = px->parent;
+            px = parent;
+            xml_reader.mem_stk->DelTop();
+        }
+    }
+    return OK;
+}
+status_t CXml::WriteToFile(CFileBase *file,CMem *header)
+{
+    ASSERT(this->root);
+    ASSERT(file);
+    file->Puts(header);
+    return this->root->WriteToFile(file);
+}
+status_t CXml::WriteToFile(const char *fn,CMem *header)
+{
+    CFile file;
+    file.Init();
+    if(!file.OpenFile(fn,"wb+"))
+        return ERROR;
+    this->WriteToFile(&file,header);
+    file.Destroy();
+    return OK;
+}
+CXmlNode * CXml::GetNodeByPath(const char *path)
+{
+    ASSERT(path);
+
+    if(this->root)
+        return this->root->GetNodeByPath(path);
+    else
+        return NULL;
+}
+status_t CXml::LoadXml(const char *fn)
+{
+    CMemFile mf;
+    mf.Init();
+    if(!mf.LoadFile(fn))
+        return ERROR;
+    return this->LoadXml(&mf);
+}

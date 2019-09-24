@@ -1,0 +1,548 @@
+class MiniBson{
+    fsize_t StartArray(string name);
+    status_t EndArray(fsize_t offset,int32_t array_len);
+    MiniBson,int32_t GetArray(string name);
+    status_t Traverse(bool recursive, callback_ onTraverse);
+    callback static void onTraverse(int info);    
+    
+    Mem GetRawData();    
+    
+    status_t LoadBson_v1(string fn);
+    status_t LoadBson_v2(FileBase file);
+}
+
+class App{
+    [static] int GetSystemTimer();
+    [static] string GetSelfExePath();
+    [static] string MakeFullPathWithExe(string rpath);
+    [static] status_t AddLuaSearchPath(string path,string type,string ext, bool recursive);
+    [static] status_t QuitMainLoop();
+    [static] string OS();
+    [static] void MainLoop();
+    [static] void LuaMain(int args);
+    [static] void PutEnv(string env);    
+    [static] int StartMessageCenter(int port);
+    [static] array<string> GetArgs();
+}
+
+class Stream{
+    string GetAsString(int len);
+    FileBase FileBase();
+    Mem Mem();
+}
+
+class FileManager{
+    static status_t DeleteFile(string name);
+    static string ReadLink(string link_name);
+    static status_t SaveFile(string path, FileBase file);
+    static status_t CreateDir(string path);
+    
+    
+    static status_t CopySingleFile_V0(string from,string to, fsize_t start, fsize_t size,fsize_t to_start,uint32_t mode);
+    static status_t CopySingleFile_V1(string from,string to,fsize_t start, fsize_t size,uint32_t mode);
+    static status_t CopySingleFile_V2(string from,string to,uint32_t mode);
+    
+    static bool IsTextFile_V1(FileBase file);
+    static bool IsTextFile_V2(string fn);
+    static status_t ConvertEol_V1(FileBase in, FileBase out, int mode);
+    static status_t ConvertEol_V2(string in, string out, int mode);
+    static bool IsFileSame_V1(FileBase src1, FileBase src2);
+    static bool IsFileSame_V2(string fn1, string fn2);
+    static status_t MakeOrderSimpleDiskFromDir(string dir,SimpleDisk disk);
+    
+    static status_t DeleteDir(string dir);
+}
+
+class CommandLine{
+    void PrintHelp();
+    bool CheckForErrors();
+    string GetValueByKey(string key);
+    bool HasKey(string str);
+    status_t AddKeyType(string key, int type, int option,string help);
+    status_t LoadFromArgv(int args);
+    
+    string SaveToCmdLine();
+    status_t DelByIndex(int index);
+    status_t DelByKey(string key);
+    status_t Print();
+    status_t LoadFromString(string str);
+    int GetCmdEntriesLen();
+    CmdEntry GetCmdEntry(int i);
+}
+
+class CmdEntry{
+    status_t SetOption(int option);
+    int GetOption();
+    int GetKeyType();
+    string GetKey();
+    string GetValue();
+    status_t SetKeyType(int _keytype);
+    status_t SetKey(string _key);
+    status_t SetValue(string _value);
+    string GetHelp();
+    status_t SetHelp(string _help);
+}
+
+class FileBase{    
+    bool IsEnd();
+    char CharAt(fsize_t index);
+    char GetLastChar(bool empty_included);
+    char Getc();
+    char UnGetc();
+    fsize_t GetMaxSize();
+    fsize_t GetOffset();
+    fsize_t GetSize();
+    fsize_t Putc(char ch);
+    
+    fsize_t Puts(FileBase str);
+    fsize_t Puts(string str);
+    
+    bool ReadLeftStr(FileBase file,bool skip_empty);
+    bool ReadWord(FileBase file);
+    bool ReadWordWithEmptyChar(FileBase file);
+    bool ReadWordWithEmptyChar_Reverse(FileBase file);
+    bool ReadWord_Reverse(FileBase file);
+    fsize_t SearchBin(FileBase file_bin);
+    fsize_t SearchStr(string str,bool case_sensive,bool word_only);
+    fsize_t Seek(fsize_t off);
+    fsize_t SeekBack(fsize_t back_bytes);
+    fsize_t SeekEnd();
+    fsize_t Split(FileBase file);
+    
+    fsize_t WriteFile(FileBase file);
+    fsize_t WriteFile(FileBase file, fsize_t start, fsize_t ws);
+    fsize_t WriteToFile(string fn);
+    fsize_t WriteToFile(string fn,fsize_t start,fsize_t wsize);
+    fsize_t WriteToFile(FileBase file,fsize_t start,fsize_t wsize);
+    
+    int StrCmp(FileBase str);
+    int StrCmp(string str);
+    int StrICmp(FileBase str);
+    int StrICmp(string str);
+    
+    int_ptr_t Read(FileBase buf,int_ptr_t n);
+    int_ptr_t ReadZeroEndString(FileBase str);
+    int_ptr_t StrLen();
+    int_ptr_t Write(FileBase buf,int_ptr_t n);
+    static status_t IsEmptyChar(char ch);
+    status_t Delete(fsize_t del_size);
+    status_t DeleteLast(fsize_t bytes);
+    status_t Dump();
+    status_t EndWith(string str, bool case_sensive, bool skip_empty);
+    status_t FillBlock(fsize_t fill_size,char fill_ch);
+    status_t Insert(FileBase file);
+    status_t Insert(FileBase file,fsize_t start, fsize_t size);
+    status_t IsSpChar(char ch);
+    status_t LoadFile(string fn);
+    status_t ReadCStr(FileBase file);
+    status_t ReadLine(FileBase file);
+    status_t ReadLine_Reverse(FileBase file);
+    status_t ReadQuoteStr(string begin_and_end_char,FileBase file);
+    status_t ReadString(FileBase file);
+    status_t ReadString_Reverse(FileBase file);
+    status_t ReplaceStr(string src_str,string des_str,bool case_sensive,bool word_only,FileBase new_file);
+    status_t Reverse(fsize_t start,fsize_t end);
+    status_t SetChar(fsize_t index,char ch);
+    status_t SetFileName(string fn);
+    status_t SetSize(fsize_t ssize);
+    status_t SetSplitChars(string sp_str);
+    status_t SkipEmptyChars();
+    status_t SkipEmptyChars_Reverse();
+    status_t StartWith(string str,bool case_sensive,bool skip_empty);
+    status_t StrCat(string str);
+    status_t StrLwr();
+    status_t StrUpr();
+    status_t Trim();
+    string GetFileName();    
+    status_t ReadLineWithEol(FileBase file,FileBase eol);
+}
+
+class Mem{
+    FileBase FileBase();
+    bool IsMalloc();
+    status_t Transfer(Mem from);
+    status_t Realloc(int_ptr_t newSize);
+    bool StrEqu(Mem str, bool case_sensitive);    
+    char C(int index);
+    status_t Malloc(int_ptr_t asize);
+    status_t Zero();
+    status_t Copy(FileBase file);
+    string CStr();
+    status_t Init();
+    status_t Destroy_();
+    int_ptr_t GetRawBuf();
+    status_t SetRawBuf(int_ptr_t buf, int_ptr_t size, bool is_const);
+}
+
+class MemFile{
+    FileBase FileBase();
+    status_t Transfer(MemFile from);
+    status_t Init();
+    status_t Init(int_ptr_t page_size,int_ptr_t max_pages);
+    status_t Destroy_();    
+}
+
+class File{
+    FileBase FileBase();
+    bool IsOpened();
+    status_t Init();
+    status_t Destroy_();
+    status_t OpenFile(string fn, string mode);
+    status_t CloseFile();
+    fsize_t GetSizeReal();
+    bool HasBuffer();
+    status_t SetBufSize(int_ptr_t size);
+}
+
+class MMapFile{
+    status_t Unlink();  
+    status_t Sync();
+    int GetSize();
+    status_t OpenReadWrite(string filename);
+    status_t OpenCreate(string filename,int size);
+    status_t OpenReadOnly(string filename);
+    status_t Close();
+    status_t SetFileName(string filename);
+    Stream Stream();
+}
+
+
+class CFunc{
+    static int memcmp(int_ptr_t s1, int_ptr_t s2, int_ptr_t n);
+    static bool wild_match(string pattern,string str);
+}
+
+
+class xImage{  
+ 
+    int DestroyAll();
+    void SetTransColor(uint32_t rgba);
+    uint32_t GetCodecOption(uint32_t imagetype);
+    
+    bool Threshold(uint8_t level);
+    bool SplitRGB(xImage r,xImage g,xImage b);
+    bool SplitCMYK(xImage c,xImage m,xImage y,xImage k);
+    bool SplitYUV(xImage y,xImage u,xImage v);
+    bool SplitYIQ(xImage y,xImage i,xImage q);
+    bool SplitXYZ(xImage x,xImage y,xImage z);
+    bool SplitHSL(xImage h,xImage s,xImage l);
+    
+    void HuePalette(float correction);
+    bool Colorize(uint8_t hue, uint8_t sat, float blend);
+    bool Light(int32_t brightness, int32_t contrast);
+    
+    float Mean();
+    bool Filter(int32_t kernel, int32_t Ksize, int32_t Kfactor, int32_t Koffset);
+    bool Erode(int32_t Ksize);
+    bool Dilate(int32_t Ksize);
+    bool Edge(int32_t Ksize);
+    void Mix(xImage imgsrc2, int op, int32_t lXOffset, int32_t lYOffset, bool bMixAlpha);
+    void MixFrom(xImage imagesrc2, int32_t lXOffset, int32_t lYOffset);
+    bool ShiftRGB(int32_t r, int32_t g, int32_t b);
+    bool Gamma(float gamma);
+    bool GammaRGB(float gammaR, float gammaG, float gammaB);
+    bool Median(int32_t Ksize);
+    bool Noise(int32_t level);
+    bool FFT2(xImage srcReal, xImage srcImag, xImage dstReal, xImage dstImag,
+        int32_t direction, bool bForceFFT, bool bMagnitude);
+    bool FFT(int dir,int m,double x,double y);
+    bool DFT(int dir,int32_t m,double x1,double y1,double x2,double y2);
+    bool Combine(xImage r,xImage g,xImage b,xImage a, int32_t colorspace);
+    bool Repair(float radius, int32_t niterations, int32_t colorspace);
+    bool RepairChannel(xImage ch, float radius);
+    bool Contour();
+    bool Jitter(int32_t radius);
+    bool TextBlur(uint8_t threshold, uint8_t decay, uint8_t max_depth, bool bBlurHorizontal, bool bBlurVertical, xImage iDst);
+    bool GaussianBlur(float radius , xImage iDst);
+    bool SelectiveBlur(float radius, uint8_t threshold, xImage iDst);
+    bool UnsharpMask(float radius , float amount , int threshold );
+    bool RedEyeRemove(float strength);
+    bool Saturate( int32_t saturation,  int32_t colorspace);
+    bool Solarize(uint8_t level, bool bLinkedChannels);
+    bool ConvertColorSpace( int32_t dstColorSpace,  int32_t srcColorSpace);
+    int  OptimalThreshold(int32_t method, int  pBox[], xImage pContrastMask);
+    bool AdaptiveThreshold(int32_t method, int32_t nBoxSize, xImage pContrastMask, int32_t nBias, float fGlobalLocalBalance);
+
+    bool QIShrink(int32_t newx, int32_t newy, xImage  iDst, bool bChangeBpp);
+    bool CircleTransform(int type,int32_t rmax,float Koeff);
+    bool Thumbnail(int32_t newx, int32_t newy, uint32_t canvascolor, xImage iDst);
+    bool Expand(int32_t newx, int32_t newy, uint32_t canvascolor, xImage iDst);
+
+    bool Skew(float xgain, float ygain, int32_t xpivot, int32_t ypivot, bool bEnableInterpolation);
+    
+    bool Crop(int r[], xImage iDst);
+    
+    bool CropRotatedRectangle( int32_t topx, int32_t topy, int32_t width, int32_t height, float angle, xImage iDst);
+    bool Dither(int32_t method);
+    bool IncreaseBpp(uint32_t nbit);
+    bool DecreaseBpp(uint32_t nbit, bool errordiffusion, uint32_t clrimportant);
+    bool Resample2(int32_t newx, int32_t newy, int inMethod, int ofMethod, xImage iDst, bool disableAveraging);
+    bool Resample(int32_t newx, int32_t newy, int mode, xImage iDst);
+    bool Rotate180(xImage iDst);
+
+    uint32_t GetPixelColorInterpolated(
+        float x,float y, 
+        int  inMethod, 
+        int  ofMethod);
+    
+    uint32_t GetAreaColorInterpolated(
+        float  xc, float  yc, float  w, float  h, 
+        int  inMethod, 
+        int  ofMethod);
+
+    uint32_t GetPixelColorWithOverflow(int32_t x, int32_t y, int  ofMethod);
+    float KernelBSpline( float x);
+    float KernelLinear( float t);
+    float KernelCubic( float t);
+    float KernelGeneralizedCubic( float t,  float a);
+    float KernelLanczosSinc( float t,  float r);
+    float KernelBox( float x);
+    float KernelHermite( float x);
+    float KernelHanning( float x);
+    float KernelHamming( float x);
+    float KernelSinc( float x);
+    float KernelBlackman( float x);
+    float KernelBessel_J1( float x);
+    float KernelBessel_P1( float x);
+    float KernelBessel_Q1( float x);
+    float KernelBessel_Order1(float x);
+    float KernelBessel( float x);
+    float KernelGaussian( float x);
+    float KernelQuadratic( float x);
+    float KernelMitchell( float x);
+    float KernelCatrom( float x);
+    float KernelPower( float x,  float a);
+
+    bool Rotate2(float angle, xImage iDst, int inMethod, int ofMethod, bool  optimizeRightAngles,bool  bKeepOriginalSize);
+    bool Rotate(float angle, xImage iDst);
+    bool Negative();
+    bool RotateRight(xImage iDst);
+    bool RotateLeft(xImage iDst);
+    bool Mirror(bool bMirrorSelection, bool bMirrorAlpha);
+    bool Flip(bool bFlipSelection, bool bFlipAlpha);
+
+    void LayerDeleteAll();
+    bool LayerDelete(int32_t position);
+
+    xImage  GetParent();
+    xImage  GetLayer(int32_t position);
+    int32_t GetNumLayers();
+    uint32_t DumpSize();
+    xImage  GetFrame(int32_t nFrame);
+    
+    void SetRetreiveAllFrames(bool flag);
+    bool GetRetreiveAllFrames();
+    uint8_t GetDisposalMethod();
+    void SetDisposalMethod(uint8_t dm);
+    void SetFrame(int32_t nFrame);
+    int32_t GetNumFrames();
+    void SetEscape(int32_t i);
+    void SetProgress(int32_t p);
+    int32_t GetEscape();
+    int32_t GetProgress();
+    void SetJpegScale(uint8_t q);
+    uint8_t GetJpegScale();
+    void SetJpegQualityF(float q);
+    float GetJpegQualityF();
+    uint8_t GetJpegQuality();
+    void SetOffset(int32_t x,int32_t y);
+    int,int GetOffset();
+    void SetFrameDelay(uint32_t d);
+    uint32_t    GetTransColor();
+    int32_t GetTransIndex();
+    void SetTransIndex(int32_t idx);
+    uint32_t GetFrameDelay();
+    uint32_t GetTypeIndexFromId( uint32_t id);
+    uint32_t GetTypeIdFromIndex( uint32_t index);
+    uint32_t GetTypeIdFromName(string ext);
+    uint32_t GetNumTypes();
+    bool SetType(uint32_t type);
+    uint32_t GetNumColors();
+    uint32_t GetEffWidth();
+    bool GrayScale();
+    
+    uint8_t BlindSelectionGet( int32_t x, int32_t y);
+    
+    bool IsIndexed();
+    void  BlindGetPixelPointer( int32_t x,  int32_t y);
+    void SetClrImportant(uint32_t ncolors);
+    uint32_t GetClrImportant();
+    bool IsSamePalette(xImage img, bool bCheckAlpha);
+    void SetStdPalette();
+    bool GetTransparentMask(xImage iDst);
+
+    void BlendPalette(uint32_t cr,int32_t perc);
+    uint32_t GetPaletteColor(uint8_t i);
+
+    void BlendPixelColor(int32_t x,int32_t y,uint32_t c, float blend, bool bSetAlpha);
+    void SetPixelColor(int32_t x,int32_t y,uint32_t c, bool bSetAlpha);
+
+    void SetPixelIndex(int32_t x,int32_t y,uint8_t i);
+    uint8_t GetPixelGray(int32_t x, int32_t y);
+    void SetPaletteColor(uint8_t idx, uint8_t r, uint8_t g, uint8_t b, uint8_t alpha);
+    uint8_t GetPixelIndex(int32_t x,int32_t y);
+    uint32_t GetPixelColor(int32_t x,int32_t y, bool bGetAlpha);
+    bool IsTransparent(int32_t x, int32_t y);
+    
+    bool AlphaFromTransparency();
+    bool AlphaPaletteSplit(xImage dest);
+    bool AlphaSplit(xImage dest);
+    bool AlphaMirror();
+    bool AlphaFlip();
+    uint8_t GetNearestIndex(uint32_t c);
+    string  GetLastError();
+    void Enable(bool enable);
+    bool IsEnabled();
+    bool IsValid();
+    void BlindSetPixelColor(int32_t x,int32_t y,uint32_t c, bool bSetAlpha);
+    uint32_t BlindGetPixelColor( int32_t x, int32_t y, bool bGetAlpha);
+    void AlphaStrip();
+    bool AlphaPaletteIsValid();
+    uint8_t BlindGetPixelIndex( int32_t x, int32_t y);
+    void BlindSetPixelIndex(int32_t x,int32_t y,uint8_t i);
+    void SwapIndex(uint8_t idx1, uint8_t idx2);
+    bool IsGrayScale();
+    bool AlphaSet(xImage from);
+    bool AlphaCopy(xImage from);
+    void AlphaInvert();
+    void AlphaClear();
+    bool AlphaPaletteIsEnabled();
+    void AlphaPaletteEnable(bool enable);
+    bool AlphaIsValid();
+    int AlphaSetMax(uint8_t nAlphaMax);
+    uint8_t AlphaGetMax();
+    int SetPaletteColor(uint8_t idx, uint32_t cr);
+    uint32_t GetPaletteColor(uint8_t idx);
+    int AlphaPaletteClear();
+    uint8_t BlindAlphaGet( int32_t x, int32_t y);
+    int_ptr_t  AlphaGetPointer( int32_t x, int32_t y);
+    uint8_t AlphaGet( int32_t x, int32_t y);
+    int AlphaSet(uint8_t level);
+    int AlphaCreate();
+    int SetGrayPalette();
+    int DestroyFrames();
+    int Transfer(xImage from, bool bTransferFrames);
+    int Clear(uint8_t bval);
+    bool IsInside(int32_t x, int32_t y);
+    int AlphaDelete();
+    int SelectionDelete();
+    int_ptr_t  GetBits(uint32_t row);
+    uint32_t GetPaletteSize();
+    uint32_t GetPalette();
+    int SetPalette(uint32_t pPal,uint32_t nColors);
+    int32_t GetSize();
+    uint32_t GetType();
+    int GetBpp();
+    int32_t GetHeight();
+    int32_t GetWidth();
+    void Create(uint32_t dwWidth, uint32_t dwHeight, uint32_t wBpp, uint32_t imagetype);
+    int Ghost(xImage from);
+
+    int Destroy();
+    int Copy(xImage p);
+    
+    bool DrawLine(int StartX, int EndX, int StartY, int EndY, uint32_t color, bool bSetAlpha);
+    int FillRect(int r[],uint32_t color,bool setAlpha);
+    int DrawRect(int r[],uint32_t color,bool setAlpha);   
+}
+
+
+class xImageHelper{
+    static status_t ImageToRawRgba(xImage img, Mem rgba);
+    static status_t SaveImage(xImage img, string filename);
+    static status_t SaveImage(xImage img, string type,FileBase dst);
+    static status_t LoadImage(string filename, xImage out);
+    static status_t LoadImage(FileBase file, xImage out);
+    static int[] Convert9Png(xImage nineImg, xImage outImg);
+}
+
+class Resource{
+    status_t Copy(Resource _p);
+    status_t Print();
+    
+    int32_t GetType();
+    string GetId();
+    string GetTheme();
+    string GetLanguage();
+    MiniBson GetBsonData();
+    
+    status_t SetType(int32_t _type);
+    status_t SetId(string id);
+    status_t SetTheme(string theme);
+    status_t SetLanguage(string _language);
+    status_t SetBsonData(MiniBson _bsondata);
+}
+
+class ResourceManager{
+    status_t LoadResourceFile(string filename);
+    status_t SearchResource(Resource key, Resource value);
+    status_t SaveResourceFile(string filename);
+    status_t AddResource(Resource res);
+    status_t Print();
+    status_t SetPathPrefix(string _pathprefix);
+    string GetPathPrefix();
+    status_t DumpResourceFile(string filename);
+    status_t SearchByString(string theme, string language,string id, Resource value);
+}
+
+
+class SimpleDisk{
+    status_t BuildFastFsIndex(FileBase out);
+    status_t RebuildFastIndex();
+    status_t AddFastFsIndex();
+    status_t LoadFastFsIndex(int64_t index);
+    fsize_t,fsize_t GetFileOffsetAndSize(int64_t index);
+    string GetFileMd5();
+    status_t SetDstFile(FileBase iFile);
+    status_t AddFile(string name,FileBase file);
+    status_t Save();
+    status_t AddFolder(string dir);
+    status_t LoadDiskImage(FileBase file);
+    int64_t GetFileSize(int64_t index);
+    status_t GetFile(int64_t index , FileBase file);
+    status_t ExtractAllFiles(string  destDir);
+    status_t Locate(string  path);
+    status_t Reset();
+    int64_t GetFileIndex();
+    
+    status_t EndFolder(fsize_t offset);
+    fsize_t BeginFolder(string name);
+}
+
+class XmlNode{   
+    void XmlNode();    
+    status_t AddAttrib(FileBase file);
+    status_t AddAttrib(string attrib,string val);
+    status_t AddChild(XmlNode node);
+    status_t AddValueData(FileBase file);
+    status_t AddValueData(string str);
+    status_t Destroy();
+    status_t GetAttrib(string name, FileBase val);
+    status_t GetNextAttrib(FileBase name, FileBase val);
+    status_t SetName(Mem name);
+    status_t SetName(string name);
+    status_t SetValueType(int type);
+    status_t WriteToFile(FileBase file);
+    string GetName();
+    string GetPath();
+    string GetStringValue();
+    XmlNode GetChild(int i);
+    XmlNode GetChild();
+    XmlNode GetNext();
+    XmlNode GetChildByName(string child_name);
+    XmlNode GetNodeByPath(string path);
+    XmlNode GetParent();
+    MemFile GetValue();
+}
+
+class Xml{
+    void Xml();
+    status_t LoadXml(string fn);
+    status_t LoadXml(FileBase file);
+    XmlNode GetNodeByPath(string path);
+    status_t WriteToFile(string fn,Mem *header);
+    status_t WriteToFile(FileBase file,Mem *header);    
+    status_t Destroy();
+    XmlNode GetRoot();
+    status_t AddRoot(XmlNode node);
+}

@@ -1,0 +1,629 @@
+#include "lualib_minibson.h"
+#include "lualib_mem.h"
+#include "lualib_filebase.h"
+#include "mem_tool.h"
+#include "syslog.h"
+#include "memstk.h"
+
+bool lua_is_minibson(lua_State *L, int idx)
+{
+    lua_userdata *ud = (lua_userdata*)luaL_testudata(L, idx, LUA_USERDATA_MINIBSON);
+    if(!ud)return false;
+    if(!ud->p)return false;
+    CMiniBson *p = (CMiniBson*)ud->p;
+    if(p->__weak_ref_id != ud->__weak_ref_id)
+        return false;
+    return true;
+}
+
+CMiniBson *get_minibson(lua_State *L, int idx)
+{
+    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_MINIBSON);
+    ASSERT(ud && ud->p);
+    ASSERT(ud->__weak_ref_id != 0);
+    CMiniBson *p = (CMiniBson*)ud->p;
+    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
+    return p;
+}
+lua_userdata *minibson_new_userdata(lua_State *L,CMiniBson *pt,int is_weak)
+{
+    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
+    ASSERT(ud && pt);
+    ud->p = pt;
+    ud->is_attached = is_weak;
+    ud->__weak_ref_id = pt->__weak_ref_id;
+    luaL_getmetatable(L,LUA_USERDATA_MINIBSON);
+    lua_setmetatable(L,-2);
+    return ud;
+}
+static int minibson_new(lua_State *L)
+{
+    CMiniBson *pt;
+    NEW(pt,CMiniBson);
+    pt->Init();
+    minibson_new_userdata(L,pt,0);
+    return 1;
+}
+
+static int minibson_destroy(lua_State *L)
+{
+    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_MINIBSON);
+    ASSERT(ud);
+    CMiniBson *pminibson = (CMiniBson*)ud->p;
+    if(!(ud->is_attached))
+    {
+        DEL(pminibson);
+    }
+    return 0;
+}
+
+static int minibson_tostring(lua_State *L)
+{
+    lua_pushstring(L,"userdata:minibson");
+    return 1;
+}
+static int minibson_isend(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    int _ret_0 = (int)pminibson->IsEnd();
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_getdocument(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+
+    CMiniBson *_ret;
+    NEW(_ret,CMiniBson);
+    _ret->Init();
+    pminibson->GetDocument(name,_ret);
+
+    minibson_new_userdata(L,_ret,false);
+    return 1;
+}
+static int minibson_startdocument(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+
+    if(!lua_isstring(L,2))
+    {
+        int _ret = pminibson->StartDocument();
+        lua_pushinteger(L,_ret);
+        return 1;
+    }
+
+    const char* name = (const char*)lua_tostring(L,2);
+    fsize_t off = 0;
+    pminibson->StartDocument(name,&off);
+    lua_pushinteger(L,off);
+    return 1;
+}
+static int minibson_enddocument(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+
+    if(!lua_isinteger(L,2))
+    {
+        int _ret = pminibson->EndDocument();
+        lua_pushboolean(L,_ret);
+        return 1;
+    }
+
+    int offset = (int)lua_tointeger(L,2);
+    int _ret_0 = (int)pminibson->EndDocument(offset);
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_resetpointer(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    int _ret_0 = (int)pminibson->ResetPointer();
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_getstring(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    CMem str;
+    pminibson->GetString(name,&str);
+    lua_pushstring(L,str.CStr());
+    return 1;
+}
+static int minibson_getboolean(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    bool b;
+    pminibson->GetBoolean(name,&b);
+    lua_pushboolean(L,b);
+    return 1;
+}
+static int minibson_getdouble(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    double d;
+    pminibson->GetDouble(name,&d);
+    lua_pushnumber(L,d);
+    return 1;
+}
+static int minibson_getint32(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    int i;
+    pminibson->GetInt32(name,&i);
+    lua_pushinteger(L,i);
+    return 1;
+}
+static int minibson_getint64(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    int64_t i;
+    pminibson->GetInt64(name,&i);
+    lua_pushinteger(L,i);
+    return 1;
+}
+static int minibson_putdouble(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    float d = (float)lua_tonumber(L,3);
+    int _ret_0 = (int)pminibson->PutDouble(name,d);
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_putboolean(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    bool b = lua_toboolean(L,3) != 0;
+    int _ret_0 = (int)pminibson->PutBoolean(name,b);
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_putdocument(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    CMiniBson *bson = get_minibson(L,3);
+    ASSERT(bson);
+    int _ret_0 = (int)pminibson->PutDocument(name,bson);
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_getdocumentsize(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    int _ret_0 = (int)pminibson->GetDocumentSize();
+    lua_pushinteger(L,_ret_0);
+    return 1;
+}
+static int minibson_putstring(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    const char* str = (const char*)lua_tostring(L,3);
+    int _ret_0 = (int)pminibson->PutString(name,str);
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_putint32(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    int i = (int)lua_tointeger(L,3);
+    int _ret_0 = (int)pminibson->PutInt32(name,i);
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_putint64(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    int64_t i = (int64_t)lua_tointeger(L,3);
+    int _ret_0 = (int)pminibson->PutInt64(name,i);
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_putint16(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    int i = (int)lua_tointeger(L,3);
+    int _ret_0 = (int)pminibson->PutInt16(name,i);
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_putint8(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    int i = (int)lua_tointeger(L,3);
+    int _ret_0 = (int)pminibson->PutInt8(name,i);
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_getpointerpos(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    int _ret_0 = (int)pminibson->GetPointerPos();
+    lua_pushinteger(L,_ret_0);
+    return 1;
+}
+static int minibson_setpointerpos(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    int pos = (int)lua_tointeger(L,2);
+    int _ret_0 = (int)pminibson->SetPointerPos(pos);
+    lua_pushboolean(L,_ret_0);
+    return 1;
+}
+static int minibson_peeknext(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    int type;
+    LOCAL_MEM(name);
+    pminibson->PeekNext(&type,&name);
+    lua_pushinteger(L,type);
+    lua_pushstring(L,name.CStr());
+    return 2;
+}
+static int minibson_tojson(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    CMem mem;
+    mem.Init();
+    mem.Malloc(64*1024);
+
+    pminibson->ToJson(&mem,true);
+    lua_pushstring(L,mem.CStr());
+
+    return 1;
+}
+
+static int minibson_getint16(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    int16_t v;
+    pminibson->GetInt16(name,&v);
+    lua_pushinteger(L,v);
+    return 1;
+}
+static int minibson_getint8(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    int8_t v;
+    pminibson->GetInt8(name,&v);
+    lua_pushinteger(L,v);
+    return 1;
+}
+static int minibson_startarray(lua_State *L)
+{
+	CMiniBson *pminibson = get_minibson(L,1);
+	ASSERT(pminibson);
+	const char* name = (const char*)lua_tostring(L,2);
+	ASSERT(name);
+	fsize_t off = 0;
+	pminibson->StartArray(name,&off);
+	lua_pushinteger(L,off);
+	return 1;
+}
+static int minibson_endarray(lua_State *L)
+{
+	CMiniBson *pminibson = get_minibson(L,1);
+	ASSERT(pminibson);
+	int offset = (int)lua_tointeger(L,2);
+	int array_len = (int)lua_tointeger(L,3);
+	int _ret_0 = (int)pminibson->EndArray(offset,array_len);
+	lua_pushboolean(L,_ret_0);
+	return 1;
+}
+static int minibson_getarray(lua_State *L)
+{
+	CMiniBson *pminibson = get_minibson(L,1);
+	ASSERT(pminibson);
+	const char* name = (const char*)lua_tostring(L,2);
+	ASSERT(name);
+	int32_t array_length = 0;
+	CMiniBson *bson;
+	NEW(bson,CMiniBson);
+	bson->Init();
+	pminibson->GetArray(name,bson,&array_length);
+	minibson_new_userdata(L,bson,0);
+	lua_pushinteger(L,array_length);
+	return 2;
+}
+
+static int minibson_traverse(lua_State *L)
+{
+	CMiniBson *pminibson = get_minibson(L,1);
+	ASSERT(pminibson);
+	int recursive = (int)lua_toboolean(L,2);
+	int callback_id = CLuaVm::ToFunction(L,3);
+
+	if(callback_id == LUA_REFNIL)
+		return 0;
+	
+	BEGIN_CLOSURE(on_traverse)
+	{
+		CLOSURE_PARAM_INT(event,CMiniBson::INDEX_EVENT);
+		CLOSURE_PARAM_INT(type,CMiniBson::INDEX_TYPE);
+		CLOSURE_PARAM_PTR(const char*,name,CMiniBson::INDEX_NAME);
+		CLOSURE_PARAM_INT(is_in_array,CMiniBson::INDEX_IS_IN_ARRAY);
+		CLOSURE_PARAM_INT(level,CMiniBson::INDEX_LEVEL);
+		CLOSURE_PARAM_PTR(CMemStk*,path,CMiniBson::INDEX_PATH);
+
+		CLOSURE_PARAM_INT(callback_id,10);
+		CLOSURE_PARAM_PTR(lua_State*,L,11);
+
+		lua_rawgeti(L,LUA_REGISTRYINDEX,callback_id);
+		
+        lua_newtable(L);
+        int top = lua_gettop(L);
+		
+        lua_pushstring(L,"event");
+        lua_pushinteger(L,event);
+        lua_settable(L, top);
+		
+        lua_pushstring(L,"type");
+        lua_pushinteger(L,type);
+        lua_settable(L, top);
+		
+        lua_pushstring(L,"name");
+        lua_pushstring(L,name);
+        lua_settable(L, top);
+		
+        lua_pushstring(L,"level");
+        lua_pushinteger(L,level);
+        lua_settable(L, top);
+		
+		lua_pushstring(L,"is_in_array");
+        lua_pushboolean(L,is_in_array);
+        lua_settable(L, top);
+
+		LOCAL_MEM(path_str);
+		path->SavePath(&path_str);
+		lua_pushstring(L,"path");
+        lua_pushlstring(L,path_str.CStr(),path_str.StrLen());
+        lua_settable(L, top);
+		
+		if(event == CMiniBson::EVENT_BEGIN_DOCUMENT)
+		{
+			CLOSURE_PARAM_INT(is_array,CMiniBson::INDEX_IS_ARRAY);
+			lua_pushstring(L,"is_array");
+			lua_pushboolean(L,is_array);
+			lua_settable(L, top);
+		}
+		
+		else if(event == CMiniBson::EVENT_SINGLE_VALUE)
+		{
+			if(type == CMiniBson::BSON_TYPE_INT32)
+			{
+				CLOSURE_PARAM_INT(t,CMiniBson::INDEX_VALUE);
+				lua_pushstring(L,"value");
+				lua_pushinteger(L,t);
+				lua_settable(L, top);
+			}
+			else if(type == CMiniBson::BSON_TYPE_INT64)
+			{
+				CLOSURE_PARAM_INT64(t,CMiniBson::INDEX_VALUE);
+				lua_pushstring(L,"value");
+				lua_pushinteger(L,t);
+				lua_settable(L, top);
+			}
+			else if(type == CMiniBson::BSON_TYPE_DOUBLE)
+			{
+				CLOSURE_PARAM_DOUBLE(t,CMiniBson::INDEX_VALUE);
+				lua_pushstring(L,"value");
+				lua_pushnumber(L,t);
+				lua_settable(L, top);
+			}
+			else if(type == CMiniBson::BSON_TYPE_STRING)
+			{
+				CLOSURE_PARAM_PTR(CMem*,mem,CMiniBson::INDEX_VALUE);
+				lua_pushstring(L,"value");
+				lua_pushlstring(L,mem->CStr(),mem->StrLen());
+				lua_settable(L, top);
+			}
+			else if(type == CMiniBson::BSON_TYPE_BOOLEAN)
+			{
+				CLOSURE_PARAM_INT(b,CMiniBson::INDEX_VALUE);
+				lua_pushstring(L,"value");
+				lua_pushboolean(L,b);
+				lua_settable(L, top);
+			}
+			else if(type == CMiniBson::BSON_TYPE_BINARY)
+			{
+				CLOSURE_PARAM_PTR(CMem*,bin,CMiniBson::INDEX_VALUE);
+				lua_pushstring(L,"value");
+				mem_new_userdata(L,bin,1);
+				lua_settable(L, top);
+			}
+		}
+		
+		else if(event == CMiniBson::EVENT_END_DOCUMENT)
+		{
+			CLOSURE_PARAM_INT(is_array,CMiniBson::INDEX_IS_ARRAY);
+			CLOSURE_PARAM_PTR(CMiniBson*,sub_bson,CMiniBson::INDEX_VALUE);
+			lua_pushstring(L,"is_array");
+			lua_pushboolean(L,is_array);
+			lua_settable(L, top);
+
+			lua_pushstring(L,"value");
+			minibson_new_userdata(L,sub_bson,1);
+			lua_settable(L, top);
+		}
+        CLuaVm vm;
+        vm.Init(L);
+        vm.Run(1,0);
+        vm.ClearStack();
+		return OK;
+	}
+	END_CLOSURE(on_traverse);
+
+	ASSERT(CMiniBson::INDEX_MAX < 10);
+
+    CMemStk path;
+    path.Init(1024);
+	
+    on_traverse.SetParamInt(CMiniBson::INDEX_IS_IN_ARRAY,0);
+    on_traverse.SetParamPointer(CMiniBson::INDEX_PATH,&path);
+	on_traverse.SetParamInt(10,callback_id);
+	on_traverse.SetParamPointer(11,L);
+	pminibson->ResetPointer();
+	pminibson->Traverse(recursive!=0,0,&on_traverse);	
+	luaL_unref(L,LUA_REGISTRYINDEX,callback_id);
+	return 0;
+}
+static int minibson_getrawdata(lua_State *L)
+{
+	CMiniBson *pminibson = get_minibson(L,1);
+	ASSERT(pminibson);
+	CMem *_ret_0 = pminibson->GetRawData();
+	if(_ret_0==NULL)return 0;
+	mem_new_userdata(L,_ret_0,1);
+	return 1;
+}
+static int minibson_loadbson_v1(lua_State *L)
+{
+	CMiniBson *pminibson = get_minibson(L,1);
+	ASSERT(pminibson);
+	const char* fn = (const char*)lua_tostring(L,2);
+	ASSERT(fn);
+	int _ret_0 = (int)pminibson->LoadBson(fn);
+	lua_pushboolean(L,_ret_0);
+	return 1;
+}
+static int minibson_loadbson_v2(lua_State *L)
+{
+	CMiniBson *pminibson = get_minibson(L,1);
+	ASSERT(pminibson);
+	CFileBase *file = get_filebase(L,2);
+	ASSERT(file);
+	int _ret_0 = (int)pminibson->LoadBson(file);
+	lua_pushboolean(L,_ret_0);
+	return 1;
+}
+
+static int minibson_loadbson(lua_State *L)
+{
+	if(lua_isstring(L,2))
+		return minibson_loadbson_v1(L);
+	else
+		return minibson_loadbson_v2(L);
+}
+
+static int minibson_putbinary(lua_State *L)
+{
+	CMiniBson *pminibson = get_minibson(L,1);
+	ASSERT(pminibson);
+	const char* name = (const char*)lua_tostring(L,2);
+	ASSERT(name);
+	CFileBase *binary = get_filebase(L,3);
+	ASSERT(binary);
+	int _ret_0 = (int)pminibson->PutBinary(name,binary);
+	lua_pushboolean(L,_ret_0);
+	return 1;
+}
+
+static int minibson_getbinary(lua_State *L)
+{
+	CMiniBson *pminibson = get_minibson(L,1);
+	ASSERT(pminibson);
+	const char* name = (const char*)lua_tostring(L,2);
+	ASSERT(name);
+	CMem *binary = get_mem(L,3);
+	ASSERT(binary);
+	int _ret_0 = (int)pminibson->GetBinary(name,binary);
+	lua_pushboolean(L,_ret_0);
+	return 1;
+}
+
+static const luaL_Reg minibson_lib[] = {
+    {"new",minibson_new},
+    {"__gc",minibson_destroy},
+    {"__tostring",minibson_tostring},
+    {"IsEnd",minibson_isend},
+    {"GetDocument",minibson_getdocument},
+    {"StartDocument",minibson_startdocument},
+    {"EndDocument",minibson_enddocument},
+    {"ResetPointer",minibson_resetpointer},
+    {"GetString",minibson_getstring},
+    {"GetBoolean",minibson_getboolean},
+    {"GetDouble",minibson_getdouble},
+    {"GetInt32",minibson_getint32},
+	{"GetInt64",minibson_getint64},
+    {"PutDouble",minibson_putdouble},
+    {"PutBoolean",minibson_putboolean},
+    {"PutDocument",minibson_putdocument},
+    {"GetDocumentSize",minibson_getdocumentsize},
+	{"GetBinary",minibson_getbinary},
+    {"PutString",minibson_putstring},
+    {"PutInt32",minibson_putint32},
+	{"PutInt64",minibson_putint64},
+    {"PutInt16",minibson_putint16},
+    {"PutInt8",minibson_putint8},	
+	{"PutBinary",minibson_putbinary},
+    {"GetPointerPos",minibson_getpointerpos},
+    {"SetPointerPos",minibson_setpointerpos},
+    {"PeekNext",minibson_peeknext},
+    {"ToJson",minibson_tojson},
+    {"GetInt16",minibson_getint16},
+    {"GetInt8",minibson_getint8},
+	{"StartArray",minibson_startarray},
+	{"EndArray",minibson_endarray},
+	{"GetArray",minibson_getarray},	
+	{"Traverse",minibson_traverse},
+	{"GetRawData",minibson_getrawdata},
+	{"LoadBson",minibson_loadbson},
+    {NULL, NULL}
+};
+static int luaL_register_minibson(lua_State *L)
+{   
+    luaL_newmetatable(L, LUA_USERDATA_MINIBSON);
+    lua_pushvalue(L, -1);   
+    lua_setfield(L, -2, "__index"); 
+    luaL_setfuncs(L,minibson_lib,0);
+    lua_pop(L, 1);
+    luaL_newlib(L,minibson_lib);
+    return 1;
+}
+
+void luaopen_minibson(lua_State *L)
+{
+    luaL_requiref(L, "Bson",luaL_register_minibson,1);
+    lua_pop(L, 1);
+}
+
+
