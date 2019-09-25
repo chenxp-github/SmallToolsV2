@@ -90,6 +90,7 @@ end
 
 --@@Begin Method OnPushBigFile @@--
 function SimpleFileServer:OnPushBigFile(_context,_param)
+    
     self:SetCurBigFile(_param.filename);
     if not self.m_cur_big_file.file then
         local _ret={
@@ -148,7 +149,7 @@ function SimpleFileServer:SendFileOnThread(_context,_filename)
                 if g_buf:GetSize() > 0 then
                     local _ret={
                         success = true,
-                        offset = offset,
+                        offset = {_int64_=offset},
                         data = {_binary_=g_buf},
                     };
                     self:SendPartReturnValue(_context,_ret);                    

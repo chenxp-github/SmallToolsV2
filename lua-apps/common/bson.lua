@@ -18,6 +18,8 @@ function BsonToObject(bson,is_array)
         local val;
         if type_ == BSON_TYPE_INT32 then
             val = bson:GetInt32(name);
+        elseif type_ == BSON_TYPE_INT64 then
+            val = bson:GetInt64(name);
         elseif type_ == BSON_TYPE_DOUBLE then
             val = bson:GetDouble(name);
         elseif type_ == BSON_TYPE_STRING then
@@ -65,7 +67,9 @@ function value_to_bson(bson,key,value)
             end
             bson:EndArray(off_a,length);
         elseif value._binary_ then
-            bson:PutBinary(key,value._binary_);        
+            bson:PutBinary(key,value._binary_);
+        elseif value._int64_ then
+            bson:PutInt64(key,value._int64_);
         else        
             local off = bson:StartDocument(key);
             for k,v in pairs_ordered(value) do

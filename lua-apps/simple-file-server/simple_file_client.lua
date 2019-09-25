@@ -72,8 +72,8 @@ function SimpleFileClient:PushBigFile(local_file,remote_file,no_wait)
 
         local _param={
             filename = remote_file,
-            total_size = total_size,
-            offset = offset,
+            total_size = {_int64_=total_size},
+            offset = {_int64_=offset},
             data = {_binary_=buf},
         };
         request_number = request_number+1;
