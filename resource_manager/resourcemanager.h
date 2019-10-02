@@ -11,7 +11,6 @@ typedef CHashFile<CResourceHashMap,CResource> CResourceHashFile;
 class CResourceManager{
 public:
     WEAK_REF_ID_DEFINE();
-    LUA_USER_DATA_DEFINE();
     CResourceHashMap m_HashMap; //for saving
     CResourceHashFile m_HashFile; //for loading
     CMem m_PathPrefix;

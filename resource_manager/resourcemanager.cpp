@@ -13,7 +13,6 @@ CResourceManager::~CResourceManager()
 status_t CResourceManager::InitBasic()
 {
     WEAK_REF_ID_CLEAR();
-    LUA_USER_DATA_CLEAR();
     this->m_HashMap.InitBasic();
     m_HashFile.InitBasic();
     m_PathPrefix.InitBasic();

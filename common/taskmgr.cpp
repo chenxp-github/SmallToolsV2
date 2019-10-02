@@ -19,7 +19,7 @@ status_t CTask::InitBasic()
     WEAK_REF_ID_CLEAR();
     TASK_CONTAINER_CLEAR();
     this->mId = 0;
-    this->mType = 0;
+    this->mName = NULL;
     this->mFlags = 0;
     this->mLastRunTime = 0;
     this->mSleepTime = 0;
@@ -47,6 +47,7 @@ status_t CTask::Init(CTaskMgr *mgr)
 }
 status_t CTask::Destroy()
 {
+    FREE(mName);
     this->InitBasic();
     return OK;
 }
@@ -79,15 +80,22 @@ bool CTask::IsRunning()
     if(this->IsDead())return false;
     return (this->mFlags&TASK_IS_RUNNING) != 0;
 }
-int CTask::GetType()
+const char* CTask::GetName()
 {
-    return this->mType;
+    return this->mName;
 }
-status_t CTask::SetType(int type)
+
+status_t CTask::SetName(const char *name)
 {
-    this->mType = type;
+    FREE(mName);
+    if(name == NULL)
+        return OK;
+    int len = strlen(name);
+    MALLOC(mName,char,len+1);
+    memcpy(mName,name,len+1);
     return OK;
 }
+
 int CTask::GetId()
 {
     return this->mId;
@@ -187,6 +195,11 @@ bool CTask::IsInvalidInterval(uint32_t interval)
 {
     //system time maybe adjusted.
     return mTotalSleepTime > 10 && interval > mTotalSleepTime*100;
+}
+status_t CTask::SetFlags(uint32_t flags)
+{
+    mFlags = flags;
+    return OK;
 }
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -494,8 +507,17 @@ status_t CTaskMgr::CheckDelete()
 
         if(pt->IsDead())
         {
-            this->DelElem(i);
-            i--;
+            callback->SetParamPointer(1,pt);
+            callback->SetParamPointer(2,this);
+            callback->Run(EVENT_BEFORE_DEL_TASK);
+            //if param 1 is changed to NULL, then 
+            //the task is not allowed to delete.
+            void *p = callback->GetParamPointer(1);            
+            if(p != NULL)
+            {
+                this->DelElem(i);
+                i--;
+            }
         }
     }
     return true;

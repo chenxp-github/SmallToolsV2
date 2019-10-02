@@ -6,6 +6,15 @@
 #include "mem.h"
 #include "minibson.h"
 
+#define HASH_ENTRY_DEFINE(type)\
+type *__next;\
+int32_t __next_index,__cur_index\
+
+#define HASH_ENTRY_CLEAR()\
+__next = NULL;\
+__next_index=-1;__cur_index=-1\
+
+
 class CResource{
 public:
     enum{

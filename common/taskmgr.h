@@ -68,6 +68,7 @@ class CTaskMgr{
 public:
 	enum{
 		EVENT_SOCKET_CONNECTED = 1,
+        EVENT_BEFORE_DEL_TASK,
 	};
 public:
     CTask **index;
@@ -122,7 +123,7 @@ public:
     TASK_CONTAINER_DEFINE();
 public:
     int mId;
-    int mType;
+    char *mName;
     CTask *mParent;
     int mParentId;
     uint32_t mLastSleepTime;
@@ -133,6 +134,7 @@ public:
     uint32_t mTurboOnMaxTime;
     uint32_t mFlags;
 public:
+    status_t SetFlags(uint32_t flags);
     bool IsInvalidInterval(uint32_t interval);
     status_t TurboOn(uint32_t max_time=0xffffffff);
     status_t TurboOff();
@@ -143,8 +145,8 @@ public:
     bool IsSleeping(uint32_t interval);
     bool IsDead();
     int GetId();
-    status_t SetType(int type);
-    int GetType();
+    status_t SetName(const char *name);
+    const char* GetName();
     bool IsRunning();
     status_t Resume();
     status_t Suspend();
