@@ -302,6 +302,23 @@ function ssh_upload_file(server,info)
     end
 end
 
+function adb_push_file(server,info)
+    local remote_file = FileManager.ToAbsPath(server.root_path.."/"..info.rpath);
+    local local_file = info.full_name;
+	local cmd ="adb push "..local_file.." "..remote_file;    
+	print(cmd);
+	return os.execute(cmd);
+end
+
+function adb_push_upload_file(server,info)
+	if info.event == EVENT_BEGIN_DIR then
+		return true;
+	end
+	
+	if info.event == EVENT_SINGLE_FILE then
+        return adb_push_file(server,info);
+    end
+end
 
 
 local kLuaConfig="--lua-config";
