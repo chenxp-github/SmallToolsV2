@@ -83,6 +83,8 @@ function app_main(args)
         remote_dir = remote_file;
     end
 
+    local error_occur = false;
+
     function main_thread(thread)
         local file_client = SimpleFileClient.new(thread);
         if as_tcp_server then
@@ -112,6 +114,7 @@ function app_main(args)
                 local local_path=FileManager.ToAbsPath(rpath);                
                 if not file_client:PushBigFile(local_path,remote_path) then
                     printfnl("push file fail %s",local_path);
+                    error_occur = true;
                 else
                     printfnl("send %s ok",local_path);
                 end    
@@ -119,6 +122,7 @@ function app_main(args)
         elseif not local_dir then
             if not file_client:PushBigFile(local_file,remote_file) then
                 printfnl("push file fail %s",local_file);
+                error_occur = true;
             else
                 printfnl("send %s ok",local_file);
             end
@@ -134,6 +138,7 @@ function app_main(args)
                 local rfile = remote_dir.."/"..remove_path_prefix(v,local_dir);
                 if not file_client:PushBigFile(v,rfile,true) then
                     printfnl("push file fail %s",v);
+                    error_occur = true;
                 else
                     printfnl("send %s ok",v);                    
                 end
@@ -151,6 +156,10 @@ function app_main(args)
     co = CoThread.new(1);
     co:Start(main_thread);
     App.MainLoop();
+
+    if error_occur then
+        os.exit(-1);
+    end
 end
 
 

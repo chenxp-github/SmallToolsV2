@@ -317,3 +317,10 @@ end
 function printfnl(...)
     printnl(string.format(...));
 end
+
+function self_call(...)
+	local args = App.GetArgs();
+	local user_cmd = string.format(...);	
+	return os.execute(args[1].." "..args[2].." "..user_cmd);
+end
+
