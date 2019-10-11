@@ -64,7 +64,12 @@ OBJCOPY := $(PREFIX)objcopy
 OBJCOPY +=
 
 # The library and the link options ( C and C++ common).
-LDFLAGS := $(APPEND_LDFLAGS) -lpthread -lstdc++ -lm -ldl
+LDFLAGS := $(APPEND_LDFLAGS) -lstdc++ -lm -ldl
+
+ifneq ($(NO_PTHREAD), 1) 
+	LDFLAGS += -lpthread
+endif
+
 ## Implict Section: change the following only when necessary.
 ##=============================================================================
 # The C program compiler. Uncomment it to specify yours explicitly.

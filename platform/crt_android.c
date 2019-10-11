@@ -1,4 +1,4 @@
-#include <fcntl.h>
+#include <fcntl.h> 
 #include "crt_linux.h"
 #include "syslog.h"
 
@@ -24,7 +24,7 @@ int64_t crt_atoi64(const char *str)
 
 status_t crt_int64_to_str(int64_t size, char *str)
 {
-    sprintf(str,"%ld",size);
+    sprintf(str,"%lld",size);
     return OK;
 }
 
@@ -33,7 +33,7 @@ status_t crt_fsize_to_str(fsize_t size, char *str)
 #if USE_FILE_32
     sprintf(str,"%d",size);
 #else
-    sprintf(str,"%ld",size);
+    sprintf(str,"%lld",size);
 #endif
     return OK;
 }
@@ -44,7 +44,7 @@ fsize_t crt_str_to_fsize(const char *str)
     return atoi(str);
 #else
     return atoll(str);
-#endif
+#endif  
 }
 
 int crt_is_file_handle(FILE_HANDLE fd)
@@ -79,12 +79,7 @@ static uint32_t string_to_mode(const char *mode)
 
 FILE_HANDLE crt_fopen(const char *fn, const char *mode)
 {
-#if USE_FILE_32
     return open(fn,string_to_mode(mode),0666);
-#else
-    int open64(const char *pathname, int flags,...);
-    return open64(fn,string_to_mode(mode),0666);
-#endif
 }
 
 void crt_fclose(FILE_HANDLE fd)
@@ -179,7 +174,7 @@ wchar_t *crt_strcat_w(wchar_t *dest,const wchar_t *src)
 int_ptr_t crt_strlen_w(const wchar_t *str)
 {
     int_ptr_t s = 0;
-    while(*str++)s++;
+    while(*str++)s++; 
     return s;
 }
 
@@ -211,13 +206,13 @@ status_t crt_strcmp_w(const wchar_t *s1, const wchar_t *s2)
 status_t crt_stricmp_w(const wchar_t *s1, const wchar_t *s2)
 {
     wchar_t f, l;
-    do
+    do 
     {
         f = crt_tolwr_w(*s1);
         l = crt_tolwr_w(*s2);
         s1++;
         s2++;
-    } while ((f) && (f == l));
+    } while ((f) && (f == l));  
     return f - l;
 }
 
@@ -263,9 +258,9 @@ status_t crt_open_dir(const char *dir, void **p)
     DIR * handle = opendir(dir);
     if(handle == NULL)
     {
-        return ERROR;
+        return ERROR;       
     }
-    p[0] = handle;
+    p[0] = handle;    
     return OK;
 }
 
@@ -284,9 +279,7 @@ status_t crt_read_dir(void **p)
     int is_dir;
 
     if(entry == NULL)
-    {
         return ERROR;
-    }    
 
 	memset(&statbuf,0,sizeof(statbuf));
     lstat(entry->d_name,&statbuf);
@@ -307,7 +300,7 @@ status_t crt_read_dir(void **p)
     p[2] = (void*)((int_ptr_t)is_dir);
     p[3] = (void*)((int_ptr_t)statbuf.st_size);
 
-    int64_t tm = statbuf.st_mtim.tv_sec*1000LL+statbuf.st_mtim.tv_nsec/1000000LL;
+    int64_t tm = statbuf.st_mtime*1000LL+statbuf.st_mtime_nsec/1000000LL;
     memcpy(&p[5],&tm,sizeof(tm));
 
     return OK;
@@ -419,7 +412,7 @@ uint32_t crt_gbk_char_to_unicode(const char *gbk)
 
 status_t crt_unicode_char_to_gbk(wchar_t uc,char *gb)
 {
-    uint16_t t = ff_convert(uc, 0);
+    uint16_t t = ff_convert(uc, 0);    
     char *p = (char*)&t;
     if(t < 0x80)
     {
@@ -450,7 +443,7 @@ int32_t crt_socket( int32_t af, int32_t type, int32_t protocol )
     return socket(af,type,protocol);
 }
 
-int32_t crt_closesocket(int32_t s)
+int32_t crt_closesocket(int32_t s) 
 {
     return close(s);
 }
@@ -482,11 +475,11 @@ status_t crt_set_blocking_mode(int32_t s,status_t enable)
     else
         fcntl(s,F_SETFL,flags|O_NONBLOCK);
     return OK;
-}
+}   
 
-int32_t crt_gethostname(char *name, int32_t namelen)
+int32_t crt_gethostname(char *name, int32_t namelen) 
 {
-    return gethostname(name,namelen);
+    return gethostname(name,namelen); 
 }
 
 static pthread_mutex_t mutex=PTHREAD_MUTEX_INITIALIZER;
@@ -501,9 +494,9 @@ status_t crt_gethostbyname(const char * name, char *out)
     pHost = gethostbyname(name);
     if(pHost != NULL)
     {
-        for(i = 0; pHost->h_addr_list[i]!=NULL; i++)
-        {
-            pszAddr=crt_inet_ntoa(*(struct in_addr *)pHost->h_addr_list[i]);
+        for(i = 0; pHost->h_addr_list[i]!=NULL; i++)     
+        {       
+            pszAddr=crt_inet_ntoa(*(struct in_addr *)pHost->h_addr_list[i]);   
             crt_strcat(out,pszAddr);
             crt_strcat(out,"\n");
         }
@@ -515,7 +508,7 @@ status_t crt_gethostbyname(const char * name, char *out)
 
 char *crt_inet_ntoa (struct in_addr in)
 {
-    return inet_ntoa(in);
+    return inet_ntoa(in); 
 }
 
 uint16_t crt_htons( uint16_t hostshort)
@@ -525,10 +518,10 @@ uint16_t crt_htons( uint16_t hostshort)
 
 int32_t crt_bind ( int32_t s,const struct sockaddr * name, int32_t namelen)
 {
-    int32_t on = 1;
-    setsockopt( s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) );
+    int32_t on = 1; 
+    setsockopt( s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) ); 
     return bind(s,name,namelen);
-}
+}   
 
 int32_t crt_listen(int32_t s, int32_t backlog)
 {
@@ -537,7 +530,7 @@ int32_t crt_listen(int32_t s, int32_t backlog)
 
 int32_t crt_accept( int32_t s, struct sockaddr *addr,int32_t *addrlen)
 {
-    return accept(s,addr,(uint32_t*)addrlen);
+	return accept(s,addr,(socklen_t*)addrlen);
 }
 
 int32_t crt_connect( int32_t s, const struct sockaddr* name,int32_t namelen)
@@ -546,26 +539,26 @@ int32_t crt_connect( int32_t s, const struct sockaddr* name,int32_t namelen)
 }
 
 status_t crt_is_connect_complete(int32_t s)
-{
+{  
     struct timeval to;
-
-    fd_set fs;
-    to.tv_sec = 0;
+    
+    fd_set fs;  
+    to.tv_sec = 0;  
     to.tv_usec = 1000;
-    FD_ZERO(&fs);
+    FD_ZERO(&fs);   
     FD_SET(s,&fs);
-
+    
     if(select((int32_t)(s+1), 0, &fs, 0, &to) > 0)
     {
         int32_t err;
-        uint32_t len = sizeof(err);
+		socklen_t len = sizeof(err);
         if(getsockopt(s, SOL_SOCKET, SO_ERROR, &err, &len) != 0)
             return FALSE;
-
+        
         if(err == 0)
             return TRUE; //connect ok
     }
-
+    
     return FALSE;
 }
 
@@ -584,17 +577,17 @@ status_t crt_get_all_ip(char *out)
 
     ifc.ifc_len = sizeof(buf);
     ifc.ifc_req = buf;
-
+    
     ASSERT(ioctl(sock_fd, SIOCGIFCONF, (char *)&ifc) >= 0);
     interface_num = ifc.ifc_len / sizeof(struct ifreq);
-
-    while(interface_num--)
+    
+    while(interface_num--) 
     {
         if(ioctl(sock_fd, SIOCGIFFLAGS, (char *)&buf[interface_num]) < 0)
         {
             continue;
         }
-
+    
         if(ioctl(sock_fd, SIOCGIFADDR, (char *)&buf[interface_num]) < 0)
         {
             continue;
@@ -604,7 +597,7 @@ status_t crt_get_all_ip(char *out)
         crt_strcat(out,addr);
         crt_strcat(out,"\n");
     }
-
+    
     close(sock_fd);
 
     return OK;
@@ -631,11 +624,7 @@ THREAD_HANDLE crt_create_thread(void(*func)(void*), int32_t stack_size, void *pa
 
 status_t crt_cancel_thread(THREAD_HANDLE thread_id)
 {
-    if(thread_id)
-    {
-        return pthread_cancel(thread_id) == 0;
-    }
-    return ERROR;
+    return OK;
 }
 
 int_ptr_t crt_get_current_thread_id()
@@ -678,13 +667,13 @@ static void _thread_gethostbyname(void *context)
 
     p[3] = (void*)1; //can be free
     p[1] = (void*)1; //success
-    p[0] = (void*)1; //complete
+    p[0] = (void*)1; //complete     
     return;
 
 fail:
     p[3] = (void*)1; //can be free
     p[1] = (void*)0; //fail
-    p[0] = (void*)1; //complete
+    p[0] = (void*)1; //complete     
     return;
 }
 status_t crt_host_to_ip_async(const char *host, int_ptr_t **context)
@@ -706,7 +695,7 @@ status_t crt_host_to_ip_async(const char *host, int_ptr_t **context)
     return OK;
 }
 status_t crt_free_host_to_ip_context(int_ptr_t **context)
-{
+{   
     int_ptr_t *p = *context;
     char *host;
     if(*context == NULL)

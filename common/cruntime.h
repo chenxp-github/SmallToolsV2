@@ -51,7 +51,7 @@
 
 /////////////////////////////////////////////////////////////
 #if _ANDROID_
-#include "crt_linux.h"
+#include "crt_android.h"
 #endif
 /////////////////////////////////////////////////////////////
 
@@ -80,7 +80,7 @@ bool func() \
 } \
 
 ///used in pure C///
-#define CFLAG_FUNC_H(_class,var,func, bit) \
+#define CFLAG_FUNC_H(_class,func) \
 status_t _class##_##set##_##func(struct _class *self,bool_t have); \
 bool_t _class##_##func(struct _class *self); \
 

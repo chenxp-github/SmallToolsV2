@@ -23,6 +23,7 @@ CMemDC::~CMemDC()
 }
 int CMemDC::InitBasic()
 {
+	WEAK_REF_ID_CLEAR();
     this->hparent = NULL;
     this->hdc = NULL;
     this->hbitmap = NULL;
@@ -48,6 +49,7 @@ int CMemDC::Init()
 {
     this->InitBasic();
     //add your code
+	WEAK_REF_ID_INIT();
     return OK;
 }
 int  CMemDC::Destroy()

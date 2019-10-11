@@ -15,6 +15,8 @@
 
 class CMemDC{
 public:
+	WEAK_REF_ID_DEFINE();
+public:
     HWND hparent;
     HDC hdc;
     HBITMAP hbitmap,old_hbitmap;

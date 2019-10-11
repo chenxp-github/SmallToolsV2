@@ -396,20 +396,28 @@ int CNativeProcess::SchedSetNiceValue(int nice)
 
 uint32_t CNativeProcess::SchedGetAffinity()
 {
+#if !_ANDROID_
     CHECK_PID();
     cpu_set_t mask;
     CPU_ZERO(&mask);
     sched_getaffinity(m_Pid,sizeof(mask),&mask);
     uint32_t *p = (uint32_t*)&mask;
     return p[0];
+#else
+    return 0;
+#endif
 }
 
 status_t CNativeProcess::SchedSetAffinity(uint32_t mask)
 {
+#if !_ANDROID_
     CHECK_PID();
     cpu_set_t tmp;
     CPU_ZERO(&tmp);
     memcpy(&tmp,&mask,sizeof(mask));
     return sched_setaffinity(m_Pid,sizeof(tmp),&tmp) == 0;
+#else
+    return 0;
+#endif
 }
 

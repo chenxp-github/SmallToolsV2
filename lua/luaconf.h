@@ -20,6 +20,10 @@
 #define LUA_USE_LINUX 1 
 #endif
 
+#ifdef ANDROID_NDK
+#define lua_getlocaledecpoint() '.'
+#endif
+
 /*
 ** ===================================================================
 ** Search for "@@" to find all configurable definitions.

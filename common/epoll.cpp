@@ -2,6 +2,10 @@
 #include "syslog.h"
 #include "mem_tool.h"
 
+#ifndef EPOLLRDHUP
+#define EPOLLRDHUP EPOLLHUP
+#endif
+
 CEpoll::CEpoll()
 {
     this->InitBasic();

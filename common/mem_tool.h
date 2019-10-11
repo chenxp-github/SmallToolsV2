@@ -81,5 +81,6 @@ FREE(p);\
 #define X_NEW_ARRAY NEW_ARRAY
 #define X_DEL_ARRAY DEL_ARRAY
 #define X_REALLOC REALLOC
+#define X_ZALLOC ZALLOC
 
 #endif
