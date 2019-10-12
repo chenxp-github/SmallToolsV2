@@ -136,7 +136,7 @@ function app_main(args)
             
             for _,v in ipairs(file_list) do
                 local rfile = remote_dir.."/"..remove_path_prefix(v,local_dir);
-                if not file_client:PushBigFile(v,rfile,true) then
+                if not file_client:PushBigFile(v,rfile) then
                     printfnl("push file fail %s",v);
                     error_occur = true;
                 else
