@@ -401,7 +401,9 @@ static status_t filemanager_md5sum_v2(lua_State *L)
 	}
 	else
 	{
-		LOG("open file %s fail.",fn);
+		XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
+            "open file %s fail.",fn
+        );
 	}
 	return 0;
 }

@@ -1,7 +1,6 @@
 #include "lualib_tasktimer.h"
 #include "mem_tool.h"
 #include "syslog.h"
-#include "globals.h"
 #include "lua_helper.h"
 
 #define CBID_PARAM_INDEX 10
