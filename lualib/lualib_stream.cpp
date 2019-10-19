@@ -18,7 +18,7 @@ bool is_stream(lua_State *L, int idx)
         LUA_USERDATA_STREAM,
     };            
     lua_userdata *ud = NULL;
-    for(int i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
     {
         ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
         if(ud)break;
@@ -263,40 +263,6 @@ static int stream_copy(lua_State *L)
     ASSERT(_p);
     int _ret_0 = (int)pstream->Copy(_p);
     lua_pushboolean(L,_ret_0);
-    return 1;
-}
-static int stream_malloc(lua_State *L)
-{
-    CStream *pstream = get_stream(L,1);
-    ASSERT(pstream);
-    int asize = (int)lua_tointeger(L,2);
-    int _ret_0 = (int)pstream->Malloc(asize);
-    lua_pushboolean(L,_ret_0);
-    return 1;
-}
-static int stream_seek(lua_State *L)
-{
-    CStream *pstream = get_stream(L,1);
-    ASSERT(pstream);
-    int off = (int)lua_tointeger(L,2);
-    int _ret_0 = (int)pstream->Seek(off);
-    lua_pushinteger(L,_ret_0);
-    return 1;
-}
-static int stream_getsize(lua_State *L)
-{
-    CStream *pstream = get_stream(L,1);
-    ASSERT(pstream);
-    int _ret_0 = (int)pstream->GetSize();
-    lua_pushinteger(L,_ret_0);
-    return 1;
-}
-static int stream_getoffset(lua_State *L)
-{
-    CStream *pstream = get_stream(L,1);
-    ASSERT(pstream);
-    int _ret_0 = (int)pstream->GetOffset();
-    lua_pushinteger(L,_ret_0);
     return 1;
 }
 static int stream_getasstring(lua_State *L)

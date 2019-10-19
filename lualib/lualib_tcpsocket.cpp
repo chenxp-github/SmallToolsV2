@@ -22,7 +22,7 @@ bool is_tcpsocket(lua_State *L, int idx)
         LUA_USERDATA_TCPSOCKET,
     };            
     lua_userdata *ud = NULL;
-    for(int i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
     {
         ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
         if(ud)break;
@@ -315,11 +315,11 @@ static status_t tcpsocket_newtcpconnector(lua_State *L)
 			tcp_socket->Init();
 			tcp_socket->TransferSocketFd(tcp_client);
 			tcp_socket->SetBlocking(false);			
-			tcpsocket_callback_ontcpacceptorevent(L,callback,false,event,tcp_socket);
+			tcpsocket_callback_ontcpconnectorevent(L,callback,false,event,tcp_socket);
         }
         else
         {
-			tcpsocket_callback_ontcpacceptorevent(L,callback,false,event,NULL);
+			tcpsocket_callback_ontcpconnectorevent(L,callback,false,event,NULL);
         }
         return OK;
     }

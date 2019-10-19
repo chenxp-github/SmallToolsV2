@@ -21,7 +21,7 @@ bool is_websocketserver(lua_State *L, int idx)
         LUA_USERDATA_WEBSOCKETSERVER,
     };            
     lua_userdata *ud = NULL;
-    for(int i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
     {
         ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
         if(ud)break;
