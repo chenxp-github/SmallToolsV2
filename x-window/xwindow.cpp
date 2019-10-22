@@ -371,6 +371,15 @@ status_t CxWindow::SetBounds(int x, int y, int width, int height)
     );
 }
 
+status_t CxWindow::Move(int x, int y)
+{
+    COMMON_XWINDOW_CHECK();
+    return XMoveWindow(
+        m_Display->GetNativeXDisplay(),
+        m_NativeXWindow,
+        x,y);
+}
+
 status_t CxWindow::Raise()
 {
     COMMON_XWINDOW_CHECK();

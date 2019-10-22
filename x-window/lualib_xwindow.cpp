@@ -560,6 +560,17 @@ static status_t xwindow_setwmname(lua_State *L)
     pxwindow->SetWMName(&mem);
     return 0;
 }
+
+static status_t xwindow_move(lua_State *L)
+{
+    CxWindow *pxwindow = get_xwindow(L,1);
+    ASSERT(pxwindow);
+    int x = lua_tointeger(L,2);
+    int y = lua_tointeger(L,3);
+    pxwindow->Move(x,y);
+    return 0;
+}
+
 static const luaL_Reg xwindow_lib[] = {
     {"new",xwindow_new},
     {"__gc",xwindow_destroy},
@@ -606,7 +617,8 @@ static const luaL_Reg xwindow_lib[] = {
 	{"StayBelow",xwindow_staybelow},
 	{"SetFunctions",xwindow_setfunctions},
 	{"GetMapState",xwindow_getmapstate},
-    {"SetWMName",xwindow_setwmname},    
+    {"SetWMName",xwindow_setwmname},  
+    {"Move",xwindow_move},  
     {NULL, NULL}
 };
 static int luaL_register_xwindow(lua_State *L)

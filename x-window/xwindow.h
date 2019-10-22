@@ -24,6 +24,7 @@ public:
     NativeXWindow *m_ChildWindows;
     int m_ChildWindowsLen;
 public:
+    status_t Move(int x, int y);
     int GetMapState();
     status_t StayAbove(bool above);
     status_t StayBelow(bool below);
