@@ -36,9 +36,11 @@
 #define _IS_WINDOWS_ 1
 #endif
 
-#define LOG syslog_printf
+#ifdef USE_X11
+#define _SUPPORT_X11_ 1
+#endif
 
-#define SOCKETRW_TIMEOUT (30*1000)
+#define LOG syslog_printf
 
 #endif
 

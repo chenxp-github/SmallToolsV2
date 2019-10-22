@@ -28,6 +28,7 @@ PREFIX ?= $(CROSS_COMPILE)
 POSTFIX := $(CROSS_COMPILE_POSTFIX)
 AS := $(PREFIX)as$(POSTFIX)
 LD := $(PREFIX)gcc$(POSTFIX)
+PKGCONFIG := pkg-config
 ###########################################
 
 # The executable file name.
@@ -39,7 +40,7 @@ PROGRAM := $(TARGET_NAME)
 # SRCDIRS := . # current directory
 SRCDIRS := . common lua lualib ximage resource_manager messagepeer  
 SRCDIRS += process_manager websocket
-
+SRCDIRS += x-window
 # The source file types (headers excluded).
 # At least one type should be specified.
 # The valid suffixes are among of .c, .C, .cc, .cpp, .CPP, .c++, .cp, or .cxx.
@@ -53,6 +54,11 @@ SRCEXTS := .cpp .c
 # If it is a C and C++ merging program, set these flags for the C parts.
 CFLAGS := -O2 -Wall -Iplatform -I. -Icommon -Ilua -Ilualib 
 CFLAGS += -Iximage -Iresource_manager -Imessagepeer -Iprocess_manager -Iwebsocket
+
+ifneq ($(NO_X11), 1) 
+CFLAGS += -DUSE_X11 -Ix-window $(shell $(PKGCONFIG) --cflags-only-I gtk+-3.0 x11 glib-2.0)
+endif
+
 CFLAGS += $(APPEND_CFLAGS)
 
 # The compiling flags used only for C++.
@@ -65,6 +71,10 @@ OBJCOPY +=
 
 # The library and the link options ( C and C++ common).
 LDFLAGS := $(APPEND_LDFLAGS) -lstdc++ -lm -ldl
+
+ifneq ($(NO_X11), 1) 
+LDFLAGS += $(shell $(PKGCONFIG) --libs-only-l gtk+-3.0 x11 glib-2.0)
+endif
 
 ifneq ($(NO_PTHREAD), 1) 
 	LDFLAGS += -lpthread

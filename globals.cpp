@@ -40,6 +40,12 @@
 #include "lualib_nativeprocessmanager.h"
 #endif
 
+#if _SUPPORT_X11_ 
+#include "lualib_xdisplay.h"
+#include "lualib_xwindow.h"
+#include "lualib_xevent.h"
+#endif
+
 CGlobals g_globals;
 CGlobals *g_globals_ptr = NULL;
 
@@ -266,6 +272,12 @@ status_t CGlobals::InitLuaVm()
 #if _IS_LINUX_
     luaopen_nativeprocess(L);
     luaopen_fivprocessmanager(L);
+#endif
+
+#if _SUPPORT_X11_
+    luaopen_xwindow(L);
+    luaopen_xdisplay(L);
+    luaopen_xevent(L);
 #endif
 
     this->StartLuaAutoGcTask();
