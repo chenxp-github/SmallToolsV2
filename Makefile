@@ -40,7 +40,11 @@ PROGRAM := $(TARGET_NAME)
 # SRCDIRS := . # current directory
 SRCDIRS := . common lua lualib ximage resource_manager messagepeer  
 SRCDIRS += process_manager websocket
+
+ifneq ($(NO_X11), 1)
 SRCDIRS += x-window
+endif
+
 # The source file types (headers excluded).
 # At least one type should be specified.
 # The valid suffixes are among of .c, .C, .cc, .cpp, .CPP, .c++, .cp, or .cxx.
