@@ -271,6 +271,7 @@ static int filebase_searchstr(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     const char* str = (const char*)lua_tostring(L,2);
+	ASSERT(str);
     int case_sensive = (int)lua_toboolean(L,3);
     int word_only = (int)lua_toboolean(L,4);
     int _ret_0 = (int)pfilebase->SearchStr(str,case_sensive,word_only);
@@ -351,6 +352,7 @@ static int filebase_writetofile_v1(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     const char* fn = (const char*)lua_tostring(L,2);
+	ASSERT(fn);
     int _ret_0 = (int)pfilebase->WriteToFile(fn);
     lua_pushinteger(L,_ret_0);
     return 1;
@@ -361,6 +363,7 @@ static int filebase_writetofile_v2(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     const char* fn = (const char*)lua_tostring(L,2);
+	ASSERT(fn);
     int start = (int)lua_tointeger(L,3);
     int wsize = (int)lua_tointeger(L,4);
     int _ret_0 = (int)pfilebase->WriteToFile(fn,start,wsize);
@@ -407,6 +410,7 @@ static int filebase_strcmp_v2(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     const char* str = (const char*)lua_tostring(L,2);
+	ASSERT(str);
     int _ret_0 = (int)pfilebase->StrCmp(str);
     lua_pushinteger(L,_ret_0);
     return 1;
@@ -438,6 +442,7 @@ static int filebase_stricmp_v2(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     const char* str = (const char*)lua_tostring(L,2);
+	ASSERT(str);
     int _ret_0 = (int)pfilebase->StrICmp(str);
     lua_pushinteger(L,_ret_0);
     return 1;
@@ -532,6 +537,7 @@ static int filebase_endwith(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     const char* str = (const char*)lua_tostring(L,2);
+	ASSERT(str);
     int case_sensive = (int)lua_toboolean(L,3);
     int skip_empty = (int)lua_toboolean(L,4);
     int _ret_0 = (int)pfilebase->EndWith(str,case_sensive,skip_empty);
@@ -635,6 +641,7 @@ static int filebase_readquotestr(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     const char* begin_and_end_char = (const char*)lua_tostring(L,2);
+	ASSERT(begin_and_end_char);
     CFileBase *file = get_filebase(L,3);
     ASSERT(file);
     int _ret_0 = (int)pfilebase->ReadQuoteStr(begin_and_end_char[0],begin_and_end_char[1],file);
@@ -667,6 +674,7 @@ static int filebase_replacestr(lua_State *L)
     ASSERT(pfilebase);
     const char* src_str = (const char*)lua_tostring(L,2);
     const char* des_str = (const char*)lua_tostring(L,3);
+	ASSERT(src_str && des_str);
     int case_sensive = (int)lua_toboolean(L,4);
     int word_only = (int)lua_toboolean(L,5);
     CFileBase *new_file = get_filebase(L,6);
@@ -700,6 +708,7 @@ static int filebase_setfilename(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     const char* fn = (const char*)lua_tostring(L,2);
+	ASSERT(fn);
     int _ret_0 = (int)pfilebase->SetFileName(fn);
     lua_pushboolean(L,_ret_0);
     return 1;
@@ -751,6 +760,7 @@ static int filebase_startwith(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     const char* str = (const char*)lua_tostring(L,2);
+	ASSERT(str);
     int case_sensive = (int)lua_toboolean(L,3);
     int skip_empty = (int)lua_toboolean(L,4);
     int _ret_0 = (int)pfilebase->StartWith(str,case_sensive,skip_empty);
@@ -762,6 +772,7 @@ static int filebase_strcat(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     const char* str = (const char*)lua_tostring(L,2);
+	ASSERT(str);
     int _ret_0 = (int)pfilebase->StrCat(str);
     lua_pushboolean(L,_ret_0);
     return 1;
