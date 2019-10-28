@@ -334,9 +334,12 @@ static status_t xmlnode_getvalue(lua_State *L)
     CXmlNode *pxmlnode = get_xmlnode(L,1);
     ASSERT(pxmlnode);
     CMemFile *ret0 = pxmlnode->GetValue();
-    ASSERT(ret0);
-    memfile_new_userdata(L,ret0,1);
-    return 1;
+    if(ret0)
+    {
+        memfile_new_userdata(L,ret0,1);
+        return 1;
+    }
+    return 0;
 }
 
 static status_t xmlnode_addvaluedata(lua_State *L)

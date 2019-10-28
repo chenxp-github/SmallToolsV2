@@ -152,6 +152,7 @@ status_t CXmlNode::AddAttrib(CFileBase *file)
         this->mf_attrib->Init(1024,10);
     }
     this->mf_attrib->WriteFile(file);
+    this->mf_attrib->Seek(0);
     return OK;
 }
 status_t CXmlNode::AddAttrib(const char *attrib, const char *val)
@@ -218,6 +219,7 @@ status_t CXmlNode::AddValueData(CFileBase *file)
             this->mf_value->Seek(0);
         }
         this->mf_value->WriteFile(file,start,end-start);
+        this->mf_value->Seek(0);
     }
 
     return OK;

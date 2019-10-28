@@ -324,3 +324,18 @@ function self_call(...)
 	return os.execute(args[1].." "..args[2].." "..user_cmd);
 end
 
+--把一个filebase类转换成string--
+function file_to_string(file)
+    local mem = new_mem(file:GetSize());
+    mem:WriteFile(file);
+    local str = mem:CStr();
+    mem:Destroy();
+    return str;
+end
+
+--把一个filebase类转换成mem--
+function file_to_mem(file)
+    local mem = new_mem(file:GetSize());
+    mem:WriteFile(file);
+    return mem;
+end
