@@ -36,7 +36,7 @@ public:
     CEpoll();
     virtual ~CEpoll();
     status_t InitBasic();
-    status_t Init(int max_);
+    status_t Init(int max_=1024);
     status_t Destroy();
 };
 

@@ -60,6 +60,11 @@
 #define WEAK_REF_ID_INIT()  __weak_ref_id = crt_get_unique_id()
 #define WEAK_REF_ID_CLEAR() __weak_ref_id = 0
 ////////////////////////////////////////////////////////////
+#define C_WEAK_REF_ID_DEFINE() int __weak_ref_id
+#define C_WEAK_REF_ID_CLEAR(self) self->__weak_ref_id = 0
+#define C_WEAK_REF_ID_INIT(self)  self->__weak_ref_id = crt_get_unique_id()
+////////////////////////////////////////////////////////////
+
 #define CLEAR_BITS(v,bits) v &= ~(bits)
 #define SET_BITS(v,bits) v |= (bits)
 #define TEST_BITS(v,bits) ((v&(bits)) == (bits))
@@ -80,11 +85,11 @@ bool func() \
 } \
 
 ///used in pure C///
-#define CFLAG_FUNC_H(_class,func) \
+#define C_FLAG_FUNC_H(_class,func) \
 status_t _class##_##set##_##func(struct _class *self,bool_t have); \
 bool_t _class##_##func(struct _class *self); \
 
-#define CFLAG_FUNC_C(_class,var,func, bit) \
+#define C_FLAG_FUNC_C(_class,var,func, bit) \
 status_t _class##_##set##_##func(struct _class *self,bool_t have) \
 { \
     if(have) \
