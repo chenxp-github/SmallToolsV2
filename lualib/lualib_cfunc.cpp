@@ -23,8 +23,18 @@ static int cfunc_wild_match(lua_State *L)
     lua_pushboolean(L,_ret_0);
     return 1;
 }
+static int cfunc_memcpy(lua_State *L)
+{
+    int_ptr_t s1 = (int_ptr_t)lua_tointeger(L,1);
+    int_ptr_t s2 = (int_ptr_t)lua_tointeger(L,2);
+    int_ptr_t n = (int_ptr_t)lua_tointeger(L,3);
+    memcpy((void*)s1,(const void*)s2,(size_t)n);
+    return 0;
+}
+
 static const luaL_Reg cfunc_lib[] = {
     {"memcmp",cfunc_memcmp},
+    {"memcpy",cfunc_memcpy},
     {"wild_match",cfunc_wild_match},
     {NULL, NULL}
 };
