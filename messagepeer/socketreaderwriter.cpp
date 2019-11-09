@@ -4,10 +4,6 @@
 
 #define MAX_LINE_LENGTH (64*1024)
 
-#ifndef SOCKETRW_TIMEOUT
-#define SOCKETRW_TIMEOUT (90*1000)
-#endif
-
 CSocketReaderWriter::CSocketReaderWriter()
 {
     this->InitBasic();

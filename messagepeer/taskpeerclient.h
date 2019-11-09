@@ -10,7 +10,7 @@
 class CTaskPeerClient:public CTaskLinkRpc{
 public:
     enum{
-        ERROR_PEER_ALREADY_EXIST = 1,
+        ERROR_INIT_CHECK_FAIL = 1,
     };
 
     CWeakPtr<CMessagePeer> iHostPeer;

@@ -32,7 +32,7 @@ function SimpleFileClient:List(_dir)
     };
     self:SendRequest(_param,METHOD_SFS_LIST,_cbid);
 
-    while not complete do
+    while not complete and not self:IsClosedPermanently() do
         self.m_thread:Sleep(1);
     end
 
@@ -200,7 +200,7 @@ function SimpleFileClient:PullFile(remote_file, local_file,on_complete)
     
     self:SendRequest(_param,METHOD_SFS_PULLFILE,_cbid);
 
-    while not on_complete and not all_complete do
+    while not on_complete and not all_complete and not self:IsClosedPermanently() do
         self.m_thread:Sleep(1);
     end
 

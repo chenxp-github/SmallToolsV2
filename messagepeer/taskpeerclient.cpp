@@ -89,10 +89,16 @@ static status_t on_tcp_connector_event(CClosure *closure)
         msg->SetFunc(PEER_FUNC_INIT_NAME);
         msg->SetFrom(self->iHostPeer->GetName());
 
-        CMemStk *all = self->iHostPeer->GetAllConnectedPeers();
+		MessagePeerInitParam_t init_param;
+		init_param.size = sizeof(init_param);
+		init_param.version = MESSAGE_PEER_VERSION;
+		init_param.socket_rw_timeout = SOCKETRW_TIMEOUT;
+		
+		CMemStk *all = self->iHostPeer->GetAllConnectedPeers();
         ASSERT(all);
 
-        LOCAL_MEM(buf);
+        LOCAL_MEM_WITH_SIZE(buf,32*1024);
+		buf.Write(&init_param,sizeof(init_param));
         all->SaveLines(&buf);
         msg->SetBody(&buf);
         //first thing , tell the server my name
@@ -146,12 +152,12 @@ status_t CTaskPeerClient::OnGotPackageData(LINKRPC_HEADER *header,CMem *header_d
     ASSERT(tmp.CheckHeader());
     tmp.TransferBody(this->mDataRecvBuf);
 
-    if(tmp.GetFunc() == PEER_FUNC_NAME_ALREADY_EXIST)
+    if(tmp.GetFunc() == PEER_FUNC_INIT_CHECK_FAIL)
     {
         XLOG(LOG_MODULE_MESSAGEPEER,LOG_LEVEL_INFO,
-            "%s",tmp.GetBody()->CStr()
+            "%s",tmp.GetFrom()->CStr()
         );
-        this->Stop(ERROR_PEER_ALREADY_EXIST);
+        this->Stop(ERROR_INIT_CHECK_FAIL);
         return ERROR;
     }
     ASSERT(this->iHostPeer.get());
@@ -203,8 +209,8 @@ CPeerMessageStk * CTaskPeerClient::GetSendingQueue()
 const char * CTaskPeerClient::ErrorToString(int err)
 {
     const char *ori_str = NULL;
-    if(err == ERROR_PEER_ALREADY_EXIST)
-        ori_str = "peer already exist";
+    if(err == ERROR_INIT_CHECK_FAIL)
+        ori_str = "peer init check fail.";
     else
         ori_str = CTaskLinkRpc::ErrorToString(err);
 

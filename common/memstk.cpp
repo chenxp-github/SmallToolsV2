@@ -403,9 +403,7 @@ status_t CMemStk::LoadLines(CFileBase *file)
 
 status_t CMemStk::SaveLines(CFileBase *file)
 {
-    ASSERT(file);
-    
-    file->SetSize(0);
+    ASSERT(file);    
     for(int32_t i = 0; i < this->GetLen(); i++)
     {
         CMem *p = this->GetElem(i);
@@ -416,6 +414,7 @@ status_t CMemStk::SaveLines(CFileBase *file)
     
     return OK;
 }
+
 bool CMemStk::Equal(CMemStk *stk)
 {
     ASSERT(stk);

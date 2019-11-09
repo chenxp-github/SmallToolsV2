@@ -20,6 +20,7 @@ public:
     status_t InitBasic();
     status_t Init(CTaskMgr *mgr);
     status_t Destroy();
+	status_t OnInitNameMessage(CPeerMessage *msg);
 
     //connection
     status_t OnGetSocket();

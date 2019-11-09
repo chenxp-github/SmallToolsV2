@@ -21,6 +21,7 @@ public:
     CClosure *mCallback;
     int mTaskFetchMessage;
 public:
+	status_t OnInitNameMessage(CPeerMessage *msg);
     int GetAliveClientNumber();
     status_t ClearSendingQueue();
     int GetSendingQueueLength();

@@ -72,7 +72,7 @@ static status_t on_peer_got_message(CClosure *closure)
     if(event == PEER_EVENT_STOPPED || event == PEER_EVENT_DISCONNECTED)    
         self->OnSocketDisconnected();
 
-    if(event == PEER_EVENT_GOT_MESSAGE || event == PEER_EVENT_GOT_MESSAGE)
+    if(event == PEER_EVENT_GOT_MESSAGE)
     {
         CLOSURE_PARAM_PTR(CPeerMessage*,msg,1);
         if(msg->GetMessageType() == CPeerMessage::REQUEST || msg->GetMessageType() == CPeerMessage::SINGAL)

@@ -82,6 +82,104 @@ status_t CTaskPeerServer::OnGotPackageHeader(LINKRPC_HEADER *header,CMem *header
     return OK;
 }
 
+status_t CTaskPeerServer::OnInitNameMessage(CPeerMessage *msg)
+{
+	ASSERT(msg);
+	PEER_GLOBALS(g);
+	
+	CMem *name = msg->GetFrom();
+	GLOBAL_PEER_MANAGER(mgr);
+	CPeerProxy *peer = mgr->GetPeerByName(name);
+	
+	if(peer && g->InTrustMode() && peer->IsConnectionAlive())
+	{
+		int index = mgr->NameToIndex(name);
+		if(index  >= 0)
+		{
+			XLOG(LOG_MODULE_MESSAGEPEER,LOG_LEVEL_INFO,
+				"delete existing peer \"%s\" in trust mode",name->CStr()
+            );
+			mgr->DeletePeer(index);
+			peer = NULL;
+		}
+	}
+	
+	CMem *body = msg->GetBody();
+	ASSERT(body);
+	
+	MessagePeerInitParam_t init_param;
+	body->Seek(0);
+	body->Read(&init_param,sizeof(init_param));
+	
+	if(	   init_param.version != MESSAGE_PEER_VERSION 
+		|| init_param.size != sizeof(init_param) 
+		|| init_param.socket_rw_timeout != SOCKETRW_TIMEOUT)
+	{
+		CPeerMessage tmp;
+		tmp.Init();
+		tmp.SetFunc(PEER_FUNC_INIT_CHECK_FAIL);
+		LOCAL_MEM(mem);
+		if(init_param.version != MESSAGE_PEER_VERSION)
+			mem.Printf("message peer version check fail %d vs %d",MESSAGE_PEER_VERSION,init_param.version);
+		else if(init_param.size != sizeof(init_param))
+			mem.Printf("message peer size check fail %d vs %d",sizeof(init_param),init_param.size);
+		else if(init_param.socket_rw_timeout != SOCKETRW_TIMEOUT)
+			mem.Printf("message peer SOCKETRW_TIMEOUT check fail %d vs %d",SOCKETRW_TIMEOUT,init_param.socket_rw_timeout);
+		tmp.SetFrom(&mem);
+                tmp.SetBodyType(CPeerMessage::RAW);
+		tmp.SerializeHeader(this->mSendHeadBuf);
+		this->quit_after_send = true;
+		return ERROR;
+	}
+	
+	CMem all_peers;
+	all_peers.Init();
+	all_peers.SetRawBuf(body->GetRawBuf(),sizeof(init_param),true);
+
+	if(peer != NULL)
+	{
+		if(peer->IsConnectionAlive())
+		{
+			CPeerMessage tmp;
+			tmp.Init();
+			tmp.SetFunc(PEER_FUNC_INIT_CHECK_FAIL);
+			LOCAL_MEM(mem);
+			mem.Printf("peer name \"%s\" already exist",name->CStr());
+			tmp.SetFrom(&mem);
+			this->mSendHeadBuf->SetSize(0);
+			tmp.SerializeHeader(this->mSendHeadBuf);
+			this->quit_after_send = true;
+		}
+		else
+		{
+			XLOG(LOG_MODULE_MESSAGEPEER,LOG_LEVEL_INFO,
+				"active existing peer \"%s\"",name->CStr()
+            );
+			iHostProxy.WeakRef(peer);
+			peer->AttachTaskPeerServer(this->GetId());
+			peer->SetLifeTime(0);
+			peer->AddAllPeers(&all_peers);
+		}
+	}
+	else
+	{
+		XLOG(LOG_MODULE_MESSAGEPEER,LOG_LEVEL_INFO,
+			"new peer \"%s\"",name->CStr()
+        );
+		NEW(peer,CPeerProxy);
+		peer->Init(this->GetTaskMgr());
+		peer->SetMaxConnectedPeers(64);
+		peer->SetName(name);
+		iHostProxy.WeakRef(peer);
+		peer->AttachTaskPeerServer(this->GetId());
+		peer->AddAllPeers(&all_peers);
+		mgr->AddPeer(peer);
+        g->NotifyNewPeer(peer);
+    }
+
+	return OK;
+}
+
 status_t CTaskPeerServer::OnGotPackageData(LINKRPC_HEADER *header,CMem *header_data,CFileBase *data)
 {
     PEER_GLOBALS(g);
@@ -104,63 +202,7 @@ status_t CTaskPeerServer::OnGotPackageData(LINKRPC_HEADER *header,CMem *header_d
 
     if(msg->GetFunc() == PEER_FUNC_INIT_NAME)
     {
-        CMem *name = msg->GetFrom();
-        GLOBAL_PEER_MANAGER(mgr);
-        CPeerProxy *peer = mgr->GetPeerByName(name);
-
-        if(peer && g->InTrustMode() && peer->IsConnectionAlive())
-        {
-            int index = mgr->NameToIndex(name);
-            if(index  >= 0)
-            {
-                 XLOG(LOG_MODULE_MESSAGEPEER,LOG_LEVEL_INFO,
-                    "delete existing peer \"%s\" in trust mode",name->CStr()
-                );
-                mgr->DeletePeer(index);
-                peer = NULL;
-            }
-        }
-
-        if(peer != NULL)
-        {
-            if(peer->IsConnectionAlive())
-            {
-                CPeerMessage tmp;
-                tmp.Init();
-                tmp.SetFunc(PEER_FUNC_NAME_ALREADY_EXIST);
-                LOCAL_MEM(mem);
-                mem.Printf("peer name \"%s\" already exist",name->CStr());
-                tmp.SetBody(&mem);
-                this->mSendHeadBuf->SetSize(0);
-                tmp.SerializeHeader(this->mSendHeadBuf);
-                this->quit_after_send = true;
-            }
-            else
-            {
-                XLOG(LOG_MODULE_MESSAGEPEER,LOG_LEVEL_INFO,
-                    "active existing peer \"%s\"",name->CStr()
-                );
-                iHostProxy.WeakRef(peer);
-                peer->AttachTaskPeerServer(this->GetId());
-                peer->SetLifeTime(0);
-                peer->AddAllPeers(msg->GetBody());
-            }
-        }
-        else
-        {
-            XLOG(LOG_MODULE_MESSAGEPEER,LOG_LEVEL_INFO,
-                "new peer \"%s\"",name->CStr()
-            );
-            NEW(peer,CPeerProxy);
-            peer->Init(this->GetTaskMgr());
-            peer->SetMaxConnectedPeers(64);
-            peer->SetName(name);
-            iHostProxy.WeakRef(peer);
-            peer->AttachTaskPeerServer(this->GetId());
-            peer->AddAllPeers(msg->GetBody());
-            mgr->AddPeer(peer);
-            g->NotifyNewPeer(peer);
-        }
+		this->OnInitNameMessage(msg);
     }
     else
     {

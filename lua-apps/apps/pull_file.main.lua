@@ -32,7 +32,7 @@ function parallel_pull_files(thread,file_client,all_pull_files)
         end
     end
 
-    while pending > 0 do
+    while pending > 0 and not file_client:IsClosedPermanently() do
         thread:Sleep(1);
     end
 end

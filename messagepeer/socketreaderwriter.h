@@ -6,6 +6,10 @@
 #include "closure.h"
 #include "taskmgr.h"
 
+#ifndef SOCKETRW_TIMEOUT
+#define SOCKETRW_TIMEOUT (90*1000)
+#endif
+
 class CSocketReaderWriter{
 public:
     enum{
