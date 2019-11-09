@@ -252,6 +252,57 @@ static int mem_setisreadonly(lua_State *L)
     pmem->SetIsReadOnly(read_only);
     return OK;
 }
+
+static status_t mem_memcpy_v1(lua_State *L)
+{
+    CMem *pmem = get_mem(L,1);
+    ASSERT(pmem);
+    int_ptr_t *addr = (int_ptr_t*)lua_tointeger(L,2);
+    size_t size = (size_t)lua_tointeger(L,3);    
+    if(size > (size_t)pmem->GetMaxSize())
+        size = (size_t)pmem->GetMaxSize();
+    ASSERT(addr != 0 && size > 0);        
+    ASSERT(!pmem->mIsConst);
+    memcpy(pmem->GetRawBuf(),addr,size); 
+    pmem->SetSize(size);
+    return 0;
+}
+
+static status_t mem_memcpy_v2(lua_State *L)
+{
+    CMem *pmem = get_mem(L,1);
+    ASSERT(pmem);
+    CMem *mem = get_mem(L,2);
+    ASSERT(mem);
+
+    void *addr = mem->GetRawBuf();
+    size_t size = (size_t)lua_tointeger(L,3);
+
+    if(size > (size_t)pmem->GetMaxSize())
+        size = (size_t)pmem->GetMaxSize();
+    ASSERT(addr != 0 && size > 0);                
+    ASSERT(!pmem->mIsConst);
+    
+    memcpy(pmem->GetRawBuf(),addr,size);
+    pmem->SetSize(size);
+    return 0;
+}
+
+static status_t mem_memcpy(lua_State *L)
+{
+    if(lua_isinteger(L,2) && lua_isinteger(L,3))
+    {
+        return mem_memcpy_v1(L);
+    }
+
+    if(is_mem(L,2))
+    {
+        return mem_memcpy_v2(L);
+    }
+
+    return 0;
+}
+
 static const luaL_Reg mem_lib[] = {
     {"new",mem_new},
     {"__gc",mem_gc_},
@@ -272,6 +323,7 @@ static const luaL_Reg mem_lib[] = {
     {"GetRawBuf",mem_getrawbuf},
     {"SetRawBuf",mem_setrawbuf},
     {"SetIsReadOnly",mem_setisreadonly},
+    {"MemCpy",mem_memcpy},    
     {NULL, NULL}
 };
 

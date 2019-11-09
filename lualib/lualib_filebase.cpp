@@ -679,6 +679,12 @@ static int filebase_replacestr(lua_State *L)
     int word_only = (int)lua_toboolean(L,5);
     CFileBase *new_file = get_filebase(L,6);
     ASSERT(new_file);
+	if(src_str[0] == 0)
+	{
+		new_file->SetSize(0);
+		new_file->WriteFile(pfilebase);
+		return 0;
+	}
     int _ret_0 = (int)pfilebase->ReplaceStr(src_str,des_str,case_sensive,word_only,new_file);
     lua_pushboolean(L,_ret_0);
     return 1;

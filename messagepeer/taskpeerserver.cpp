@@ -126,7 +126,7 @@ status_t CTaskPeerServer::OnInitNameMessage(CPeerMessage *msg)
 		else if(init_param.socket_rw_timeout != SOCKETRW_TIMEOUT)
 			mem.Printf("message peer SOCKETRW_TIMEOUT check fail %d vs %d",SOCKETRW_TIMEOUT,init_param.socket_rw_timeout);
 		tmp.SetFrom(&mem);
-                tmp.SetBodyType(CPeerMessage::RAW);
+		tmp.SetBodyType(CPeerMessage::RAW);
 		tmp.SerializeHeader(this->mSendHeadBuf);
 		this->quit_after_send = true;
 		return ERROR;
