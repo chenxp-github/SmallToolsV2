@@ -179,9 +179,8 @@ function PeerServiceBase:OnPartResponse(msg)
     self.m_callback_map:Run(msg.callback_id,E_PART_OK,obj);
 end
 
---never timeout, but emit error when socket disconncted
-function PeerServiceBase:AddPeerCallback(func)
-    local id = self.m_callback_map:Put(func,-1);
+function PeerServiceBase:AddCallback(func,timeout)
+    local id = self.m_callback_map:Put(func,timeout);
     self.m_callback_map:SetPeer(id,self);
     return id;
 end

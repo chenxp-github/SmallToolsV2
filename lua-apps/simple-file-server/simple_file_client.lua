@@ -20,12 +20,12 @@ function SimpleFileClient:List(_dir)
     local complete = false;
     local list = nil;
 
-    local _cbid = self:AddPeerCallback(function(ret,val)
+    local _cbid = self:AddCallback(function(ret,val)
         complete = true;
         if val then
             list = val.list;
         end
-    end);
+    end,-1);
 
     local _param={
         dir = _dir,
@@ -43,7 +43,7 @@ end
 
 --@@Begin Method PushSmallFile @@--
 function SimpleFileClient:PushSmallFile(_filename, _data, _callback)
-    local _cbid = self:AddPeerCallback(_callback);
+    local _cbid = self:AddCallback(_callback,-1);
     local _param={
         filename = _filename,
         data = {_binary_=_data},
@@ -68,7 +68,7 @@ function SimpleFileClient:PushBigFile(local_file,remote_file,no_wait)
 
     local request_number = 0;
     function send_part_data(offset,total_size,buf)
-        local _cbid = self:AddPeerCallback(inner_callback);
+        local _cbid = self:AddCallback(inner_callback,-1);
 
         local _param={
             filename = remote_file,
@@ -192,7 +192,7 @@ function SimpleFileClient:PullFile(remote_file, local_file,on_complete)
         end   
     end
 
-    _cbid = self:AddPeerCallback(on_pull_file);
+    _cbid = self:AddCallback(on_pull_file,-1);
 
     local _param={
         filename = remote_file,
