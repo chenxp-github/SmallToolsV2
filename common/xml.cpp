@@ -425,7 +425,8 @@ status_t CXmlNode::GetStringValue(CMem *val)
 
     if(this->GetValue() != NULL)
     {
-        val->Copy(this->GetValue());
+        ASSERT(GetValue()->GetSize() < val->GetMaxSize());
+        val->Puts(this->GetValue());
         return OK;
     }    
     return OK;

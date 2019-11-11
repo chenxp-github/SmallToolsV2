@@ -115,7 +115,7 @@ status_t syslog_puts(int module,int log_level,const char *str)
     if(g_puts_handler)
         return g_puts_handler(module,log_level,str);
     else
-        printf("%s\n",str);
+        printf("%s",str);
     return OK;
 }
 
@@ -160,6 +160,7 @@ status_t syslog_log(int module,int log_level,const char* format, ...)
         return ERROR;
     crt_va_start(ap, format);
     syslog_va_printf(module, log_level, format, ap);
+    syslog_puts(module,log_level,"\n");
     crt_va_end(ap);
     return OK;
 }
