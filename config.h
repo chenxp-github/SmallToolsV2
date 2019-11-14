@@ -40,7 +40,5 @@
 #define _SUPPORT_X11_ 1
 #endif
 
-#define LOG syslog_printf
-
 #endif
 

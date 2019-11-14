@@ -101,7 +101,8 @@ static status_t on_taskmgr_event(CClosure *closure)
 		CEpoll *epoll = &self->m_Epoll;
 		if(epoll->AddFd(socket))
 		{
-			LOG("socket %d is added to epoll.",socket);
+			XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
+                "socket %d is added to epoll.",socket);
 		}
 	}
 	
@@ -187,7 +188,8 @@ status_t CGlobals::AddLuaSearchPath(lua_State *L,const char *path, const char *t
     
     if(!CDirMgr::IsDirExist(&abs_path))
     {
-        LOG("path \"%s\" is not exist",abs_path.CStr());
+        XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
+            "path \"%s\" is not exist",abs_path.CStr());
         return ERROR;
     }
     
@@ -366,7 +368,8 @@ status_t CGlobals::Main(int argc, char **argv)
 {
     if(argc < 2)
     {
-        LOG("%s <lua-path>",argv[0]);
+        XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
+            "%s <lua-path>",argv[0]);
         return ERROR;
     }
 
@@ -388,7 +391,8 @@ status_t CGlobals::Main(int argc, char **argv)
 
     if(!lua_file_name)
     {
-        LOG("can not find app: '%s'",app_name);
+        XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
+            "can not find app: '%s'",app_name);
         return ERROR;
     }
     this->RunAppMain(lua_file_name,argc-2,argv+2);
@@ -407,7 +411,8 @@ status_t CGlobals::BareMain()
         if(!this->RunStringLuaFunction("app_short_help",&tmp))
             return ERROR;
         tmp.Trim();
-        LOG("%s: %s",lua_file->GetFileName(),tmp.CStr());
+        XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
+            "%s: %s",lua_file->GetFileName(),tmp.CStr());
     }
     return OK;
 }
@@ -465,7 +470,8 @@ status_t CGlobals::RunLua(CMem *fn)
     this->InitLuaVm();  
     if(!m_LuaVm.LoadFile(fn->CStr()))
     {
-        LOG("run lua file '%s' fail",fn->CStr());
+        XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
+            "run lua file '%s' fail",fn->CStr());
         return ERROR;
     }
     
