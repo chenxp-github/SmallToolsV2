@@ -70,6 +70,8 @@ function value_to_bson(bson,key,value)
             bson:PutBinary(key,value._binary_);
         elseif value._int64_ then
             bson:PutInt64(key,value._int64_);
+        elseif value._double_ then
+            bson:PutDouble(key,value._double_);
         else        
             local off = bson:StartDocument(key);
             for k,v in pairs_ordered(value) do
