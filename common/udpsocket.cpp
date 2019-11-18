@@ -108,10 +108,10 @@ status_t CUdpSocket::RecvMsg(CMem *data)
 	return OK;
 }
 
-status_t CUdpSocket::UseNonBlockingMode(bool non_blocking)
+
+status_t CUdpSocket::SetBlocking(status_t enable)
 {
-	ASSERT(m_sock_fd > 0);
-	return crt_set_blocking_mode(m_sock_fd,!non_blocking);
+    return crt_set_blocking_mode(this->m_sock_fd,enable);
 }
 
 struct sockaddr_in *CUdpSocket::GetSrcAddr()

@@ -117,7 +117,7 @@ static status_t udpsocket_create(lua_State *L)
     CUdpSocket *pudpsocket = get_udpsocket(L,1);
     ASSERT(pudpsocket);
     status_t ret0 = pudpsocket->Create();
-    pudpsocket->UseNonBlockingMode(true); //always use none block mode
+    pudpsocket->SetBlocking(false); //always use none block mode
     lua_pushboolean(L,ret0);
     return 1;
 }
@@ -177,7 +177,14 @@ static status_t udpsocket_getsrcaddr(lua_State *L)
     lua_pushinteger(L,port);
     return 2;
 }
-
+static status_t udpsocket_setblocking(lua_State *L)
+{
+    CUdpSocket *pudpsocket = get_udpsocket(L,1);
+    ASSERT(pudpsocket);
+    bool b = (lua_toboolean(L,2)!=0);
+    pudpsocket->SetBlocking(b);
+    return 0;
+}
 /****************************************************/
 static const luaL_Reg udpsocket_funcs_[] = {
     {"__gc",udpsocket_gc_},
@@ -192,6 +199,7 @@ static const luaL_Reg udpsocket_funcs_[] = {
     {"SendMsg",udpsocket_sendmsg},
     {"RecvMsg",udpsocket_recvmsg},
     {"GetSrcAddr",udpsocket_getsrcaddr},
+    {"SetBlocking",udpsocket_setblocking},
     {NULL,NULL},
 };
 

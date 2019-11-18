@@ -19,7 +19,7 @@ public:
 	status_t Init();
 	status_t Destroy();
 
-	status_t UseNonBlockingMode(bool non_blocking);
+	status_t SetBlocking(status_t enable);
 	status_t Create();	
 	status_t Bind(int port);
 	status_t SetDestIpAndPort(const char *ip, int port);

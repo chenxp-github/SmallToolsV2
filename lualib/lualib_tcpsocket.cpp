@@ -338,6 +338,14 @@ static status_t tcpsocket_newtcpconnector(lua_State *L)
     return 1;
 }
 
+static status_t tcpsocket_setblocking(lua_State *L)
+{
+    CTcpSocket *ptcpsocket = get_tcpsocket(L,1);
+    ASSERT(ptcpsocket);
+    bool b = (lua_toboolean(L,2)!=0);
+    ptcpsocket->SetBlocking(b);
+    return 0;
+}
 
 /****************************************************/
 static const luaL_Reg tcpsocket_funcs_[] = {
@@ -357,6 +365,7 @@ static const luaL_Reg tcpsocket_funcs_[] = {
     {"Destroy",tcpsocket_destroy},
     {"NewTcpAcceptor",tcpsocket_newtcpacceptor},
     {"NewTcpConnector",tcpsocket_newtcpconnector},
+    {"SetBlocking",tcpsocket_setblocking},
     {NULL,NULL},
 };
 
