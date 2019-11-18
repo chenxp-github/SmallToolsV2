@@ -544,7 +544,7 @@ status_t CFileBase::Dump()
 
     while(this->ReadLine(&mem))
     {
-        syslog_printf("%s",mem.CStr());
+        syslog_printf("%s\n",mem.CStr());
     }
 
     this->Seek(save_off);
