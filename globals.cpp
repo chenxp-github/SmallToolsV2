@@ -148,7 +148,7 @@ status_t CGlobals::MainLoop()
     while(m_MainLoopRunning)
     {   
 		if(!m_TaskMgr.Schedule())
-			m_Epoll.Wait(10);
+			m_Epoll.Wait(1);
     }
     return OK;
 }
