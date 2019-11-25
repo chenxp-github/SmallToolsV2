@@ -16,15 +16,12 @@ local all_files_index = 0;
 local all_files_list={};
 
 function AddSingleFile(fullname,mem_file)    
-    if not all_files_list[fullname] then
-        all_files_index = all_files_index + 1;
-        
-        all_files_list[fullname] = {
-            index = all_files_index,
-            full_name = fullname,
-            mem_file = mem_file,
-        };
-    end
+    all_files_index = all_files_index + 1;    
+    table.insert(all_files_list,{
+        index = all_files_index,
+        full_name = fullname,
+        mem_file = mem_file,
+    });
 end
 
 function AddFiles(path,files_table)
@@ -305,10 +302,11 @@ function app_main(args)
         exit("load list file fail.");        
     end
 
-    local sorted_list = {};    
-    for k,v in pairs(all_files_list) do
-        sorted_list[v.index] = v;
-    end
+    local sorted_list = all_files_list;
+
+    -- for k,v in pairs(all_files_list) do
+    --     sorted_list[v.index] = v;
+    -- end
 
     if #sorted_list <= 0 then
         return;
