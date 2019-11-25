@@ -166,7 +166,7 @@ function SetRootPath(root_path)
     if g_root_path then
         exit("SetRootPath can only be called once");
     end
-    g_root_path = root_path;
+    g_root_path = FileManager.ToAbsPath(root_path);
 end
 
 local make_begin_comments = nil;
