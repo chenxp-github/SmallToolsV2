@@ -1,5 +1,6 @@
 require("common");
 require("utils");
+require("print_buffer");
 
 local g_root_path = nil;
 
@@ -14,10 +15,15 @@ end
 local all_files_index = 0;
 local all_files_list={};
 
-function AddSingleFile(fullname)    
+function AddSingleFile(fullname,mem_file)    
     if not all_files_list[fullname] then
         all_files_index = all_files_index + 1;
-        all_files_list[fullname] = all_files_index;       
+        
+        all_files_list[fullname] = {
+            index = all_files_index,
+            full_name = fullname,
+            mem_file = mem_file,
+        };
     end
 end
 
@@ -27,6 +33,7 @@ function AddFiles(path,files_table)
         AddSingleFile(fullname);
     end
 end
+
 
 function is_interesting_ext(interesting_exts,ext)    
     if type(interesting_exts) == "string" then
@@ -141,6 +148,20 @@ function AddConfig(config_name)
     FileManager.ChangeDir(old_cur_dir);
 end
 
+local codegen_id = 0;
+function AddCodeGen(filename)
+    code = PrintBuffer.new();
+    AddConfig(filename);
+    if code.mf_text:GetSize() > 0 then
+        AddSingleFile(
+            FileManager.ToAbsPath(filename.."."..codegen_id),
+            code.mf_text
+        );
+        codegen_id = codegen_id + 1;
+    end
+    code = nil;
+end
+
 function SetRootPath(root_path)
     if g_root_path then
         exit("SetRootPath can only be called once");
@@ -199,9 +220,9 @@ end
 
 function combine_files(sorted_list)
     local mf,mf_file = new_memfile(1024*1024,1024);
-    
-    for _,filename in ipairs(sorted_list) do       
-    
+
+    for _,v in ipairs(sorted_list) do       
+        local filename = v.full_name;
         local related_filename = filename;     
         if g_root_path then
             related_filename = remove_path_prefix(filename,g_root_path);
@@ -217,12 +238,14 @@ function combine_files(sorted_list)
                 mf_file:Puts("\r\n");
             end
         end
-    
-        local mem,mem_file = new_mem(filename);
-        if not mem then exit(-1) end         
-        mf_file:Puts(mem_file);
-        mf_file:Puts("\r\n");
         
+        local mem_file = v.mem_file;
+        if not mem_file then
+            mem_file = new_mem(filename);
+        end
+        
+        mf_file:Puts(mem_file);
+        mf_file:Puts("\r\n");            
         if make_end_comments then
             local comments = make_end_comments(related_filename);
             if comments then
@@ -230,6 +253,7 @@ function combine_files(sorted_list)
                 mf_file:Puts("\r\n\r\n");
             end
         end        
+
     end
     
     return mf_file;
@@ -240,7 +264,8 @@ function print_help(args)
     print("available functions for list script:");
     print("  AddFiles(path,files_table) : add one or more files in path to the list");
     print("  AddFolder(folder,exts_table,[headers],[footers]) : add one folder to the list,recursively");
-    print("  AddConfig(config_file) : add another config file");
+    print("  AddConfig(config_file) : add another config file/");
+    print("  AddCodeGen(script_file) : add a codegen lua file, the script will has a global code as PrintBuffer");
     print("  SetComments(func) : set splitor comments format");
     print("  SetRootPath(root) : set root path of source files, / is default");
     print("comments styles are:");
@@ -282,9 +307,9 @@ function app_main(args)
 
     local sorted_list = {};    
     for k,v in pairs(all_files_list) do
-        sorted_list[v] = k;
+        sorted_list[v.index] = v;
     end
-    
+
     if #sorted_list <= 0 then
         return;
     end
