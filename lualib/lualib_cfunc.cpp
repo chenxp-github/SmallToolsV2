@@ -32,10 +32,17 @@ static int cfunc_memcpy(lua_State *L)
     return 0;
 }
 
+static int cfunc_getpid(lua_State *L)
+{
+    lua_pushinteger(L,getpid());
+    return 1;
+}
+
 static const luaL_Reg cfunc_lib[] = {
     {"memcmp",cfunc_memcmp},
     {"memcpy",cfunc_memcpy},
     {"wild_match",cfunc_wild_match},
+    {"getpid",cfunc_getpid},
     {NULL, NULL}
 };
 static int luaL_register_cfunc(lua_State *L)
