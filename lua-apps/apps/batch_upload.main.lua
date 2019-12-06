@@ -303,9 +303,14 @@ function ssh_upload_file(server,info)
 end
 
 function adb_push_file(server,info)
+    local device_name = server.name;
     local remote_file = FileManager.ToAbsPath(server.root_path.."/"..info.rpath);
     local local_file = info.full_name;
-	local cmd ="adb push "..local_file.." "..remote_file;    
+	local cmd =string.format(
+        "adb -s %s push %s %s",
+        device_name,local_file,remote_file
+    );  
+
 	print(cmd);
 	return os.execute(cmd);
 end
@@ -378,7 +383,7 @@ function app_main(args)
     FileManager.ChangeDir(g_folder);
 
     for _,server in ipairs(server_list) do
-        upload_all_files_each_server(server);
+        upload_all_files_each_server(server);        
     end
 
     save_config();
