@@ -245,6 +245,9 @@ function combine_files(sorted_list)
         local mem_file = v.mem_file;
         if not mem_file then
             mem_file = new_mem(filename);
+            if not mem_file then
+                exit("can not open file:"..filename);
+            end
         end
         
         mf_file:Puts(mem_file);
