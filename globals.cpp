@@ -395,8 +395,7 @@ status_t CGlobals::Main(int argc, char **argv)
             "can not find app: '%s'",app_name);
         return ERROR;
     }
-    this->RunAppMain(lua_file_name,argc-2,argv+2);
-    return OK;
+    return this->RunAppMain(lua_file_name,argc-2,argv+2);
 }
 
 status_t CGlobals::BareMain()

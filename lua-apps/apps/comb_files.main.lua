@@ -175,6 +175,11 @@ function SetComments(_begin,_end)
 end
 
 function set_stock_comments_style(style)
+    local begin_str1 = "";
+    local begin_str2 = "";
+    local end_str1="";
+    local end_str2="";
+
     if style == "c" or style == "js" then
         begin_str1="/*$begin ";
         begin_str2=" $*/";
@@ -203,16 +208,17 @@ function set_stock_comments_style(style)
         end_str2=" $-->";        
     end
 
-    SetComments(
-        function(filename)
-            return begin_str1..filename..begin_str2;
-        end,
+    if style ~= "none" then
+        SetComments(
+            function(filename)
+                return begin_str1..filename..begin_str2;
+            end,
 
-        function(filename)
-            return end_str1..filename..end_str2;
-        end
-    );
-    
+            function(filename)
+                return end_str1..filename..end_str2;
+            end
+        );
+    end
 end
 
 function combine_files(sorted_list)
@@ -271,6 +277,7 @@ function print_help(args)
     print("  cpp: //@begin ??? //");
     print("  lua: --@begin ??? --");
     print("  html: <!--@begin ??? -->");
+    print("  none: no comments");
 end
 
 function app_main(args)
@@ -299,7 +306,7 @@ function app_main(args)
     print("use list file: "..list_file);
     
     if not exec_file(list_file) then
-        exit("load list file fail.");        
+        exit("load list file fail.");
     end
 
     local sorted_list = all_files_list;
