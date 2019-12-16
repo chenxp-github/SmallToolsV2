@@ -112,9 +112,25 @@ function read_lua_block(lsp)
     return attributes,code;
 end
 
-function split_jsp_file(lsp)
+function calcu_line(lsp,offset)
+    local save_off = lsp:GetOffset();
+    local tmp = new_mem(64*1024);
+    lsp:Seek(0);
+    local line = 1;
+    while lsp:ReadLine(tmp) do
+        if lsp:GetOffset() >= offset then
+            break;
+        end
+        line = line+1;
+    end
+    lsp:Seek(save_off);
+    return line;
+end
+
+function split_lsp_file(lsp,lsp_name)
     local blocks={};
     local tmp = new_memfile();
+    local block_num = 1;
 
     lsp:Seek(0);
     while not lsp:IsEnd() do
@@ -128,14 +144,20 @@ function split_jsp_file(lsp)
 
             local attr,code = read_lua_block(lsp);
             if not attr then
-                printf("lsp syntax error at offset %d,",lsp:GetOffset());
+                printf("lsp syntax error at line %d",calcu_line(lsp,lsp:GetOffset()));
                 return
+            end
+
+            if not attr.name then
+                attr.name = "/"..lsp_name.."/"..block_num;
             end
 
             table.insert( blocks,{
                 attributes = attr,
                 code = code,
-            })
+            });
+
+            block_num = block_num + 1;
         else
             tmp:Putc(lsp:Getc());
         end
@@ -151,9 +173,59 @@ function split_jsp_file(lsp)
     return blocks;
 end
 
+function add_lsp_file(code,filename)
+    local old_path = FileManager.GetCurDir();
+    local tmp = new_mem(filename);
+    if not tmp then
+        exit("can not open file "..filename);
+    end    
+    local path = FileManager.SliceFileName(filename,FN_PATH);
+    FileManager.ChangeDir(path);        
+    expand_lsp(tmp,filename,code:GetInnerFile());
+    FileManager.ChangeDir(old_path);
+end
+
+function add_code_block(block,out)    
+    local code = PrintBuffer.new();
+    __gen_code__ = nil;
+
+    local new_lua_code = "function __gen_code__(code)"..EOL;
+    new_lua_code = new_lua_code..block.code..EOL;
+    new_lua_code = new_lua_code.."end";
+    if not exec_string(new_lua_code,block.attributes.name) then
+        exit("execute lua chunk fail: "..block.attributes.name);
+    end
+    __gen_code__(code);
+    out:Puts(code:GetInnerFile());
+end
+
+function expand_lsp(lsp,lsp_name,out)
+    local blocks = split_lsp_file(lsp,lsp_name);
+    if not blocks then return end
+    for _,block in ipairs(blocks) do
+        if block.text then
+            out:Puts(block.text);
+        elseif block.code then
+            local tmp = new_memfile();
+            add_code_block(block,tmp);
+            expand_lsp(tmp,block.attributes.name,out);
+            tmp:Destroy();
+        end
+    end
+end
 
 function print_help(args)
-    printf("%s <lsp> <out>",args[1]);
+    printf("usage: %s <lsp> <out>",args[1]);
+    printf([[
+    the lsp file format like:
+        <@@ name="xxx">
+            code:Log("something");
+            add_lsp_file(code,"ttt/2.lsp");
+        </@@>
+
+    the parameter 'code' is a PrintBuffer object, and 
+    add_lsp_file(code,filename) can be used to add another lsp file 
+    ]]);
 end
 
 function app_main(args)
@@ -170,8 +242,11 @@ function app_main(args)
         return printf("open file %s fail.",in_file);
     end
 
-    local blocks = split_jsp_file(in_mem);
-
-    print_table(blocks);
-    
+    local out_mf = new_memfile();
+    expand_lsp(in_mem,in_file,out_mf);
+    if out_mf:WriteToFile(out_file) > 0 then
+        printf("save to file %s",out_file);
+    else
+        printf("fail to save file %s",out_file);
+    end
 end

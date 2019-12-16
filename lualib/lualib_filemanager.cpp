@@ -61,7 +61,10 @@ static int filemanager_slicefilename(lua_State *L)
 static int filemanager_changedir(lua_State *L)
 {   
 	LUA_TO_LOCAL_STRING(dir,L,1);
-    crt_chdir(dir);
+    if(dir[0])
+    {
+        crt_chdir(dir);
+    }
     return 0;
 }
 static int filemanager_isdirexist(lua_State *L)

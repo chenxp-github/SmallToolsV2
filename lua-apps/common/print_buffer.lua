@@ -9,7 +9,7 @@ function PrintBuffer:ctor()
 end
 
 function PrintBuffer:Clear()
-    self.mf_text = "";
+    self.mf_text:SetSize(0);
 end
 
 function PrintBuffer:IncLogLevel(l)
@@ -27,11 +27,7 @@ function PrintBuffer:GetText()
     if self.mf_text:GetSize() <= 0 then
         return "";
     end
-    local mem = Mem.new();
-    local mem_file = mem:FileBase();
-    mem:Malloc(self.mf_text:GetSize());
-    mem_file:WriteFile(self.mf_text);    
-    return mem:CStr();
+    return file_to_string(self.mf_text);
 end
 
 function PrintBuffer:Printf(...)
@@ -67,4 +63,8 @@ end
 
 function PrintBuffer:Puts(str)
     self.mf_text:Puts(str);
+end
+
+function PrintBuffer:GetInnerFile()
+    return self.mf_text;
 end

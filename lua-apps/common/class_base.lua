@@ -86,7 +86,7 @@ function clone_table(ori_tab)
         local vtyp = type(v)
         if (vtyp == "table") then
             new_tab[i] = clone_table(v)
-         else
+        else
             new_tab[i] = v
         end
     end
@@ -112,10 +112,10 @@ function load_lua_lib(name)
     return r;
 end
 
-function exec_string(code)
+function exec_string(code,name)
     local ret;
     local r,errors = pcall(function() 
-        ret = load(code)(); 
+        ret = load(code,name)(); 
     end);
     if not r then 
         print(errors); 
