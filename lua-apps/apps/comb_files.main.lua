@@ -60,7 +60,7 @@ function default_can_be_added(root,info,exts,header_table,footer_table)
     end
     
     local rpath = remove_path_prefix(info.full_name,root);
-   
+
     if header_table then
         for _,fn in pairs(header_table) do
             if rpath == fn then
@@ -68,7 +68,7 @@ function default_can_be_added(root,info,exts,header_table,footer_table)
             end
         end
     end
-   
+
     if footer_table then
         for _,fn in pairs(footer_table) do        
             if rpath == fn then
@@ -111,7 +111,7 @@ function AddFolder(folder,exts,param1, param2)
     if not can_be_added then
         can_be_added = default_can_be_added;
     end
-       
+
     local tmp_list = {};    
     FileManager.SearchDir(fullname,true,function(info)    
         if info.event == EVENT_SINGLE_FILE then        
@@ -120,7 +120,7 @@ function AddFolder(folder,exts,param1, param2)
             end
         end
     end);
-       
+
     table.sort(tmp_list);
 
     for k,v in ipairs(tmp_list) do
@@ -130,7 +130,6 @@ function AddFolder(folder,exts,param1, param2)
     if header_footer_mode then
         AddFiles(folder,footer_table);
     end
-   
 end
 
 function AddConfig(config_name)
