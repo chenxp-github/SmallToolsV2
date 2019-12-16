@@ -242,11 +242,18 @@ function app_main(args)
         return printf("open file %s fail.",in_file);
     end
 
+    local work_dir = FileManager.SliceFileName(in_file,FN_PATH);
+    local old_dir = FileManager.GetCurDir();
+    FileManager.ChangeDir(work_dir);
+
     local out_mf = new_memfile();
     expand_lsp(in_mem,in_file,out_mf);
+    FileManager.ChangeDir(old_dir);
+
     if out_mf:WriteToFile(out_file) > 0 then
         printf("save to file %s",out_file);
     else
         printf("fail to save file %s",out_file);
     end
 end
+
