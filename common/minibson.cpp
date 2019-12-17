@@ -958,19 +958,21 @@ status_t CMiniBson::PeekNext(int *type, CMem *name)
 status_t CMiniBson::LoadRawBuf(CMem *buf)
 {
     ASSERT(buf);
-    this->mData->Destroy();
-    this->mData->Init();
-
-    if(buf->GetSize() > 0)
-    {
-        this->mData->SetRawBuf(buf->GetRawBuf(),(int_ptr_t)buf->GetSize(),true);
-        this->ResetPointer();
-    }
-
-    return OK;
+    return this->LoadRawBuf(buf->GetRawBuf(),buf->GetSize());
 }
 
+status_t CMiniBson::LoadRawBuf(const void *buf, int_ptr_t size)
+{
+    ASSERT(buf);
+    this->mData->Free();
 
+    if(size > 0)
+    {
+        this->mData->SetRawBuf((void*)buf,size,true);
+        this->ResetPointer();
+    }
+    return OK;
+}
 
 
 

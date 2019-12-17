@@ -112,6 +112,7 @@ public:
     uint8_t m_Types[MAX_PARAMS];
     CLOSURE_FUNC m_Func;
     uint32_t m_Flags;
+    void *user_data;
 public:
     int GetParamsCount();
     CMiniBson* GetParamBson(int index);

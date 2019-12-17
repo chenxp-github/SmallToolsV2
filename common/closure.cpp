@@ -75,6 +75,7 @@ status_t CClosure::InitBasic()
     m_Flags = 0;
     memset(m_Params,0,sizeof(m_Params));
     memset(m_Types,0,sizeof(m_Types));
+    user_data = NULL;
     return OK;
 }
 status_t CClosure::Init()
@@ -429,7 +430,11 @@ void* CClosure::GetParamWeakPointer(int index,int *weak_ref_id)
 void* CClosure::Malloc(int index, int size)
 {
     if(size <= 0)
+    {
+        this->SetParamPointer(index,NULL);
         return NULL;
+    }
+
     void *p;
     MALLOC(p,char,size+sizeof(int));
     SET_PARAM(PARAM_TYPE_MALLOC,p);
@@ -441,11 +446,12 @@ void* CClosure::Malloc(int index, int size)
 }
 
 void* CClosure::Malloc(int index, const void *buf,int size)
-{
-    if(size <= 0)return NULL;
+{    
     void *p = this->Malloc(index,size);
-    ASSERT(p);
-    memcpy(p,buf,size);
+    if(p && buf && size > 0)
+    {
+        memcpy(p,buf,size);
+    } 
     return p;
 }
 

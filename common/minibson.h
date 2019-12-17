@@ -49,6 +49,7 @@ public:
 public:
     CMem *mData;
 public:
+    status_t LoadRawBuf(const void *buf, int_ptr_t size);
     status_t LoadRawBuf(CMem *buf);
     status_t PeekNext(int *type, CMem *name);
     CMiniBson();
