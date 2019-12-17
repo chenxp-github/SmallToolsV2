@@ -212,6 +212,14 @@ static int messagepeer_getname(lua_State *L)
 	return 1;
 }
 
+static int messagepeer_destroy_(lua_State *L)
+{
+	CMessagePeer *pmessagepeer = get_messagepeer(L,1);
+    ASSERT(pmessagepeer);
+    pmessagepeer->Destroy();
+	return 0;
+}
+
 static const luaL_Reg messagepeer_lib[] = {
     {"new",messagepeer_new},
     {"__gc",messagepeer_destroy},
@@ -231,6 +239,7 @@ static const luaL_Reg messagepeer_lib[] = {
     {"GetRetries",messagepeer_getretries},
     {"SetRetries",messagepeer_setretries},
     {"ClearSendingQueue",messagepeer_clearsendingqueue},    
+    {"Destroy",messagepeer_destroy_},    
     {NULL, NULL}
 };
 static int luaL_register_messagepeer(lua_State *L)
