@@ -339,3 +339,11 @@ function file_to_mem(file)
     mem:WriteFile(file);
     return mem;
 end
+
+--去掉字符串前后的空格--
+string.trim=function(s)
+    return (s:gsub("^%s*(.-)%s*$", "%1"))
+end
+
+
+    
