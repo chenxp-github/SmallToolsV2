@@ -195,6 +195,15 @@ static int app_makeordersimplediskfromdir(lua_State *L)
     return 1;
 }
 
+static status_t app_quittask(lua_State *L)
+{
+    int tid = (int)lua_tointeger(L,1);
+    CTaskMgr *taskmgr = how_to_get_global_taskmgr();
+    ASSERT(taskmgr);
+    taskmgr->QuitTask(&tid);
+    return 0;
+}
+
 static const luaL_Reg app_lib[] = {
     {"GetSystemTimer",app_getsystemtimer},
     {"GetSelfExePath",app_getselfexepath},
@@ -209,6 +218,7 @@ static const luaL_Reg app_lib[] = {
     {"Sleep",app_sleep},	
     {"GetArgs",app_getargs},
 	{"MakeOrderSimpleDiskFromDir",app_makeordersimplediskfromdir},
+    {"QuitTask",app_quittask},    
     {NULL, NULL}
 };
 static int luaL_register_app(lua_State *L)

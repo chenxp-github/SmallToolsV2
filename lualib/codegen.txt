@@ -23,6 +23,7 @@ class App{
     [static] void PutEnv(string env);    
     [static] int StartMessageCenter(int port);
     [static] array<string> GetArgs();
+    [static] void QuitTask(int tid);
 }
 
 class Stream{
