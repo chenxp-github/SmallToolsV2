@@ -163,14 +163,14 @@ status_t CSerial::Configure(int baudrate,int databits,int stopbits,int parity)
             break;  
         case 'o':   
         case 'O':     
-            options.c_cflag |= (PARODD | PARENB); /* ����Ϊ��Ч��*/  
-            options.c_iflag |= INPCK;             /* Disnable parity checking */ 
+            options.c_cflag |= (PARODD | PARENB); 
+            options.c_iflag |= INPCK; 
             break;  
         case 'e':  
         case 'E':   
-            options.c_cflag |= PARENB;     /* Enable parity */    
-            options.c_cflag &= ~PARODD;   /* ת��ΪżЧ��*/     
-            options.c_iflag |= INPCK;       /* Disnable parity checking */
+            options.c_cflag |= PARENB; 
+            options.c_cflag &= ~PARODD; 
+            options.c_iflag |= INPCK; 
             break;
         case 'S': 
         case 's':  /*as no parity*/   
