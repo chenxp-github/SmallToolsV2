@@ -34,6 +34,7 @@ public:
     bool IsMalloc();
     status_t Transfer(CMem *from);
     status_t Realloc(int_ptr_t newSize);
+    status_t AutoRealloc(int_ptr_t newSize);
     bool StrEqu(CMem *str, bool case_sensitive=true);
     char C(int index);
     char* GetRawBuf();
