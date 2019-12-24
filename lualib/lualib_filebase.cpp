@@ -9,6 +9,7 @@
 #include "lualib_stream.h"
 #include "lualib_tcpsocket.h"
 #include "lualib_serial.h"
+#include "lualib_queuefile.h"
 
 #define CAN_NOT_REACH() ASSERT(0);return 0
 
@@ -31,6 +32,7 @@ bool is_filebase(lua_State *L, int idx)
         LUA_USERDATA_STREAM,
 		LUA_USERDATA_TCPSOCKET,
         LUA_USERDATA_SERIAL,
+        LUA_USERDATA_QUEUEFILE,
     };            
     lua_userdata *ud = NULL;
     for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
@@ -465,6 +467,7 @@ static int filebase_read(lua_State *L)
     ASSERT(pfilebase);
     CFileBase *buf = get_filebase(L,2);
     ASSERT(buf);
+    buf->SetSize(0);
     int n = (int)lua_tointeger(L,3);
     int _ret_0 = (int)pfilebase->WriteToFile(buf,pfilebase->GetOffset(),n);
     lua_pushinteger(L,_ret_0);

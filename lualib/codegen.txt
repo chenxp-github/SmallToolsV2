@@ -549,9 +549,23 @@ class Xml{
 }
 
 class Serial:FileBase{
+    void Serial();
     status_t EnableDtrHandshake(bool enable);
     status_t Configure(int baudrate,int databits,int stopbits,int parity);
     status_t Open(string dev_name);
     status_t Destroy();
 }
+
+
+class QueueFile:FileBase{
+    void QueueFile(int_ptr_t bytes);
+    int_ptr_t FindTag(Mem tag, int size);
+    int_ptr_t PeekData(Mem data, int_ptr_t size);
+    int Clear();
+    status_t Destroy();
+    fsize_t GetFreeSize();
+    bool HasEmptyLine();
+    bool HasWholeLine();
+}
+
 

@@ -102,8 +102,9 @@ static status_t serial_configure(lua_State *L)
     int baudrate = (int)lua_tointeger(L,2);
     int databits = (int)lua_tointeger(L,3);
     int stopbits = (int)lua_tointeger(L,4);
-    int parity = (int)lua_tointeger(L,5);
-    status_t ret0 = pserial->Configure(baudrate,databits,stopbits,parity);
+    const char *parity = lua_tostring(L,5);
+    ASSERT(parity);
+    status_t ret0 = pserial->Configure(baudrate,databits,stopbits,parity[0]);
     lua_pushboolean(L,ret0);
     return 1;
 }
@@ -127,12 +128,20 @@ static status_t serial_destroy(lua_State *L)
     lua_pushboolean(L,ret0);
     return 1;
 }
-
+static status_t serial_new(lua_State *L)
+{
+    CSerial *pserial;
+    NEW(pserial,CSerial);
+    pserial->Init();
+    serial_new_userdata(L,pserial,0);
+    return 1;
+}
 /****************************************************/
 static const luaL_Reg serial_funcs_[] = {
     {"__gc",serial_gc_},
     {"__tostring",serial_tostring_},
     {"__is_same",serial_issame_},
+    {"new",serial_new},
     {"EnableDtrHandshake",serial_enabledtrhandshake},
     {"Configure",serial_configure},
     {"Open",serial_open},

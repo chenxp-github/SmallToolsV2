@@ -54,7 +54,7 @@ fsize_t CSerial::GetMaxSize()
 //////////////////////////////////////////////////////////////////
 status_t CSerial::InitBasic()
 {
-    this->fd = 0;
+    this->fd = ERROR_FILE_HANDLE;
     return OK;
 }
 
@@ -63,7 +63,7 @@ status_t CSerial::Destroy()
     if(this->fd > 0)
     {
         close(this->fd);
-        this->fd = 0;
+        this->fd = ERROR_FILE_HANDLE;
     }
 
     CFileBase::Destroy();
@@ -73,10 +73,9 @@ status_t CSerial::Destroy()
 
 status_t CSerial::Open(const char *dev_name)
 {
-    ASSERT(this->fd == 0);
+    ASSERT(this->fd < 0);
 
     this->fd = open(dev_name,O_RDWR);
-    
     if(this->fd <= 0)
     {
         XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
@@ -128,11 +127,11 @@ static status_t set_baud_rate(int fd,int speed)
 
 status_t CSerial::Configure(int baudrate,int databits,int stopbits,int parity)
 {
-    struct termios options; 
-    
+    ASSERT(this->fd > 0);
     ASSERT(set_baud_rate(this->fd,baudrate));
     
-    if(tcgetattr( fd,&options)  !=  0) 
+    struct termios options; 
+    if(tcgetattr(fd,&options)  !=  0) 
     { 
         XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
             "SetupSerial Error 1\n");
@@ -215,12 +214,12 @@ status_t CSerial::Configure(int baudrate,int databits,int stopbits,int parity)
 
 int_ptr_t CSerial::Read(void *buf,int_ptr_t n)
 {
-    ASSERT(this->fd);
+    ASSERT(this->fd > 0);
     return read(this->fd,buf,n);
 }
 int_ptr_t CSerial::Write(const void *buf,int_ptr_t n)
 {
-    ASSERT(this->fd);
+    ASSERT(this->fd > 0);
     return write(this->fd,buf,n);
 }
 status_t CSerial::EnableDtrHandshake(bool enable)

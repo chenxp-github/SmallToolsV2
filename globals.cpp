@@ -35,6 +35,7 @@
 #include "lualib_xml.h"
 #include "lualib_xmlnode.h"
 #include "lualib_serial.h"
+#include "lualib_queuefile.h"
 
 #if _IS_LINUX_
 #include "lualib_nativeprocess.h"
@@ -272,6 +273,8 @@ status_t CGlobals::InitLuaVm()
     luaopen_xmlnode(L);
     luaopen_xml(L);
     luaopen_serial(L);
+    luaopen_queuefile(L);
+    
 #if _IS_LINUX_
     luaopen_nativeprocess(L);
     luaopen_fivprocessmanager(L);
