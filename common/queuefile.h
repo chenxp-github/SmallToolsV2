@@ -17,7 +17,7 @@ public:
     int_ptr_t FindTag(const void *tag, int size);
     status_t RestoreContext(void *buf);
     status_t SaveContext(void *buf);
-    fsize_t PeekData(void *data, int_ptr_t size);
+    int_ptr_t PeekData(void *data, int_ptr_t size);
     int Clear();
     CQueueFile();
     ~CQueueFile();

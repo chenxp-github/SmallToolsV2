@@ -25,6 +25,7 @@ public:
     int m_CurEventsLen;
     struct epoll_event *m_Events;
     int m_EpollHandle;
+    int m_WaitFail;
 #endif
 
 public:

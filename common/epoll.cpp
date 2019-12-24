@@ -23,6 +23,7 @@ status_t CEpoll::InitBasic()
     m_CurEventsLen = 0;
     m_MaxEventsLen = 0;
     m_EpollHandle = 0;
+    m_WaitFail = 0;
 #endif
     return OK;
 }
@@ -150,6 +151,21 @@ int CEpoll::Wait(int ms, uint32_t opt)
 	return OK;
 #else
     int ret = epoll_wait(m_EpollHandle,m_Events,m_MaxEventsLen,ms);
+    if(ret == 0)
+    {
+        m_WaitFail = 0;
+    }
+    else
+    {
+        m_WaitFail ++;
+        //force sleep to avoid cpu usage is too high
+        if(m_WaitFail > 100) 
+        {
+            m_WaitFail = 0;
+            crt_msleep(1);
+        }
+    }
+
     m_CurEventsLen = ret;
     ASSERT(m_CurEventsLen < m_MaxEventsLen);
     if(opt & WAIT_OPT_AUTO_REMOVE)
@@ -159,7 +175,6 @@ int CEpoll::Wait(int ms, uint32_t opt)
     return ret;
 #endif
 }
-
 
 int CEpoll::Wait(int ms)
 {

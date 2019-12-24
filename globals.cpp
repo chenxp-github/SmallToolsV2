@@ -34,6 +34,7 @@
 #include "lualib_serversidepeer.h"
 #include "lualib_xml.h"
 #include "lualib_xmlnode.h"
+#include "lualib_serial.h"
 
 #if _IS_LINUX_
 #include "lualib_nativeprocess.h"
@@ -270,7 +271,7 @@ status_t CGlobals::InitLuaVm()
 	luaopen_serversidepeer(L);
     luaopen_xmlnode(L);
     luaopen_xml(L);
-    
+    luaopen_serial(L);
 #if _IS_LINUX_
     luaopen_nativeprocess(L);
     luaopen_fivprocessmanager(L);

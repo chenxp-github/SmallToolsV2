@@ -203,13 +203,13 @@ bool CQueueFile::HasWholeLine()
     return ret;
 }
 
-fsize_t CQueueFile::PeekData(void *data, int_ptr_t size)
-{   
-    QUEUE_FILE_CONTEXT(context);
-    this->SaveContext(context);
-    fsize_t rs = this->Read(data,size);
-    this->RestoreContext(context);
-    return rs;
+int_ptr_t CQueueFile::PeekData(void *data, int_ptr_t size)
+{	
+	QUEUE_FILE_CONTEXT(context);
+	this->SaveContext(context);
+	int_ptr_t rs = this->Read(data,size);
+	this->RestoreContext(context);
+	return rs;
 }
 
 status_t CQueueFile::SaveContext(void *buf)
@@ -249,9 +249,9 @@ int_ptr_t CQueueFile::FindTag(const void *tag, int size)
     }
     END_CLOSURE(binary_match);
 
-    binary_match.SetParamPointer(10,(void*)tag);
-    binary_match.SetParamInt(11,size);
-    return FindTag(&binary_match);
+	binary_match.SetParamPointer(10,(void*)tag);
+	binary_match.SetParamInt(11,size);
+	return this->FindTag(&binary_match);
 }
 
 int_ptr_t CQueueFile::FindTag(CClosure *match)
