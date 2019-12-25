@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     g_globals.Init();
     g_globals_ptr = &g_globals;
     g_argc = argc;
-    g_argv = argv;
+    g_argv = argv;  
     int ok = g_globals.Main(argc, argv);
     g_globals.Destroy();
     CSocket::EndNet();

@@ -209,6 +209,14 @@ end
 --@@End Method PullFile @@--
 
 
-
+--@@Begin Method RunCmd @@--
+function SimpleFileClient:RunCommand(_command, _callback)
+    local _cbid = self:AddCallback(_callback,-1);
+    local _param={
+        command = _command
+    };
+    return self:SendRequest(_param,METHOD_SFS_RUN_CMD,_cbid);
+end
+--@@End Method RunCmd @@--
 
 --@@ Insert Method Here @@--

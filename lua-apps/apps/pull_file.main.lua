@@ -37,7 +37,6 @@ function parallel_pull_files(thread,file_client,all_pull_files)
     end
 end
 
-
 local kPeerName = "--peer-name";
 local kAsServer = "--as-server";
 local kServer = "--server";

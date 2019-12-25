@@ -30,7 +30,6 @@ FsHelper.ListFolder = function(dir)
             t.size = info.size;
             table.insert(list,t);
         end
-       
     end);
 
     return list;

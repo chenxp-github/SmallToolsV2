@@ -26,6 +26,9 @@ function SimpleFileServer:OnRequest(_context,_param)
     if method == METHOD_SFS_PULLFILE then
         self:OnPullFile(_context,_param);
     end
+    if method == METHOD_SFS_RUN_CMD then
+        self:OnRunCmd(_context,_param);
+    end
 --##End OnRequest ##--
 end
 
@@ -209,6 +212,20 @@ function SimpleFileServer:OnPullFile(_context,_param)
     return self:SendFile(_context,self:MakeLocalPath(_param.filename));
 end
 --@@End Method OnPullFile @@--
+
+
+
+--@@Begin Method OnRunCmd @@--
+function SimpleFileServer:OnRunCmd(_context,_param)
+    printf("run cmd: %s",_param.command);
+    local r = os.execute(_param.command);    
+    local _ret={
+        result = r and 1 or 0
+    };
+    return self:SendReturnValue(_context,_ret);
+end
+--@@End Method OnRunCmd @@--
+
 
 --@@ Insert Method Here @@--
 
