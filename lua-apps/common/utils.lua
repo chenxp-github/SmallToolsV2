@@ -115,7 +115,7 @@ function new_file_no_buffer(filename,mode)
     if not mode then mode = "rb" end
     
     local file = File.new();
- 
+
     if not file:OpenFile(filename,mode) then
         print("open file "..filename.." error.");
         return
@@ -161,10 +161,10 @@ function check_env(str,do_not_exit)
     if not var then
         print("environment variable "..str.." must be set.");
         if not do_not_exit then
-           exit(-1);
+            exit(-1);
         end        
     end
-       return var;
+    return var;
 end
 
 function remove_path_prefix(full_name,prefix)
@@ -181,11 +181,11 @@ end
 
 --split extension list e.g. "c,cpp,h,lua,js"
 function split_file_exts_list(exts)
-   local tab = {};
-   for k in string.gmatch(exts, "([%a%d]+)") do
+    local tab = {};
+    for k in string.gmatch(exts, "([%a%d]+)") do
         tab[k] = true;
-   end
-   return tab;
+    end
+    return tab;
 end
 
 function for_each_line(filename,callback)

@@ -70,6 +70,7 @@ function app_main(args)
         file_client:Start();
     
         file_client:RunCommand(command,function(ret,val)
+            print("run cmd:"..command);
             print(ret);
             print_table(val);
             App.QuitMainLoop();
