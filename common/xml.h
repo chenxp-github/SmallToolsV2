@@ -55,6 +55,17 @@ public:
     CXmlNode *GetChildByName(const char *child_name);
     CMemFile *GetValue();
     status_t GetStringValue(CMem *val);
+    int32_t GetInt32Value();
+    int64_t GetInt64Value();
+    uint32_t GetUInt32Value();
+    uint64_t GetUInt64Value();
+    int8_t GetInt8Value();
+    int16_t GetInt16Value();
+    uint8_t GetUInt8Value();
+    uint16_t GetUInt16Value();
+    bool GetBooleanValue();
+    double GetDoubleValue();
+    float GetFloatValue();
 };
 
 class CXml{

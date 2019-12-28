@@ -246,6 +246,16 @@ int32_t str2int_32(const char *str)
     return 0;
 }
 
+int64_t str2int_64(const char *str)
+{
+    ASSERT(str);
+    if(is_dec(str))
+        return crt_atoi64(str);
+    if(is_hex(str))
+        return hex2dec_64(str);
+    return 0;
+}
+
 uint32_t ac_x31_hash_string(const char *s)
 {
     uint32_t h = (uint32_t)*s;

@@ -28,6 +28,7 @@ void generate_uuid(char *uuid);
 status_t reshuffle(int *array, int size, int min);
 uint32_t ac_x31_hash_string(const char *s);
 uint32_t bob_32bit_integer_hash(uint32_t a);
+int64_t str2int_64(const char *str);
 
 #ifdef __cplusplus
 }

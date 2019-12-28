@@ -4,6 +4,7 @@
 #include "xml.h"
 #include "syslog.h"
 #include "mem_tool.h"
+#include "misc.h"
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -422,14 +423,76 @@ status_t CXmlNode::GetStringValue(CMem *val)
     ASSERT(val);
     
     val->SetSize(0);
-
     if(this->GetValue() != NULL)
     {
-        ASSERT(GetValue()->GetSize() < val->GetMaxSize());
+        val->AutoRealloc((int_ptr_t)GetValue()->GetSize());
         val->Puts(this->GetValue());
         return OK;
     }    
     return OK;
+}
+
+int32_t CXmlNode::GetInt32Value()
+{
+    LOCAL_MEM(tmp);
+    this->GetStringValue(&tmp);
+    return str2int_32(tmp.CStr());
+}
+
+uint32_t CXmlNode::GetUInt32Value()
+{
+    return (uint32_t)GetInt32Value();
+}
+
+int64_t CXmlNode::GetInt64Value()
+{
+    LOCAL_MEM(tmp);
+    this->GetStringValue(&tmp);
+    return str2int_64(tmp.CStr());
+}
+
+uint64_t CXmlNode::GetUInt64Value()
+{
+    return (uint64_t)GetInt64Value();
+}
+
+int8_t CXmlNode::GetInt8Value()
+{
+    return (int8_t)GetInt32Value();
+}
+
+int16_t CXmlNode::GetInt16Value()
+{
+    return (int16_t)GetInt32Value();
+}
+
+uint8_t CXmlNode::GetUInt8Value()
+{
+    return (uint8_t)GetInt32Value();
+}
+
+uint16_t CXmlNode::GetUInt16Value()
+{
+    return (uint16_t)GetInt32Value();
+}
+
+bool CXmlNode::GetBooleanValue()
+{
+    LOCAL_MEM(tmp);
+    this->GetStringValue(&tmp);
+    return (tmp.StrICmp("true") == 0);
+}
+
+double CXmlNode::GetDoubleValue()
+{
+    LOCAL_MEM(tmp);
+    this->GetStringValue(&tmp);
+    return atof(tmp.CStr());
+}
+
+float CXmlNode::GetFloatValue()
+{
+    return (float)GetDoubleValue();
 }
 /*=======================================================*/
 CXml::CXml()
