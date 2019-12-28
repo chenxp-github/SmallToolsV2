@@ -814,6 +814,14 @@ SOURCE=.\lualib\lualib_mmapfile.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lualib\lualib_queuefile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_queuefile.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lualib\lualib_resource.cpp
 # End Source File
 # Begin Source File
@@ -827,6 +835,14 @@ SOURCE=.\lualib\lualib_resourcemanager.cpp
 # Begin Source File
 
 SOURCE=.\lualib\lualib_resourcemanager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_serial.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_serial.h
 # End Source File
 # Begin Source File
 
@@ -1255,6 +1271,14 @@ SOURCE=.\resource_manager\resourcemanager.cpp
 # Begin Source File
 
 SOURCE=.\resource_manager\resourcemanager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\serial.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\serial.h
 # End Source File
 # Begin Source File
 
