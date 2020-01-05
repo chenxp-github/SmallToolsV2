@@ -105,9 +105,9 @@ SHELL = /bin/sh
 SOURCES = $(foreach d,$(SRCDIRS),$(wildcard $(addprefix $(d)/*,$(SRCEXTS))))
 
 OBJS = $(foreach x,$(SRCEXTS), \
-$(patsubst %$(x),%.o,$(filter %$(x),$(SOURCES))))
+$(patsubst %$(x),%.$(TARGET_NAME).o,$(filter %$(x),$(SOURCES))))
 
-DEPS = $(patsubst %.o,%.d,$(OBJS))
+DEPS = $(patsubst %.$(TARGET_NAME).o,%.$(TARGET_NAME).d,$(OBJS))
 
 .PHONY : all objs clean cleanall rebuild
 
@@ -115,55 +115,32 @@ all : $(PROGRAM)
 
 # Rules for creating the dependency files (.d).
 #---------------------------------------------------
-%.d : %.c
-	$(CC) -MM -MD $(CFLAGS) $< -o $@
-
-%.d : %.C
-	$(CC) -MM -MD $(CXXFLAGS) $< -o $@
-
-%.d : %.cc
-	$(CC) -MM -MD $(CXXFLAGS) $< -o $@
-
-%.d : %.cpp
-	$(CXX) -MM -MD $(CXXFLAGS) $< -o $@
-
-%.d : %.CPP
-	$(CXX) -MM -MD $(CXXFLAGS) $< -o $@
-
-%.d : %.c++
-	$(CXX) -MM -MD $(CXXFLAGS) $< -o $@
-
-%.d : %.cp
-	$(CXX) -MM -MD $(CXXFLAGS) $< -o $@
-
-%.d : %.cxx
-	$(CXX) -MM -MD $(CXXFLAGS) $< -o $@
 
 # Rules for producing the objects.
 #---------------------------------------------------
 objs : $(OBJS)
-%.o : %.c
+%.$(TARGET_NAME).o : %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
-%.o : %.C
+%.$(TARGET_NAME).o : %.C
 	$(CC) -c $(CXXFLAGS) $< -o $@
 
-%.o : %.cc
+%.$(TARGET_NAME).o : %.cc
 	$(CC) -c $(CXXFLAGS) $< -o $@
 
-%.o : %.cpp
+%.$(TARGET_NAME).o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
-%.o : %.CPP
+%.$(TARGET_NAME).o : %.CPP
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
-%.o : %.c++
+%.$(TARGET_NAME).o : %.c++
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
-%.o : %.cp
+%.$(TARGET_NAME).o : %.cp
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
-%.o : %.cxx
+%.$(TARGET_NAME).o : %.cxx
 	$(CXX) -c $(CXXFLAGS) $< -o $@
 
 # Rules for producing the executable.
