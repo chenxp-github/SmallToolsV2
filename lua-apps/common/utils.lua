@@ -200,7 +200,9 @@ function for_each_line(filename,callback)
     while list_file:ReadLine(mem_file) do
         mem_file:Trim();
         if mem:C(0) ~= 0 then            
-            callback(mem);
+            if callback(mem) then
+                break;
+            end
         end
     end
     list:CloseFile();   
