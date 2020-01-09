@@ -185,6 +185,13 @@ function PeerServiceBase:AddCallback(func,timeout)
     return id;
 end
 
+--never timeout, but emit error when socket disconncted
+function PeerServiceBase:AddPeerCallback(func)
+    local id = self.m_callback_map:Put(func,-1);
+    self.m_callback_map:SetPeer(id,self);
+    return id;
+end
+
 function PeerServiceBase:CancelCallback(id)
     self.m_callback_map:Delete(id);
 end
