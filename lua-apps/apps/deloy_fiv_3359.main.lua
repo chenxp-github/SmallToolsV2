@@ -40,6 +40,7 @@ function app_main(args)
     fiv_copy_files("locales");
     fiv_copy_files("cef.pak");
     fiv_copy_files("cef_extensions.pak");
+    fiv_copy_files("resources");
 end
 
 
