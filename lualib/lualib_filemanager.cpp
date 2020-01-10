@@ -80,6 +80,7 @@ static int filemanager_isdirexist(lua_State *L)
 static int filemanager_searchdir(lua_State *L)
 {
 	LUA_TO_LOCAL_STRING(dir,L,1);
+    if(dir[0] == 0)dir="/";
     int recursive = (int)lua_toboolean(L,2);
     int callback = CLuaVm::ToFunction(L,3);
 
@@ -133,7 +134,6 @@ static int filemanager_searchdir(lua_State *L)
 
     on_search_dir.SetParamInt(10,callback);
     on_search_dir.SetParamPointer(11,L);
-
 	
 	CMem mem_dir(dir);
     CDirMgr::SearchDir_Interruptable(
