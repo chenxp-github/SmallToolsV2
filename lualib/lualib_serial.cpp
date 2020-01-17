@@ -89,7 +89,7 @@ static status_t serial_enabledtrhandshake(lua_State *L)
 {
     CSerial *pserial = get_serial(L,1);
     ASSERT(pserial);
-    bool enable = (bool)lua_toboolean(L,2);
+    bool enable = lua_toboolean(L,2)!=0;
     status_t ret0 = pserial->EnableDtrHandshake(enable);
     lua_pushboolean(L,ret0);
     return 1;

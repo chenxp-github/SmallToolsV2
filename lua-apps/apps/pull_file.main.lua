@@ -105,6 +105,11 @@ function app_main(args)
         local list = file_client:List(remote_file);
         if list then
             remote_dir = remote_file;
+        else
+            if FileManager.IsDirExist(local_file) then
+                local name = FileManager.SliceFileName(remote_file,FN_FILENAME);
+                local_file = FileManager.ToAbsPath(local_file.."/"..name);
+            end
         end
 
         local all_pull_files = {};
@@ -147,7 +152,7 @@ function app_main(args)
         printnl("all done");
         App.QuitMainLoop();
     end
-   
+
     co = CoThread.new(1);
     co:Start(main_thread);
     App.MainLoop();

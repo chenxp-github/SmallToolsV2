@@ -115,8 +115,8 @@ static status_t queuefile_peekdata(lua_State *L)
     CMem *data = get_mem(L,2);
     ASSERT(data);
     int_ptr_t size = (int_ptr_t)lua_tointeger(L,3);
-    if(size > data->GetMaxSize())
-        size = data->GetMaxSize();
+    if(size > (int_ptr_t)data->GetMaxSize())
+        size = (int_ptr_t)data->GetMaxSize();
 
     int_ptr_t ret0 = pqueuefile->PeekData(data->GetRawBuf(),size);
     data->SetSize(ret0);
