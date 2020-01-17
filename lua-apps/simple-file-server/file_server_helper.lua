@@ -27,7 +27,7 @@ FsHelper.ListFolder = function(dir)
         end
 
         if info.event == EVENT_SINGLE_FILE then
-            t.size = info.size;
+            t.size = {_int64_=info.size};
             table.insert(list,t);
         end
     end);
