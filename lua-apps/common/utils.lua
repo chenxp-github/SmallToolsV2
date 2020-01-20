@@ -176,7 +176,13 @@ function remove_path_prefix(full_name,prefix)
     if len == 0 then return full_name end
     
     local rpath = string.sub(full_name,len+1);
-    return rpath;
+    local first = string.char(string.byte(rpath,1));
+
+    if first == "\\" or first =="/" then
+        return string.sub(rpath,2);
+    else
+        return rpath;
+    end
 end
 
 --split extension list e.g. "c,cpp,h,lua,js"
