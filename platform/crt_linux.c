@@ -284,9 +284,11 @@ status_t crt_read_dir(void **p)
     int is_dir;
 
     if(entry == NULL)
+    {
         return ERROR;
+    }
 
-	memset(&statbuf,0,sizeof(statbuf));
+    memset(&statbuf,0,sizeof(statbuf));
     lstat(entry->d_name,&statbuf);
 	
     crt_strcpy(p[1],entry->d_name);
@@ -303,8 +305,10 @@ status_t crt_read_dir(void **p)
     }
 
     p[2] = (void*)((int_ptr_t)is_dir);
-    p[3] = (void*)((int_ptr_t)statbuf.st_size);
 
+    p[4] = 0;
+    memcpy(&p[3],&statbuf.st_size,sizeof(statbuf.st_size));
+ 
     int64_t tm = statbuf.st_mtim.tv_sec*1000LL+statbuf.st_mtim.tv_nsec/1000000LL;
     memcpy(&p[5],&tm,sizeof(tm));
 

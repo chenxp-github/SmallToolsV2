@@ -43,7 +43,7 @@ typedef unsigned long long  uint64_t;
 
 typedef int32_t             status_t;
 typedef int32_t             int_ptr_t;
-typedef uint8_t             bool_t;
+typedef int             bool_t;
 
 #define LBUF_SIZE           4096
 #define FILEBASE_LBUF_SIZE  (32*1024)
