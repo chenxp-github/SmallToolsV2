@@ -31,10 +31,12 @@ function app_main(args)
         return
     end
 
-    local root_dir = FileManager.ToAbsPath(cmd:GetValueByKey(kRoot));
+    local root_dir = FileManager.ToAbsPath(cmd:GetValueByKey(kRoot));    
+    if root_dir == "" then root_dir="/" end
     if not FileManager.IsDirExist(root_dir) then
         printfnl("root path %s is not exist.",root_dir);
     end
+    FileManager.ChangeDir(root_dir);
 
     printfnl("root dir is: %s",root_dir);
 

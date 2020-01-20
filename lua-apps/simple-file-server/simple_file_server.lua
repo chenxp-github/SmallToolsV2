@@ -265,7 +265,7 @@ function SimpleFileServer:OnChangeDir(_context,_param)
 	printf("change dir to %s %s",path,
 		(success and "success" or "fail")
 	);
-	
+
 	local cur_dir;
 	if success then
 		cur_dir = "/"..remove_path_prefix(new_cd,self.m_root_dir);

@@ -175,7 +175,7 @@ function remove_path_prefix(full_name,prefix)
     local len = string.len(prefix);
     if len == 0 then return full_name end
     
-    local rpath = string.sub(full_name,len+2);
+    local rpath = string.sub(full_name,len+1);
     return rpath;
 end
 
