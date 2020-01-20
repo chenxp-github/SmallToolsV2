@@ -29,6 +29,9 @@ function SimpleFileServer:OnRequest(_context,_param)
     if method == METHOD_SFS_RUN_CMD then
         self:OnRunCmd(_context,_param);
     end
+    if method == METHOD_SFS_CHANGEDIR then
+        self:OnChangeDir(_context,_param);
+    end	
 --##End OnRequest ##--
 end
 
@@ -238,3 +241,39 @@ function SimpleFileServer:MakeLocalPath(dir)
     return FileManager.ToAbsPath(tmp_path,self.m_root_dir);
 end
 
+
+--@@Begin Method OnChangeDir @@--
+function SimpleFileServer:OnChangeDir(_context,_param)
+	local path = FileManager.ToAbsPath(_param.dir);
+	
+	if string.len(path) < string.len(self.m_root_dir) then
+		path = self.m_root_dir;
+		printf("change dir to %s",self.m_root_dir);
+		FileManager.ChangeDir(self.m_root_dir);
+		local _ret={
+			cur_dir = "/",
+			success = true,		
+		};
+		return self:SendReturnValue(_context,_ret);		
+	end
+
+	local old_cd = FileManager.GetCurDir();
+	FileManager.ChangeDir(path);
+	local new_cd = FileManager.GetCurDir();	
+	local success = (old_cd ~= new_cd);
+	
+	printf("change dir to %s %s",path,
+		(success and "success" or "fail")
+	);
+	
+	local cur_dir;
+	if success then
+		cur_dir = "/"..remove_path_prefix(new_cd,self.m_root_dir);
+	end
+	
+    local _ret={
+		cur_dir = cur_dir,
+        success = success,
+    };
+    self:SendReturnValue(_context,_ret);
+end

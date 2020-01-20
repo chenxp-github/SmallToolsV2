@@ -219,4 +219,16 @@ function SimpleFileClient:RunCommand(_command, _callback)
 end
 --@@End Method RunCmd @@--
 
+
+--@@Begin Method ChangeDir @@--
+function SimpleFileClient:ChangeDir(_dir, _callback)
+    local _cbid = self:AddCallback(_callback,-1);
+    local _param={
+        dir = _dir,
+    };
+    return self:SendRequest(_param,METHOD_SFS_CHANGEDIR,_cbid);
+end
+--@@End Method ChangeDir @@--
+
+
 --@@ Insert Method Here @@--
