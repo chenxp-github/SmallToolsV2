@@ -160,7 +160,7 @@ status_t syslog_log(int module,int log_level,const char* format, ...)
         return ERROR;
     crt_va_start(ap, format);
     syslog_va_printf(module, log_level, format, ap);
-    syslog_puts(module,log_level,"\n");
+    syslog_puts(module,log_level,"\r\n");
     crt_va_end(ap);
     return OK;
 }

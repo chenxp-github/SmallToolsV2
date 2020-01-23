@@ -5,6 +5,14 @@
 #include "filebase.h"
 #include "mem.h"
 
+#define LOCAL_STREAM_WITH_SIZE(name,size) char __##name[size];\
+CStream name;\
+name.Init();\
+name.SetRawBuf(__##name,size,false);\
+name.SetSize(0)\
+
+#define LOCAL_STREAM(name) LOCAL_STREAM_WITH_SIZE(name,LBUF_SIZE)
+
 class CStream:public CMem{
 public:
 	status_t GetAsString(CMem *str, int len);
