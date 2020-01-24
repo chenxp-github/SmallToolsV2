@@ -69,7 +69,7 @@ static int filemanager_changedir(lua_State *L)
 }
 static int filemanager_isdirexist(lua_State *L)
 {
-    const char *dir = lua_tostring(L,1);
+    LUA_TO_LOCAL_STRING(dir,L,1);
     ASSERT(dir);
     CMem mem(dir);
     int _r=(int)CDirMgr::IsDirExist(&mem);
