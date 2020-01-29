@@ -227,6 +227,14 @@ status_t CPeerGlobals::NotifyPeerDeleted(CPeerProxy *peer)
     return OK;
 }
 
+status_t CPeerGlobals::NotifyPeerDisconnected(CPeerProxy *peer)
+{
+    ASSERT(peer);
+    mCallback->SetParamPointer(1,peer);
+    mCallback->Run(EVENT_PEER_DISCONNECTED);
+    return OK;
+}
+
 CPeerProxy* CPeerGlobals::NewPendingPeerProxy(const char *name)
 {
     ASSERT(name);

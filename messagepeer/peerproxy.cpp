@@ -231,7 +231,19 @@ status_t CPeerProxy::OnSocketConnected()
 
 status_t CPeerProxy::OnSocketDisconnected()
 {
+    PEER_GLOBALS(peer_globals);
+    peer_globals->NotifyPeerDisconnected(this);
     Callback()->SetParamPointer(1,this);
     Callback()->Run(PEER_EVENT_DISCONNECTED);
     return OK;
 }
+
+CSocket *CPeerProxy::GetSocket()
+{
+    if(IsServerSide())
+        return NULL;
+    CTaskPeerServer *pt = (CTaskPeerServer *)GetTask(mTaskPeerServer);
+    if(!pt)return NULL;
+    return pt->GetSocket();
+}
+

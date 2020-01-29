@@ -12,6 +12,7 @@ public:
     bool IsPeerExist(CMem *name);
     int NameToIndex(CMem *name);
     CPeerProxy * GetPeerByName(CMem *name);
+    CPeerProxy * GetPeerByName(const char *name);
     int GetTotalPeers();
     CPeerProxy * GetPeer(int i);
     status_t AddPeer(CPeerProxy *peer);

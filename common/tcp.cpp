@@ -18,7 +18,7 @@ CSocket::~CSocket()
 status_t CSocket::InitBasic()
 {
     this->socket_num = -1;
-   return OK;
+    return OK;
 }
 status_t CSocket::Init()
 {

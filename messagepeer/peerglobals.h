@@ -13,6 +13,7 @@ public:
         EVENT_ACCEPTOR_ERROR=1,
         EVENT_NEW_PEER,
         EVENT_PEER_DELETED,
+        EVENT_PEER_DISCONNECTED,
     };
 public:
     TASK_CONTAINER_DEFINE();
@@ -30,6 +31,7 @@ public:
     CPeerProxy *NewPendingPeerProxy(const char *name);
     status_t NotifyPeerDeleted(CPeerProxy *peer);
     status_t NotifyNewPeer(CPeerProxy *peer);
+    status_t NotifyPeerDisconnected(CPeerProxy *peer);
     CClosure *Callback();
     status_t StartAccept(int port);
     status_t StartTaskPeerKiller();

@@ -84,3 +84,9 @@ int CPeerProxyManager::GetAliveClientNumber()
     return c;
 }
 
+CPeerProxy * CPeerProxyManager::GetPeerByName(const char *name)
+{
+    ASSERT(name);
+    CMem mem(name);
+    return this->GetPeerByName(&mem);
+}

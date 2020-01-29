@@ -8,6 +8,7 @@
 #include "taskmgr.h"
 #include "serversidepeer.h"
 #include "weakptr.h"
+#include "tcp.h"
 
 class CPeerProxy{
 public:
@@ -22,6 +23,7 @@ public:
     uint32_t mLifeTime;
 	CClosure *mCallback;
 public:
+    CSocket *GetSocket();
 	CClosure *Callback();
     bool IsServerSide();
     status_t ClearSendingQueue();

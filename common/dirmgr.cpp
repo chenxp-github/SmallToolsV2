@@ -355,27 +355,35 @@ status_t CDirMgr::CreateDirSuper(CMem *dir)
 
     dir->SetSplitChars(":\\/");
     dir->Seek(0);
-
-    if(dir->CharAt(1) == ':')
+	
+	if(dir->CharAt(1) == ':')
     {
         path.Putc(dir->Getc());
         path.Putc(dir->Getc());
+		path.Putc(crt_get_path_splitor());
     }
+	else if(dir->CharAt(0) == '\\' || dir->CharAt(0)=='/')
+	{
+		path.Putc(crt_get_path_splitor());
+	}
 
+    int i = 0;
     while(dir->ReadString(&buf))
     {
         char str[2];
         str[0] = GetPathSplitor();
         str[1] = 0;
-        path.StrCat(str);
+        if(i > 0)path.StrCat(str);
         path.StrCat(&buf);
         if(!IsDirExist(&path))
         {
             ASSERT(CreateDir(&path));
         }
+        i++;
     }
     return OK;
 }
+
 status_t CDirMgr::CreateFilePath(CMem *fullname)
 {
     ASSERT(fullname);
