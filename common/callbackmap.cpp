@@ -20,6 +20,7 @@ status_t CCallbackMap::InitBasic()
 	this->m_Capacity = 0;
 	this->m_Data = 0;
 	this->m_Size = 0;
+	this->m_UniqueId = 0;
 	return OK;
 }
 status_t CCallbackMap::Init(CTaskMgr *mgr,int capacity)
@@ -368,3 +369,12 @@ status_t CCallbackMap::AddClosure(CClosure *closure, int cbid)
     callback->SetCallbackId(cbid);
     return this->PutPtr(callback);
 }
+
+int CCallbackMap::AllocUniqueId()
+{
+	m_UniqueId++;
+	if(m_UniqueId == 0)
+		m_UniqueId++;
+    return m_UniqueId;
+}
+

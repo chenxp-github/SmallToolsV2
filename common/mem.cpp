@@ -229,11 +229,7 @@ status_t CMem::Copy(CFileBase *file)
 {
     ASSERT(file);
     if(this == file) return OK;
-
-    SAVE_WEAK_REF_ID(*this,w);
-    this->Destroy();
-    this->Init();
-    RESTORE_WEAK_REF_ID(*this,w);
+    this->Free();
 
     if(file->file_name)
         this->SetFileName(file->file_name);
@@ -292,8 +288,7 @@ bool CMem::StrEqu(CMem *str, bool case_sensitive)
 status_t CMem::Transfer(CMem *from)
 {
     ASSERT(from);
-    this->Destroy();
-    this->Init();
+    this->Free();
 
     this->mBuf = from->mBuf;
     this->mSelfAlloc = from->mSelfAlloc;

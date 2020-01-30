@@ -154,16 +154,13 @@ status_t CWebSocketServiceBase::OnRequest(CWebSocketMessage *_message)
 int CWebSocketServiceBase::AddCallback(CClosure *closure)
 {
     if(!closure)return 0;
-
-    int callback_id = crt_get_unique_id();
-    	
+    int callback_id = m_CallbackMap.AllocUniqueId();
     if(!m_CallbackMap.AddClosure(closure,callback_id))
     {
         callback_id = 0;
     }
     return callback_id;
 }
-
 
 status_t CWebSocketServiceBase::OnResponse(CWebSocketMessage *msg)
 {

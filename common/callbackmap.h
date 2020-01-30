@@ -15,6 +15,7 @@ public:
 	CCallback **m_Data;
 	int m_Capacity;
 	int m_Size;
+	int m_UniqueId;
 public:	
 	status_t AddClosure(CClosure *closure, int cbid);
 	CCallback * Get(int cbid);
@@ -39,6 +40,7 @@ public:
 	status_t Init(CTaskMgr *mgr,int capacity);
 	status_t Destroy();
 	status_t Print(CFileBase *_buf);
+	int AllocUniqueId();
 };
 
 #endif
