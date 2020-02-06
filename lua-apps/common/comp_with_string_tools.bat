@@ -1,0 +1,1 @@
+bc . Z:\mydisk\Program\VC6\Projects\StringToolsV2\main_window\moon-tools\base\common

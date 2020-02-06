@@ -1,4 +1,4 @@
-require("common")
+require("class_base")
 
 PrintBuffer = class();
 
