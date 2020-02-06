@@ -169,7 +169,15 @@ static status_t queuefile_haswholeline(lua_State *L)
     lua_pushboolean(L,ret0);
     return 1;
 }
-
+static status_t queuefile_skip(lua_State *L)
+{
+    CQueueFile *pqueuefile = get_queuefile(L,1);
+    ASSERT(pqueuefile);
+    int_ptr_t size = lua_tointeger(L,2);
+    int_ptr_t rs = pqueuefile->Read(NULL,size);
+    lua_pushinteger(L,rs);
+    return 1;
+}
 /****************************************************/
 static const luaL_Reg queuefile_funcs_[] = {
     {"__gc",queuefile_gc_},
@@ -183,6 +191,7 @@ static const luaL_Reg queuefile_funcs_[] = {
     {"GetFreeSize",queuefile_getfreesize},
     {"HasEmptyLine",queuefile_hasemptyline},
     {"HasWholeLine",queuefile_haswholeline},
+    {"Skip",queuefile_skip},
     {NULL,NULL},
 };
 
