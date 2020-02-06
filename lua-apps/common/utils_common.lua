@@ -158,17 +158,14 @@ function for_each_line(filename,callback)
     local mem = new_mem();    
     list_file:Seek(0);
     while list_file:ReadLine(mem) do
-        mem:Trim();
-        if mem:C(0) ~= 0 then            
-            if callback(mem) then
-                break;
-            end
+        if callback(mem) then
+            break;
         end
     end
 	
-	if type(filename) == "string" then
-		list_file:Destroy();
-	end
+    if type(filename) == "string" then
+        list_file:Destroy();
+    end
 end
 
 --执行一个命令行，并且返回结果--
