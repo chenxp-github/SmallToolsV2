@@ -64,6 +64,7 @@ public:
     status_t InitBasic();
     status_t Init(CTaskMgr *taskmgr);
     status_t Destroy();
+    status_t NeverTimeout();
 };
 
 #endif

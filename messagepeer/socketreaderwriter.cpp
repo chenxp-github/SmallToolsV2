@@ -3,6 +3,7 @@
 #include "mem_tool.h"
 
 #define MAX_LINE_LENGTH (64*1024)
+#define HAS_TIMEOUT() ((mTimeout&0x80000000)==0)
 
 CSocketReaderWriter::CSocketReaderWriter()
 {
@@ -49,6 +50,7 @@ status_t CSocketReaderWriter::Destroy()
 
 status_t CSocketReaderWriter::SetTimeout(uint32_t timeout)
 {
+    ASSERT(timeout != 0);
     this->mTimeout = timeout;
     return OK;
 }
@@ -119,7 +121,7 @@ status_t CSocketReaderWriter::DoWrite(uint32_t interval)
         this->mWriteOffset += ws;
         if(interval < mTimeout)
             this->mWriteTimer += interval;
-        if(this->mWriteTimer >= this->mTimeout)
+        if(HAS_TIMEOUT() && this->mWriteTimer >= this->mTimeout)
         {
             this->iSocket->CloseConnect();
             this->Error(ERROR_WRITE_TIMEOUT);
@@ -224,7 +226,7 @@ status_t CSocketReaderWriter::DoRead(uint32_t interval)
     {
         if(interval < mTimeout)
             this->mReadTimer += interval;
-        if(this->mReadTimer >= this->mTimeout)
+        if(HAS_TIMEOUT() && this->mReadTimer >= this->mTimeout)
         {
             this->iSocket->CloseConnect();
             this->Error(ERROR_READ_TIMEOUT);
@@ -297,7 +299,7 @@ status_t CSocketReaderWriter::DoReadUntilEol(uint32_t interval,bool only_lf)
         {
             if(interval < mTimeout)
                 this->mReadTimer += interval;
-            if(this->mReadTimer > this->mTimeout)
+            if(HAS_TIMEOUT() && this->mReadTimer > this->mTimeout)
             {
                 this->Error(ERROR_READ_TIMEOUT);
             }
@@ -360,7 +362,7 @@ status_t CSocketReaderWriter::DoReadUntilEmptyLine(uint32_t interval)
         {
             if(interval < mTimeout)
                 this->mReadTimer += interval;
-            if(this->mReadTimer > this->mTimeout)
+            if(HAS_TIMEOUT() && this->mReadTimer > this->mTimeout)
             {
                 this->Error(ERROR_READ_TIMEOUT);
             }
@@ -407,3 +409,10 @@ bool CSocketReaderWriter::IsConnected()
     ASSERT(iSocket);
     return iSocket->IsConnected();
 }
+
+status_t CSocketReaderWriter::NeverTimeout()
+{
+    mTimeout = (uint32_t)(-1);
+    return OK;
+}
+

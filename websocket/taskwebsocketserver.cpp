@@ -104,7 +104,7 @@ status_t CTaskWebSocketServer::Init(CTaskMgr *mgr)
 	m_SocketRw.SetSocket(&m_Socket);
 	m_SocketRw.Callback()->SetParamPointer(10,this);
 	m_SocketRw.Callback()->SetFunc(on_socket_rw_event);
-    m_SocketRw.SetTimeout(0xffffffff);//no timeout
+    m_SocketRw.NeverTimeout();
 	return OK;
 }
 status_t CTaskWebSocketServer::Destroy()
