@@ -98,7 +98,10 @@ function app_main(args)
         file_client:Start();
 
         if is_file_list then
-            for_each_line(local_file,function(line)                
+            for_each_line(local_file,function(line)  
+                line:Trim(); 
+                if line:C(0) == 0 then return end
+                         
                 local rpath = line:CStr();
 
                 if path_strip then

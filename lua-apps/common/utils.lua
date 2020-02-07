@@ -68,13 +68,14 @@ function check_env(str,do_not_exit)
     return var;
 end
 
-
 function split_file_lines(filename,callback)
     for_each_line(filename,function(mem)
-        callback(mem:CStr());
+        mem:Trim();
+        if mem:C(0) ~= 0 then
+            return callback(mem:CStr());
+        end
     end);
 end
-
 
 function get_self_path(rpath)
     if not rpath then rpath="" end
