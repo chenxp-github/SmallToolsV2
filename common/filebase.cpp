@@ -90,6 +90,7 @@ fsize_t CFileBase::WriteToFile(CFileBase *file, fsize_t start, fsize_t wsize, vo
         ws = file->Write(buf,rs);
         if(ws <= 0) break;
         sum += ws;
+        if(ws != rs)break;
     }
     
     return sum;
@@ -241,13 +242,14 @@ fsize_t CFileBase::WriteFile(CFileBase *file, fsize_t start, fsize_t ws, void *b
         b_size = left;
         if(b_size > block_size)
             b_size = block_size;
+        
         rs = file->Read(buf,(int_ptr_t)b_size);
         if(rs > 0)
         {
             write_size = this->Write(buf,rs);
             if(write_size > 0)
                 left -= write_size;
-            else
+            if(write_size!=rs)
                 break;
         }
         else
