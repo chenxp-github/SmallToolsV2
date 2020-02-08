@@ -36,6 +36,7 @@
 #include "lualib_xmlnode.h"
 #include "lualib_serial.h"
 #include "lualib_queuefile.h"
+#include "_build_time_.h"
 
 #if _IS_LINUX_
 #include "lualib_nativeprocess.h"
@@ -410,6 +411,10 @@ status_t CGlobals::Main(int argc, char **argv)
 
 status_t CGlobals::BareMain()
 {
+    XLOG(LOG_MODULE_USER,LOG_LEVEL_INFO,
+        "version: %s %s",BUILD_DATE,BUILD_TIME
+    );
+    
     LOCAL_MEM_WITH_SIZE(tmp,32*1024);
 
     for(int i = 0; i < m_MainLuaFileList.GetLen(); i++)
