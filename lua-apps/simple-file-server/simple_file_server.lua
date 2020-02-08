@@ -123,7 +123,7 @@ function SimpleFileServer:OnPushBigFile(_context,_param)
 end
 --@@End Method OnPushBigFile @@--
 
-local g_buf = new_mem(4*1024*1024);
+local g_buf = new_mem(1*1024*1024);
 function SimpleFileServer:SendFileOnThread(_context,_filename)
 
     self.m_pulling_files = self.m_pulling_files + 1;
