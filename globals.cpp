@@ -150,7 +150,13 @@ status_t CGlobals::MainLoop()
     while(m_MainLoopRunning)
     {   
 		if(!m_TaskMgr.Schedule())
-			m_Epoll.Wait(1);
+
+#ifdef EPOLL_SLEEP_TIME
+    m_Epoll.Wait(EPOLL_SLEEP_TIME);
+#else
+	m_Epoll.Wait(1);
+#endif        
+
     }
     return OK;
 }
