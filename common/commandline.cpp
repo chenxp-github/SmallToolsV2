@@ -361,4 +361,23 @@ int CCommandLine::GetCmdEntriesLen()
     return m_CmdEntries.GetLen();
 }
 
+status_t CCommandLine::GetAllValuesByKey(const char *key,CMemStk *values)
+{
+    ASSERT(key && values);
+    CMem mem_key(key);
+    return this->GetAllValuesByKey(&mem_key,values);
+}
 
+status_t CCommandLine::GetAllValuesByKey(CMem *key,CMemStk *values)
+{
+    ASSERT(key && values);
+    for(int i = 0; i < m_CmdEntries.GetLen(); i++)
+    {
+        CCmdEntry *e = m_CmdEntries.GetElem(i);
+        if(e->GetKey()->StrEqu(key,true))
+        {
+            values->Push(e->GetValue());
+        }
+    }
+    return OK;
+}

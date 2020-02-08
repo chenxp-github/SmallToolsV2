@@ -5,6 +5,7 @@
 #include "filebase.h"
 #include "cmdentry.h"
 #include "commonarray.h"
+#include "memstk.h"
 
 class CCommandLine{
 public:
@@ -40,6 +41,9 @@ public:
     status_t Copy(CCommandLine *_p);
     int Comp(CCommandLine *_p);
     status_t Print(CFileBase *_buf);
+
+    status_t GetAllValuesByKey(const char *key,CMemStk *values);
+    status_t GetAllValuesByKey(CMem *key,CMemStk *values);
 };
 
 #endif

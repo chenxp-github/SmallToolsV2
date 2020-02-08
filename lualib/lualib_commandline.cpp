@@ -212,6 +212,25 @@ static int commandline_getcmdentry(lua_State *L)
     cmdentry_new_userdata(L,_ret_0,1);
     return 1;
 }
+
+static status_t commandline_getallvaluesbykey(lua_State *L)
+{
+    CCommandLine *pcommandline = get_commandline(L,1);
+    ASSERT(pcommandline);
+    const char* key = (const char*)lua_tostring(L,2);
+    ASSERT(key);
+    
+    CMemStk values;
+    values.Init();    
+
+    pcommandline->GetAllValuesByKey(key,&values);
+    if(values.GetLen() <= 0)
+        return 0;
+
+    CLuaVm::PushStringArray(L,&values);
+    return 1;
+}
+
 static const luaL_Reg commandline_lib[] = {
     {"new",commandline_new},
     {"__gc",commandline_destroy},
@@ -230,6 +249,7 @@ static const luaL_Reg commandline_lib[] = {
     {"LoadFromString",commandline_loadfromstring},
     {"GetCmdEntriesLen",commandline_getcmdentrieslen},
     {"GetCmdEntry",commandline_getcmdentry},
+    {"GetAllValuesByKey",commandline_getallvaluesbykey},    
     {NULL, NULL}
 };
 static int luaL_register_commandline(lua_State *L)

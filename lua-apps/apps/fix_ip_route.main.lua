@@ -25,8 +25,17 @@ function app_main(args)
         return;
     end
 
-    local wanted = cmd:GetValueByKey(kWant);
-    print("wanted = "..wanted);
+    local all_wanted = cmd:GetAllValuesByKey(kWant);
+    print("wanted = ");
+    print_table(all_wanted);
+
+    function is_wanted(str)
+        for _,v in ipairs(all_wanted) do
+            if CFunc.wild_match(v,str) then
+                return true;
+            end
+        end
+    end
 
     local mf = new_memfile();
     local mem = new_mem();
@@ -40,7 +49,7 @@ function app_main(args)
         
         while mf:ReadLine(mem) do
             if CFunc.wild_match("default via*",mem:CStr()) then
-                if CFunc.wild_match(wanted,mem:CStr()) then
+                if is_wanted(mem:CStr()) then
                     break;
                 else
                     local cmd = "ip route del "..mem:CStr();
