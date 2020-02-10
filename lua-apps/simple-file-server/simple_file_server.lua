@@ -237,15 +237,13 @@ function SimpleFileServer:SetRootDir(root)
 end
 
 function SimpleFileServer:MakeLocalPath(dir)
-    local tmp_path = FileManager.ToAbsPath("",dir);
+    local tmp_path = FileManager.ToAbsPath(dir,"");
     return FileManager.ToAbsPath(tmp_path,self.m_root_dir);
 end
-
 
 --@@Begin Method OnChangeDir @@--
 function SimpleFileServer:OnChangeDir(_context,_param)
 	local path = FileManager.ToAbsPath(_param.dir);
-	
 	if string.len(path) < string.len(self.m_root_dir) then
 		path = self.m_root_dir;
 		printf("change dir to %s",self.m_root_dir);
@@ -257,18 +255,25 @@ function SimpleFileServer:OnChangeDir(_context,_param)
 		return self:SendReturnValue(_context,_ret);		
 	end
 
-	local old_cd = FileManager.GetCurDir();
+	local old_cd = FileManager.ToAbsPath(FileManager.GetCurDir());
 	FileManager.ChangeDir(path);
-	local new_cd = FileManager.GetCurDir();	
+	local new_cd = FileManager.ToAbsPath(FileManager.GetCurDir());	
 	local success = (old_cd ~= new_cd);
 	
-	printf("change dir to %s %s",path,
-		(success and "success" or "fail")
+	printf("change dir %s %s=>%s",
+        (success and "success" or "fail"),
+        old_cd,new_cd
 	);
 
 	local cur_dir;
-	if success then
-		cur_dir = "/"..remove_path_prefix(new_cd,self.m_root_dir);
+    if success then
+        if is_windows() then
+            local root_dir_ = string.lower(self.m_root_dir);
+            local new_cd_ = string.lower(new_cd);
+            cur_dir = remove_path_prefix(new_cd_,root_dir_);
+        else
+            cur_dir = "/"..remove_path_prefix(new_cd,self.m_root_dir);
+        end
 	end
 	
     local _ret={

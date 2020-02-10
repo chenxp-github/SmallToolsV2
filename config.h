@@ -21,6 +21,14 @@
 #ifdef __x86_64__
 #define _LINUX64_   1
 #undef _LINUX_
+#undef _WIN32_
+#endif
+
+#ifdef WIN32 
+#undef _LINUX_
+#undef  _LINUX64_
+#undef _WIN32_
+#define _WIN32_ 1
 #endif
 
 #if _ANDROID_

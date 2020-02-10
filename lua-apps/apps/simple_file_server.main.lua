@@ -36,6 +36,11 @@ function app_main(args)
     if not FileManager.IsDirExist(root_dir) then
         printfnl("root path %s is not exist.",root_dir);
     end
+    
+    if is_windows() then
+        root_dir = root_dir.."\\";
+    end
+
     FileManager.ChangeDir(root_dir);
 
     printfnl("root dir is: %s",root_dir);
