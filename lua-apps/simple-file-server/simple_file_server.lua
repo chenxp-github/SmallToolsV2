@@ -267,8 +267,13 @@ function SimpleFileServer:OnChangeDir(_context,_param)
 	);
 
 	local cur_dir;
-	if success then
-		cur_dir = "/"..remove_path_prefix(new_cd,self.m_root_dir);
+    if success then
+        local rpath = remove_path_prefix(new_cd,self.m_root_dir);
+        if rpath then
+            cur_dir = "/"..rpath
+        else
+            cur_dir = new_cd;
+        end
 	end
 	
     local _ret={

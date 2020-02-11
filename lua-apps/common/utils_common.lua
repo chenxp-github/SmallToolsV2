@@ -113,7 +113,7 @@ end
 --比如 C:\1.txt ,如果把前缀C:移除，就变成了 1.txt 了 
 function remove_path_prefix(full_name,prefix)
     if string.find(full_name,prefix,1,true) ~= 1 then
-        return
+        return;
     end
     local len = string.len(prefix);
     if len == 0 then return full_name end
