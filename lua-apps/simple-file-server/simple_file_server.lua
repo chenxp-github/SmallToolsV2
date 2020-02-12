@@ -220,7 +220,7 @@ end
 
 --@@Begin Method OnRunCmd @@--
 function SimpleFileServer:OnRunCmd(_context,_param)
-    printf("run cmd: %s",_param.command);
+    printfnl("run cmd: %s",_param.command);
     local r = os.execute(_param.command);    
     local _ret={
         result = r and 1 or 0
@@ -246,7 +246,7 @@ function SimpleFileServer:OnChangeDir(_context,_param)
 	local path = FileManager.ToAbsPath(_param.dir);
 	if string.len(path) < string.len(self.m_root_dir) then
 		path = self.m_root_dir;
-		printf("change dir to %s",self.m_root_dir);
+		printfnl("change dir to %s",self.m_root_dir);
 		FileManager.ChangeDir(self.m_root_dir);
 		local _ret={
 			cur_dir = "/",
@@ -260,7 +260,7 @@ function SimpleFileServer:OnChangeDir(_context,_param)
 	local new_cd = FileManager.ToAbsPath(FileManager.GetCurDir());	
 	local success = (old_cd ~= new_cd);
 	
-	printf("change dir %s %s=>%s",
+	printfnl("change dir %s %s=>%s",
         (success and "success" or "fail"),
         old_cd,new_cd
 	);

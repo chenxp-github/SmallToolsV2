@@ -5,7 +5,6 @@ FsHelper = {};
 
 FsHelper.ListFolder = function(dir)
     if not FileManager.IsDirExist(dir) then
-        printfnl("'%s' is not exist.",dir);
         return
     end
 
