@@ -15,6 +15,7 @@ local MMAP_FILE_NAME="/tmp/my_tools_wget.bin";
 local g_mmap_file = nil;
 local g_mmap_stream = nil;
 local g_threads = 10;
+local g_retry = -1;
 
 local FLAG_UNUSED = 0;
 local FLAG_USED = 1;
@@ -31,8 +32,8 @@ local usage=[[
 list file is a lua table, like this:
 
 all_urls={
-{"http://www.163.com","163.html"},
-{"http://www.baidu.com","baidu.html"},
+{"wget http://www.baidu.com -O baidu.html"},
+{"wget http://www.csdn.net -O csdn.html"},
 };
 ]];
 
@@ -40,12 +41,33 @@ all_urls={
 local kList = "--list";
 local kThreads = "--threads";
 local kChild = "--child";
-local kUrl = "--url";
-local kSaveFile = "--save-file";
-
+local kCommand = "--cmd";
+local kRetry = "--retry";
 
 function child_mode_main(cmd)
+    if not cmd:HasKey(kCommand) then
+        printfnl("error: %s is missing.",kCommand);
+        return
+    end
+    
+    if not cmd:HasKey(kChild) then
+        printfnl("error: %s is missing.",kChild);
+        return
+    end
 
+    local command = cmd:GetValueByKey(kCommand);
+    local slot =  tonumber(cmd:GetValueByKey(kChild));
+
+    g_mmap_file = MMapFile.new();
+    if not g_mmap_file:OpenReadWrite(MMAP_FILE_NAME) then
+        return exit("open mmap file %s fail.",MMAP_FILE_NAME);
+    end
+    g_mmap_stream = g_mmap_file:Stream();
+
+    local ret = os.execute(command);
+
+    g_mmap_stream:Seek(slot);
+    g_mmap_stream:PutInt8(ret and FLAG_SUCCESS or FLAG_FAIL);
 end
 
 function create_shared_mmap_file(bytes)
@@ -70,6 +92,24 @@ function is_all_complete(list)
     return true;
 end
 
+function update_progress(list)
+    for i=0,g_threads-1,1 do
+        local flag = g_mmap_stream:CharAt(i);
+        local item = find_url_by_slot(list,i);
+        if item then
+            if flag == FLAG_SUCCESS then
+                printf("slot %d download success, cmd=%s",i,item[1]);                
+                item.status = STATUS_SUCCESS;
+                g_mmap_stream:SetChar(i,FLAG_UNUSED);
+            elseif flag == FLAG_FAIL then
+                item.status = STATUS_FAILED;
+                printf("slot %d fail to download, cmd=%s",i,item[1]);                
+                g_mmap_stream:SetChar(i,FLAG_UNUSED);
+            end            
+        end
+    end
+end
+
 function alloc_empty_slot()
     for i=0,g_threads-1,1 do
         local flags = g_mmap_stream:CharAt(i);
@@ -80,23 +120,51 @@ function alloc_empty_slot()
     end
 end
 
-function find_first_not_start_url(list)
+function find_first_pending_url(list)
     for _,item in ipairs(list) do
         if item.status == STATUS_NOT_START then
+           return item;
+        end
+
+        if item.status == STATUS_FAILED then
+            item.retries = item.retries+1;
+            if g_retry > 0 and item.retries > g_retry then
+                return
+            end
+            return item;
+        end
+    end
+end
+
+function find_url_by_slot(list, slot)
+    for _,item in ipairs(list) do
+        if item.slot == slot then
            return item;
         end
     end
 end
 
+function run_child_process(item,slot)
+    local command = item[1];
+    printf("start '%s' at slot %d",command,slot);
+
+    local child_cmd = string.format(
+        "wget --child=%d --cmd=\"%s\"",
+        slot,command
+    );
+    self_call(child_cmd);
+end
+
 function host_mode_main(cmd)
     if not cmd:HasKey(kList) then
-        printnl("%s is missing.",kList);
+        printfnl("error: %s is missing.",kList);
+        printnl("usage:");
+        cmd:PrintHelp();
         print(usage);
         return
     end
 
     local threads = 10;
-
     local list_file = cmd:GetValueByKey(kList);
     exec_file(list_file);
     if not all_urls then
@@ -105,12 +173,17 @@ function host_mode_main(cmd)
 
     for _,item in ipairs(all_urls) do
         item.status = STATUS_NOT_START;
+        item.retries = 0;
     end
 
     if cmd:HasKey(kThreads) then
         threads = tonumber(cmd:GetValueByKey(kThreads));
     end
 
+    if cmd:HasKey(kRetry) then
+        g_retry = tonumber(cmd:GetValueByKey(kRetry));
+    end
+    
     printf("threads = %d",threads);
     if threads <= 0 or threads > 200 then
         return exit("threads must between 1-200");
@@ -120,18 +193,23 @@ function host_mode_main(cmd)
     create_shared_mmap_file(threads);
 
     while not is_all_complete(all_urls) do
+        local find = false;
+
         local slot = alloc_empty_slot();
         if slot then
-            local item = find_first_not_start_url(all_urls);
+            local item = find_first_pending_url(all_urls);
             if item then
                 item.status = STATUS_DOWNLOADING;
                 item.slot = slot;
-                printf("start download %s at slot %d",item[1],slot);
-                
+                run_child_process(item,slot);
+                find = true;
             end
         end
 
-        App.Sleep(1000);
+        if not find then
+            update_progress(all_urls);
+            App.Sleep(1000);
+        end
     end
 
     g_mmap_file:Close();
@@ -144,17 +222,19 @@ function app_main(args)
     local cmd = CommandLine.new();
     cmd:AddKeyType(kList,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"url list file");
     cmd:AddKeyType(kThreads,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"max number of download process, default is 10");
-    cmd:AddKeyType(kChild,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"child index.inner use only");
+    cmd:AddKeyType(kChild,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"child index, child process only");
+    cmd:AddKeyType(kCommand,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"command to run, child process only");
+    cmd:AddKeyType(kRetry,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"maxmium retries, default is -1");
     cmd:LoadFromArgv(args);
     
-    local child_index = 0; 
+    local child_index = -1; 
     local threads = 10;
 
     if cmd:HasKey(kChild) then
         child_index = tonumber(cmd:GetValueByKey(kChild));
     end
     
-    if child_index > 0 then --child mode
+    if child_index >= 0 then --child mode
         return child_mode_main(cmd);
     else
         return host_mode_main(cmd);
