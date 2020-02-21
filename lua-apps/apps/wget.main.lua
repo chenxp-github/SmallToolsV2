@@ -14,7 +14,7 @@ end
 local MMAP_FILE_NAME="/tmp/my_tools_wget.bin";
 local g_mmap_file = nil;
 local g_mmap_stream = nil;
-local g_threads = 10;
+local g_threads = 20;
 local g_retry = -1;
 
 local FLAG_UNUSED = 0;
@@ -39,7 +39,7 @@ all_urls={
 
 
 local kList = "--list";
-local kThreads = "--threads";
+local kThreads = "--g_threads";
 local kChild = "--child";
 local kCommand = "--cmd";
 local kRetry = "--retry";
@@ -100,9 +100,11 @@ function update_progress(list)
             if flag == FLAG_SUCCESS then
                 printf("slot %d download success, cmd=%s",i,item[1]);                
                 item.status = STATUS_SUCCESS;
+                item.slot = -1;
                 g_mmap_stream:SetChar(i,FLAG_UNUSED);
             elseif flag == FLAG_FAIL then
                 item.status = STATUS_FAILED;
+                item.slot = -1;
                 printf("slot %d fail to download, cmd=%s",i,item[1]);                
                 g_mmap_stream:SetChar(i,FLAG_UNUSED);
             end            
@@ -149,7 +151,7 @@ function run_child_process(item,slot)
     printf("start '%s' at slot %d",command,slot);
 
     local child_cmd = string.format(
-        "wget --child=%d --cmd=\"%s\"",
+        "wget --child=%d --cmd=\"%s\" &",
         slot,command
     );
     self_call(child_cmd);
@@ -164,8 +166,7 @@ function host_mode_main(cmd)
         return
     end
 
-    local threads = 10;
-    local list_file = cmd:GetValueByKey(kList);
+    local list_file = FileManager.ToAbsPath(cmd:GetValueByKey(kList));
     exec_file(list_file);
     if not all_urls then
         return exit("can not find all_urls, maybe lua syntax is wrong.");
@@ -177,20 +178,20 @@ function host_mode_main(cmd)
     end
 
     if cmd:HasKey(kThreads) then
-        threads = tonumber(cmd:GetValueByKey(kThreads));
+        g_threads = tonumber(cmd:GetValueByKey(kThreads));
     end
 
     if cmd:HasKey(kRetry) then
         g_retry = tonumber(cmd:GetValueByKey(kRetry));
     end
     
-    printf("threads = %d",threads);
-    if threads <= 0 or threads > 200 then
+    printf("threads = %d",g_threads);
+    if g_threads <= 0 or g_threads > 200 then
         return exit("threads must between 1-200");
     end
 
-    g_threads = threads;
-    create_shared_mmap_file(threads);
+    g_threads = g_threads;
+    create_shared_mmap_file(g_threads);
 
     while not is_all_complete(all_urls) do
         local find = false;
@@ -228,7 +229,7 @@ function app_main(args)
     cmd:LoadFromArgv(args);
     
     local child_index = -1; 
-    local threads = 10;
+    local g_threads = 10;
 
     if cmd:HasKey(kChild) then
         child_index = tonumber(cmd:GetValueByKey(kChild));
