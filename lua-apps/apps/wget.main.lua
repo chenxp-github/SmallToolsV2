@@ -88,6 +88,11 @@ function is_all_complete(list)
         if item.status == STATUS_DOWNLOADING then
             return false;
         end
+        if item.status == STATUS_FAILED then
+            if g_retry > 0 and item.retries < g_retry then
+                return false;
+            end
+        end
     end
     return true;
 end
