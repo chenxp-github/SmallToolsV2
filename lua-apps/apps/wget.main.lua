@@ -11,7 +11,7 @@ end
 
 -----------------------------------------------------------
 -----------------------------------------------------------
-local MMAP_FILE_NAME="/tmp/my_tools_wget.bin";
+local MMAP_FILE_NAME="/tmp/.my_tools_wget.bin";
 local g_mmap_file = nil;
 local g_mmap_stream = nil;
 local g_threads = 20;
@@ -39,7 +39,7 @@ all_urls={
 
 
 local kList = "--list";
-local kThreads = "--g_threads";
+local kThreads = "--threads";
 local kChild = "--child";
 local kCommand = "--cmd";
 local kRetry = "--retry";
@@ -195,7 +195,6 @@ function host_mode_main(cmd)
         return exit("threads must between 1-200");
     end
 
-    g_threads = g_threads;
     create_shared_mmap_file(g_threads);
 
     while not is_all_complete(all_urls) do
