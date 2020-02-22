@@ -89,7 +89,9 @@ function is_all_complete(list)
             return false;
         end
         if item.status == STATUS_FAILED then
-            if g_retry > 0 and item.retries < g_retry then
+            if g_retry <= 0 then
+                return false;
+            elseif item.retries < g_retry then
                 return false;
             end
         end
