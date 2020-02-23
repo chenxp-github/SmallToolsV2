@@ -315,11 +315,11 @@ static status_t tcpsocket_newtcpconnector(lua_State *L)
 			tcp_socket->Init();
 			tcp_socket->TransferSocketFd(tcp_client);
 			tcp_socket->SetBlocking(false);			
-			tcpsocket_callback_ontcpconnectorevent(L,callback,false,event,tcp_socket);
+			tcpsocket_callback_ontcpconnectorevent(L,callback,true,event,tcp_socket);
         }
         else
         {
-			tcpsocket_callback_ontcpconnectorevent(L,callback,false,event,NULL);
+			tcpsocket_callback_ontcpconnectorevent(L,callback,true,event,NULL);
         }
         return OK;
     }

@@ -5,6 +5,15 @@
 
 #define CBID_PARAM_INDEX 10
 
+#define RELEASE_CALLBACK(ptasktimer) do{\
+if(ptasktimer->Callback()->GetParamType(CBID_PARAM_INDEX) == PARAM_TYPE_INT)\
+{\
+    int old_cbid = ptasktimer->Callback()->GetParamInt(CBID_PARAM_INDEX);\
+    CLuaVm::ReleaseFunction(L,old_cbid);\
+    ptasktimer->Callback()->SetParamInt(CBID_PARAM_INDEX,LUA_REFNIL);\
+}\
+}while(0)\
+
 CTaskTimer *get_tasktimer(lua_State *L, int idx)
 {
     lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_TASKTIMER);
@@ -54,8 +63,7 @@ static int tasktimer_destroy(lua_State *L)
     CTaskTimer *ptasktimer = (CTaskTimer*)ud->p;
     if(!(ud->is_attached))
     {
-        int cbid = ptasktimer->Callback()->GetParamInt(CBID_PARAM_INDEX);
-        CLuaVm::ReleaseFunction(L,cbid);
+        RELEASE_CALLBACK(ptasktimer);
         ptasktimer->Quit();//do not use DEL()
     }
     return 0;
@@ -115,6 +123,9 @@ static int tasktimer_stop(lua_State *L)
 {
     CTaskTimer *ptasktimer = get_tasktimer(L,1);
     ASSERT(ptasktimer);
+
+    RELEASE_CALLBACK(ptasktimer);
+
     int _ret_0 = (int)ptasktimer->Stop();
     lua_pushboolean(L,_ret_0);
     return 1;
@@ -144,12 +155,8 @@ static int tasktimer_setcallback(lua_State *L)
     int onTimerCallback = CLuaVm::ToFunction(L,2);
     ASSERT(onTimerCallback);
     
-    if(ptasktimer->Callback()->GetParamType(CBID_PARAM_INDEX) == PARAM_TYPE_INT)
-    {
-        int old_cbid = ptasktimer->Callback()->GetParamInt(CBID_PARAM_INDEX);
-        CLuaVm::ReleaseFunction(L,old_cbid);
-    }
-    
+    RELEASE_CALLBACK(ptasktimer);    
+
     BEGIN_CLOSURE_FUNC(trigger)
     {
         CLOSURE_PARAM_INT(interval,0);
