@@ -24,6 +24,12 @@
 #undef _WIN32_
 #endif
 
+#ifdef __aarch64__
+#define _LINUX64_   1
+#undef _LINUX_
+#undef _WIN32_
+#endif
+
 #ifdef WIN32 
 #undef _LINUX_
 #undef  _LINUX64_
