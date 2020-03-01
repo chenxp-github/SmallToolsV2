@@ -480,6 +480,10 @@ bool CXmlNode::GetBooleanValue()
 {
     LOCAL_MEM(tmp);
     this->GetStringValue(&tmp);
+    if(tmp.StrCmp("1") == 0)
+        return true;
+    if(tmp.StrCmp("0") == 0)
+        return false;
     return (tmp.StrICmp("true") == 0);
 }
 

@@ -9,9 +9,10 @@ CMiniBson bson;\
 bson.Init();\
 bson.SetRawBuf(__##bson,size);\
 
-#define BSON_CHECK(f) do{if(!(f))\
+#define BSON_CHECK(f) do{if(!(f)){\
 	__LOG("check fail \"%s\" at file=%s line=%d"),#f,__FILE__,__LINE__);\
-}while(0)\
+    return 0;\
+}}while(0)\
 
 class CMiniBson{
 public:
