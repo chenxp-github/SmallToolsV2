@@ -573,16 +573,16 @@ status_t CMiniBson::ResetPointer()
 status_t CMiniBson::GetDocument(const char *name, CMiniBson *doc)
 {
     ASSERT(doc);
-    
-    CHECK_TYPE_AND_NAME(BSON_TYPE_DOCUMENT,name);
-    int32_t size;
-    fsize_t off = this->mData->GetOffset();
-    this->mData->Read(&size,sizeof(size));
 
 	SAVE_WEAK_REF_ID(*doc,w);
     doc->Destroy();
     doc->Init();
 	RESTORE_WEAK_REF_ID(*doc,w);
+
+    CHECK_TYPE_AND_NAME(BSON_TYPE_DOCUMENT,name);
+    int32_t size;
+    fsize_t off = this->mData->GetOffset();
+    this->mData->Read(&size,sizeof(size));
 
     CMem *data = doc->GetRawData();
     char *buf = this->mData->GetRawBuf();
@@ -598,6 +598,11 @@ status_t CMiniBson::GetArray(const char *name, CMiniBson *doc,int32_t *array_len
     ASSERT(doc && array_length);
     *array_length = 0;
 
+	SAVE_WEAK_REF_ID(*doc,w);
+    doc->Destroy();
+    doc->Init();
+	RESTORE_WEAK_REF_ID(*doc,w);
+
     CHECK_TYPE_AND_NAME(BSON_TYPE_ARRAY,name);
 
     int32_t size;
@@ -607,11 +612,6 @@ status_t CMiniBson::GetArray(const char *name, CMiniBson *doc,int32_t *array_len
     this->mData->Read(&size,sizeof(size));
     
     size -= sizeof(int32_t);
-
-	SAVE_WEAK_REF_ID(*doc,w);
-    doc->Destroy();
-    doc->Init();
-	RESTORE_WEAK_REF_ID(*doc,w);
 
     CMem *data = doc->GetRawData();
     char *buf = this->mData->GetRawBuf();
