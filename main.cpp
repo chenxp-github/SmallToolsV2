@@ -16,9 +16,25 @@
 
 int g_argc = 0;
 char **g_argv = NULL;
+int g_abnormal_exit = 0;
+
+#if (!HAVE_WINDOWS_H)
+void on_terminate(int signatl) 
+{
+    printf("process %d:catch signal %d\n",getpid(),signatl);
+    g_globals.QuitMainLoop();
+    g_abnormal_exit = 1;
+}
+#endif
 
 int main(int argc, char **argv)
 {
+#if (!HAVE_WINDOWS_H)
+    signal(SIGINT, on_terminate);
+    signal(SIGTSTP,on_terminate);    
+    signal(SIGTERM,on_terminate); 
+#endif
+
     CSocket::StartNet();
     g_globals.Init();
     g_globals_ptr = &g_globals;
@@ -27,6 +43,10 @@ int main(int argc, char **argv)
     int ok = g_globals.Main(argc, argv);
     g_globals.Destroy();
     CSocket::EndNet();
+
+    if(g_abnormal_exit)
+        return 2;
+
     return ok ? 0:1;
 }
 
