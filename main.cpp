@@ -24,6 +24,7 @@ void on_terminate(int signatl)
     printf("process %d:catch signal %d\n",getpid(),signatl);
     g_globals.QuitMainLoop();
     g_abnormal_exit = 1;
+    signal(signatl, SIG_DFL);
 }
 #endif
 
