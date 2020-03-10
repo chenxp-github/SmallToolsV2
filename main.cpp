@@ -21,10 +21,19 @@ int g_abnormal_exit = 0;
 #if (!HAVE_WINDOWS_H)
 void on_terminate(int signatl) 
 {
-    printf("process %d:catch signal %d\n",getpid(),signatl);
-    g_globals.QuitMainLoop();
+    printf("process %d:catch signal %d, exit\n",getpid(),signatl);
     g_abnormal_exit = 1;
-    signal(signatl, SIG_DFL);
+
+    if(g_globals.m_MainLoopRunning)
+    {
+        g_globals.QuitMainLoop();    
+    }
+    else
+    {
+        //default signal handler
+        signal(signatl, SIG_DFL);
+        kill(getpid(),signatl);
+    }
 }
 #endif
 

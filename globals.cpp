@@ -120,7 +120,7 @@ status_t CGlobals::Init()
     m_TaskMgr.Init(1024);
 	m_TaskMgr.Callback()->SetFunc(on_taskmgr_event);
 	m_TaskMgr.Callback()->SetParamPointer(10,this);
-    m_MainLoopRunning = true;
+    m_MainLoopRunning = false;
     m_MainLuaFileList.Init(1024);
     m_LuaFilesPath.Init();
 	PEER_GLOBALS(g);
@@ -148,6 +148,7 @@ status_t CGlobals::Destroy()
 
 status_t CGlobals::MainLoop()
 {
+    m_MainLoopRunning = true;
     while(m_MainLoopRunning)
     {   
 		if(!m_TaskMgr.Schedule())
@@ -157,7 +158,6 @@ status_t CGlobals::MainLoop()
 #else
 	m_Epoll.Wait(1);
 #endif        
-
     }
     return OK;
 }
