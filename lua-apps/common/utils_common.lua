@@ -177,6 +177,12 @@ function execute_command(cmd)
     return str;
 end
 
+--执行一个命令，支持格式化--
+function execf(...)
+    local cmd = string.format(...);
+    printnl("exec:"..cmd);
+    return os.execute(cmd);
+end
 
 --得到当前的git 的 branch 值--
 function git_current_branch(folder)
