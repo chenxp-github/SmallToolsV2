@@ -11,6 +11,7 @@ static bool xmlnode_is_userdata_valid(lua_userdata *ud)
     if(ud->p == NULL)return false;
     if(ud->__weak_ref_id == 0) return false;
     CXmlNode *p = (CXmlNode*)ud->p;
+    CHECK_IS_UD_READABLE(CXmlNode,ud);
     return p->__weak_ref_id == ud->__weak_ref_id;
 }    
 
@@ -408,6 +409,14 @@ static status_t xmlnode_getchild(lua_State *L)
     return xmlnode_getchild_v2(L);
 }
 
+static status_t xmlnode_restartattrib(lua_State *L)
+{
+    CXmlNode *pxmlnode = get_xmlnode(L,1);
+    ASSERT(pxmlnode);
+    status_t ret0 = pxmlnode->RestartAttrib();
+    lua_pushboolean(L,ret0);
+    return 1;
+}
 /****************************************************/
 static const luaL_Reg xmlnode_funcs_[] = {
     {"new",xmlnode_new},    
@@ -432,6 +441,7 @@ static const luaL_Reg xmlnode_funcs_[] = {
     {"GetPath",xmlnode_getpath},
     {"GetValue",xmlnode_getvalue},
     {"GetNext",xmlnode_getnext},    
+    {"RestartAttrib",xmlnode_restartattrib},
     {NULL,NULL},
 };
 

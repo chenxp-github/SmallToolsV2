@@ -9,6 +9,7 @@ static bool mem_is_userdata_valid(lua_userdata *ud)
     if(ud == NULL)return false;
     if(ud->p == NULL)return false;
     if(ud->__weak_ref_id == 0) return false;
+    CHECK_IS_UD_READABLE(CMem,ud);
     CMem *p = (CMem*)ud->p;
     return p->__weak_ref_id == ud->__weak_ref_id;
 }    

@@ -50,6 +50,7 @@ static bool tasktimer_is_userdata_valid(lua_userdata *ud)
     if(ud == NULL)return false;
     if(ud->p == NULL)return false;
     if(ud->__weak_ref_id == 0) return false;
+    CHECK_IS_UD_READABLE(CTaskTimer,ud);
     CTaskTimer *p = (CTaskTimer*)ud->p;
     return p->__weak_ref_id == ud->__weak_ref_id;
 }
@@ -156,7 +157,7 @@ static int tasktimer_setcallback(lua_State *L)
     ASSERT(onTimerCallback);
     
     RELEASE_CALLBACK(ptasktimer);    
-
+    
     BEGIN_CLOSURE_FUNC(trigger)
     {
         CLOSURE_PARAM_INT(interval,0);

@@ -13,11 +13,13 @@ CXmlNode::CXmlNode()
     WEAK_REF_ID_INIT();    
     this->next = NULL;
 }
+
 CXmlNode::~CXmlNode()
 {
     WEAK_REF_ID_CLEAR();
     this->Destroy();
 }
+
 status_t CXmlNode::Init()
 {    
     this->mf_attrib = NULL;
@@ -33,6 +35,7 @@ status_t CXmlNode::Init()
     this->value_type = VALUE_TYPE_NORMAL;
     return OK;
 }
+
 status_t CXmlNode::Destroy()
 {
     DEL(this->mem_name);
@@ -40,6 +43,7 @@ status_t CXmlNode::Destroy()
     DEL(this->mf_value);
     return OK;
 }
+
 status_t CXmlNode::Print()
 {
     CXmlNode *p;
@@ -66,6 +70,7 @@ status_t CXmlNode::Print()
 
     return OK;
 }
+
 CXmlNode * CXmlNode::Alloc()
 {
     CXmlNode *p;
@@ -112,6 +117,7 @@ status_t CXmlNode::AddChild(CXmlNode *node)
     node->parent = this;
     return OK;
 }
+
 CXmlNode * CXmlNode:: GetChild(int i)
 {
     int c = 0;
@@ -144,6 +150,7 @@ CXmlNode *CXmlNode::GetParent()
 {
     return this->parent;
 }
+
 status_t CXmlNode::AddAttrib(CFileBase *file)
 {
     ASSERT(file);
@@ -156,6 +163,7 @@ status_t CXmlNode::AddAttrib(CFileBase *file)
     this->mf_attrib->Seek(0);
     return OK;
 }
+
 status_t CXmlNode::AddAttrib(const char *attrib, const char *val)
 {
     if(this->mf_attrib == NULL)
@@ -184,11 +192,13 @@ status_t CXmlNode::SetName(const char *name)
     CMem mem(name);
     return SetName(&mem);
 }
+
 status_t CXmlNode::AddValueData(const char *str)
 {
     CMem mem(str);
     return this->AddValueData(&mem);
 }
+
 status_t CXmlNode::AddValueData(CFileBase *file)
 {
     char ch;
@@ -225,11 +235,13 @@ status_t CXmlNode::AddValueData(CFileBase *file)
 
     return OK;
 }
+
 status_t CXmlNode::SetValueType(int type)
 {
     this->value_type = type;
     return OK;
 }
+
 status_t CXmlNode::WriteToFile(CFileBase *file)
 {
     ASSERT(file);
@@ -280,6 +292,7 @@ status_t CXmlNode::WriteToFile(CFileBase *file)
     file->Puts(">\r\n");
     return OK;
 }
+
 status_t CXmlNode::GetPathToStk(CMemStk *ss)
 {
     CXmlNode *p;
@@ -293,6 +306,7 @@ status_t CXmlNode::GetPathToStk(CMemStk *ss)
     }
     return OK;
 }
+
 status_t CXmlNode::GetPath(CFileBase *path)
 {
     CMemStk ss;
@@ -323,6 +337,7 @@ status_t CXmlNode::GetPath(CFileBase *path)
     }
     return OK;
 }
+
 CXmlNode * CXmlNode::GetNodeByPath(const char *path)
 {
     CXmlNode *p,*pret;
@@ -340,11 +355,13 @@ CXmlNode * CXmlNode::GetNodeByPath(const char *path)
     }
     return NULL;
 }
+
 const char *CXmlNode::GetName()
 {
     ASSERT(this->mem_name);
     return this->mem_name->CStr();
 }
+
 status_t CXmlNode::GetAttrib(const char *name, CFileBase *val)
 {
     ASSERT(name && val);
@@ -369,6 +386,14 @@ status_t CXmlNode::GetAttrib(const char *name, CFileBase *val)
     val->SetSize(0);
     return ERROR;
 }
+
+status_t CXmlNode::RestartAttrib()
+{
+    if(mf_attrib)
+        mf_attrib->Seek(0);
+    return OK;
+}
+
 status_t CXmlNode::GetNextAttrib(CFileBase *name, CFileBase *val)
 {
     ASSERT(name && val);
@@ -504,16 +529,19 @@ CXml::CXml()
     WEAK_REF_ID_INIT();
     this->root = NULL;
 }
+
 CXml::~CXml()
 {
     WEAK_REF_ID_CLEAR();
     Destroy();
 }
+
 status_t CXml::Init()
 {    
     this->root = NULL;
     return OK;
 }
+
 status_t  CXml::Destroy()
 {
     if( this->root == NULL)
@@ -523,10 +551,12 @@ status_t  CXml::Destroy()
 
     return OK;
 }
+
 CXmlNode * CXml:: GetRoot()
 {
     return this->root;
 }
+
 status_t CXml:: AddRoot(CXmlNode *node)
 {
     if(this->root != NULL)
@@ -534,6 +564,7 @@ status_t CXml:: AddRoot(CXmlNode *node)
     this->root = node;
     return OK;
 }
+
 status_t CXml::LoadXml(CFileBase *file)
 {
     status_t ret;
@@ -592,6 +623,7 @@ status_t CXml::LoadXml(CFileBase *file)
     }
     return OK;
 }
+
 status_t CXml::WriteToFile(CFileBase *file,CMem *header)
 {
     ASSERT(this->root);
@@ -599,6 +631,7 @@ status_t CXml::WriteToFile(CFileBase *file,CMem *header)
     file->Puts(header);
     return this->root->WriteToFile(file);
 }
+
 status_t CXml::WriteToFile(const char *fn,CMem *header)
 {
     CFile file;
@@ -609,6 +642,7 @@ status_t CXml::WriteToFile(const char *fn,CMem *header)
     file.Destroy();
     return OK;
 }
+
 CXmlNode * CXml::GetNodeByPath(const char *path)
 {
     ASSERT(path);
@@ -618,6 +652,7 @@ CXmlNode * CXml::GetNodeByPath(const char *path)
     else
         return NULL;
 }
+
 status_t CXml::LoadXml(const char *fn)
 {
     CMemFile mf;

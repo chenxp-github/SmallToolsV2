@@ -12,6 +12,7 @@ CMessagePeer *get_messagepeer(lua_State *L, int idx)
     lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_MESSAGEPEER);
     ASSERT(ud && ud->p);
     ASSERT(ud->__weak_ref_id != 0);
+    CHECK_IS_UD_READABLE(CMessagePeer,ud);
     CMessagePeer *p = (CMessagePeer*)ud->p;
     ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
     return p;

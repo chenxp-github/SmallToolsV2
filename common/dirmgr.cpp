@@ -311,6 +311,7 @@ status_t CDirMgr::IsDirExist(CMem *dir)
 
     return FALSE;
 }
+
 status_t CDirMgr::IsFileExist(CMem *file)
 {
     ASSERT(file);
@@ -321,6 +322,14 @@ status_t CDirMgr::IsFileExist(CMem *file)
     crt_fclose(fp);
     return TRUE;
 }
+
+status_t CDirMgr::IsFileExist(const char *fn)
+{
+    ASSERT(fn);
+    CMem mem(fn);
+    return IsFileExist(&mem);
+}
+
 char CDirMgr::GetPathSplitor()
 {
     return crt_get_path_splitor();
@@ -335,6 +344,13 @@ status_t CDirMgr::DeleteFile(CMem *filename)
     ASSERT(filename);
     return crt_unlink(filename->CStr());
 }
+
+status_t CDirMgr::DeleteFile(const char *filename)
+{
+    ASSERT(filename);
+    return crt_unlink(filename);
+}
+
 status_t CDirMgr::DeleteDir(CMem *dir)
 {
     ASSERT(dir);

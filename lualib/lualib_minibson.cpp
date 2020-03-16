@@ -10,6 +10,7 @@ bool lua_is_minibson(lua_State *L, int idx)
     lua_userdata *ud = (lua_userdata*)luaL_testudata(L, idx, LUA_USERDATA_MINIBSON);
     if(!ud)return false;
     if(!ud->p)return false;
+    CHECK_IS_UD_READABLE(CMiniBson,ud);
     CMiniBson *p = (CMiniBson*)ud->p;
     if(p->__weak_ref_id != ud->__weak_ref_id)
         return false;

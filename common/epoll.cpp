@@ -85,7 +85,7 @@ status_t CEpoll::DelFd(int fd)
 static status_t copy_fd_set(fd_set *to, fd_set *from)
 {
 	to->fd_count = from->fd_count;
-	for(int i = 0; i < from->fd_count; i++)
+	for(uint32_t i = 0; i < from->fd_count; i++)
 	{
 		to->fd_array[i] = from->fd_array[i];
 	}
@@ -135,7 +135,7 @@ int CEpoll::Wait(int ms, uint32_t opt)
 
 	if(opt & WAIT_OPT_AUTO_REMOVE)
     {        
-		for(int i = 0; i < error_set.fd_count; i++)
+		for(uint32_t i = 0; i < error_set.fd_count; i++)
 		{
 			FD_CLR(error_set.fd_array[i],&m_fd_set);
 			if(opt & WAIT_OPT_OPEN_LOG)

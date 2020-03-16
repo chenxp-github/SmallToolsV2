@@ -51,6 +51,7 @@ public:
     CXmlNode *GetNodeByPath(const char *path);
     const char *GetName();
     status_t GetAttrib(const char *name, CFileBase *val);
+    status_t RestartAttrib();
     status_t GetNextAttrib(CFileBase *name, CFileBase *val);
     CXmlNode *GetChildByName(const char *child_name);
     CMemFile *GetValue();

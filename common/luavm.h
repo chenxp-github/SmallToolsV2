@@ -8,6 +8,14 @@
 
 #define MAX_LUA_FUNCS 4096
 
+#if HAVE_WINDOWS_H
+#define CHECK_IS_UD_READABLE(type,ud)\
+if(IsBadReadPtr(ud->p,sizeof(type)))\
+return 0;
+#else
+#define CHECK_IS_UD_READABLE(type,ud)
+#endif
+
 typedef struct {
     void *p;
     int is_attached;

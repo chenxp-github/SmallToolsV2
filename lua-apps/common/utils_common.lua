@@ -123,7 +123,7 @@ function remove_path_prefix(full_name,prefix)
         return string.sub(rpath,2);
     else
         return rpath;
-    end    
+    end
 end
 
 
