@@ -157,7 +157,7 @@ status_t CXmlNode::AddAttrib(CFileBase *file)
     if(this->mf_attrib == NULL)
     {
         NEW(this->mf_attrib,CMemFile);
-        this->mf_attrib->Init(1024,10);
+        this->mf_attrib->Init(1024,16);
     }
     this->mf_attrib->WriteFile(file);
     this->mf_attrib->Seek(0);
@@ -169,7 +169,7 @@ status_t CXmlNode::AddAttrib(const char *attrib, const char *val)
     if(this->mf_attrib == NULL)
     {
         NEW(this->mf_attrib,CMemFile);
-        this->mf_attrib->Init(1024,10);
+        this->mf_attrib->Init(1024,16);
     }
     this->mf_attrib->Puts(attrib);
     this->mf_attrib->Puts("=\"");
@@ -417,6 +417,7 @@ status_t CXmlNode::GetNextAttrib(CFileBase *name, CFileBase *val)
     mem.ReadWord(name);
     mem.ReadWord(&mem_temp);
     mem.ReadWord(&mem_temp);
+
     ASSERT(mem_temp.C(0) == '\"');
     if(!mem.ReadCStr(val))
     {
