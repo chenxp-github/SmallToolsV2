@@ -49,7 +49,7 @@ status_t CXmlReader::EnterNextItem()
     fsize_t n,b_off;
     int ret_code = ERROR;
     CMem *pstr;
-    LOCAL_MEM_WITH_SIZE(buf,32*1024);
+    LOCAL_MEM_WITH_SIZE(buf,1024);
     char *pbuf = buf.GetRawBuf();
 
     this->mf_value->SetSize(0);

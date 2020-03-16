@@ -417,7 +417,6 @@ status_t CXmlNode::GetNextAttrib(CFileBase *name, CFileBase *val)
     mem.ReadWord(name);
     mem.ReadWord(&mem_temp);
     mem.ReadWord(&mem_temp);
-
     ASSERT(mem_temp.C(0) == '\"');
     if(!mem.ReadCStr(val))
     {
