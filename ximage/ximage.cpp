@@ -9348,10 +9348,7 @@ int CxImage::Init()
 }
 int CxImage::Destroy()
 {
-    long n; 
-    
-    WEAK_REF_DESTROY();
-
+    long n;     
     if (info.pGhost==NULL)
     {
         if (ppLayers) 
@@ -11241,6 +11238,7 @@ void CxImage::SetTransColor(RGBQUAD rgb)
 
 int CxImage::DestroyAll()
 {
+    WEAK_REF_DESTROY();
     this->DestroyFrames();
     this->Destroy();
     return OK;

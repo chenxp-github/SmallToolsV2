@@ -256,7 +256,6 @@ status_t CxImageHelper::DrawString(CxImage *img, LOGFONTW *log_font, CRect *layo
     }
     return OK;
 }
-
 /////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -412,9 +411,11 @@ float CxImageHelper::CalcuSimilarity(CxImage *img1, CxImage *img2, int threshold
     {
         if(w1 != diff_img->GetWidth() || h1 != diff_img->GetHeight())
         {
+            SAVE_WEAK_REF_ID(*diff_img,w);
             diff_img->DestroyAll();
             diff_img->Init();
             diff_img->Create(w1,h1,24,CXIMAGE_FORMAT_BMP);
+            RESTORE_WEAK_REF_ID(*diff_img,w);
         }
     }
     

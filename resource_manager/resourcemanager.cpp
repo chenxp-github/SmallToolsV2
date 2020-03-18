@@ -183,7 +183,7 @@ status_t CResourceManager::DumpResourceFile(CFileBase *out)
     ASSERT(out);
 
     CIndexFile *index_file = &m_HashFile.m_IndexFile;
-    int total_block = index_file->GetBlockCount() - 1; //skip meta data
+    int total_block = (int)index_file->GetBlockCount() - 1; //skip meta data
 
     int total = 0;
     for(int i = 0; i < total_block; i++)
