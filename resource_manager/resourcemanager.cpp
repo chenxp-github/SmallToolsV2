@@ -12,7 +12,7 @@ CResourceManager::~CResourceManager()
 }
 status_t CResourceManager::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->m_HashMap.InitBasic();
     m_HashFile.InitBasic();
     m_PathPrefix.InitBasic();
@@ -21,7 +21,6 @@ status_t CResourceManager::InitBasic()
 status_t CResourceManager::Init()
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
     this->m_HashMap.Init(1024*10);
     m_HashFile.Init();
     m_PathPrefix.Init();
@@ -30,6 +29,7 @@ status_t CResourceManager::Init()
 }
 status_t CResourceManager::Destroy()
 {
+    WEAK_REF_DESTROY();
     m_PathPrefix.Destroy();
     m_HashMap.Destroy();
     m_HashFile.Destroy();
@@ -94,10 +94,9 @@ status_t CResourceManager::LoadResourceFile(CFileBase *i_file)
 status_t CResourceManager::SearchResource(CResource *key, CResource *value)
 {
     ASSERT(key && value);
-
-    int old_weak_ref_id = value->__weak_ref_id;
+    SAVE_WEAK_REF_ID(*value,w);
     status_t ret = m_HashFile.Search(key,value);
-    value->__weak_ref_id = old_weak_ref_id;
+    RESTORE_WEAK_REF_ID(*value,w);
     return ret;
 }
 

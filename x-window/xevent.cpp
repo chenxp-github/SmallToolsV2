@@ -2,81 +2,81 @@
 #include "syslog.h"
 #include "mem_tool.h"
 
-CXEvent::CXEvent()
+CxEvent::CxEvent()
 {
     this->InitBasic();
 }
-CXEvent::~CXEvent()
+CxEvent::~CxEvent()
 {
     this->Destroy();
 }
-status_t CXEvent::InitBasic()
+status_t CxEvent::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     memset(&m_Event,0,sizeof(m_Event));
     return OK;
 }
-status_t CXEvent::Init()
+status_t CxEvent::Init()
 {
-    this->InitBasic();
-    WEAK_REF_ID_INIT();
+    this->InitBasic();    
     return OK;
 }
-status_t CXEvent::Destroy()
+status_t CxEvent::Destroy()
 {
+    WEAK_REF_DESTROY();
     this->InitBasic();
     return OK;
 }
-int CXEvent::Comp(CXEvent *_p)
+int CxEvent::Comp(CxEvent *_p)
 {
     ASSERT(_p);
     if(this==_p)return 0;
     return 0;
 }
-status_t CXEvent::Copy(CXEvent *_p)
+status_t CxEvent::Copy(CxEvent *_p)
 {
     ASSERT(_p);
     if(this == _p)return OK;
     memcpy(&m_Event,&_p->m_Event,sizeof(m_Event));
     return OK;
 }
-status_t CXEvent::Copy(NativeXEvent *event)
+status_t CxEvent::Copy(NativeXEvent *event)
 {
     ASSERT(event);
     memcpy(&m_Event,event,sizeof(m_Event));
     return OK;
 }
-status_t CXEvent::Print(CFileBase *_buf)
+status_t CxEvent::Print(CFileBase *_buf)
 {
     return OK;
 }
-int CXEvent::GetType()
+int CxEvent::GetType()
 {
     return m_Event.type;
 }
-uint32_t CXEvent::GetSerial()
+uint32_t CxEvent::GetSerial()
 {
     return m_Event.xkey.serial;
 }
-uint32_t CXEvent::GetSendEvent()
+uint32_t CxEvent::GetSendEvent()
 {
     return m_Event.xkey.send_event;
 }
-uint32_t CXEvent::GetWindow()
+uint32_t CxEvent::GetWindow()
 {
     return m_Event.xkey.window;
 }
-uint32_t CXEvent::GetRootWindow()
+uint32_t CxEvent::GetRootWindow()
 {
     return m_Event.xkey.root;
 }
 
-NativeXEvent* CXEvent::GetNativeXEvent()
+NativeXEvent* CxEvent::GetNativeXEvent()
 {
     return &m_Event;
 }
 
-int CXEvent::Size()
+int CxEvent::Size()
 {
     return sizeof(m_Event);
 }

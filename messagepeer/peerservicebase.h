@@ -14,7 +14,7 @@
 
 class CPeerServiceBase{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
     TASK_CONTAINER_DEFINE();
 public:
     CServerSidePeer m_ServerSidePeer;

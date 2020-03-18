@@ -5,15 +5,12 @@
 #include "lualib_mem.h"
 #include "lualib_memfile.h"
 
-static bool xmlnode_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CXmlNode *p = (CXmlNode*)ud->p;
-    CHECK_IS_UD_READABLE(CXmlNode,ud);
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CXmlNode,xmlnode)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CXmlNode,xmlnode)
+LUA_NEW_USER_DATA_FUNC(CXmlNode,xmlnode,XMLNODE)
+LUA_GC_FUNC(CXmlNode,xmlnode)
+LUA_IS_SAME_FUNC(CXmlNode,xmlnode)
+LUA_TO_STRING_FUNC(CXmlNode,xmlnode)
 
 bool is_xmlnode(lua_State *L, int idx)
 {        
@@ -27,64 +24,6 @@ bool is_xmlnode(lua_State *L, int idx)
         if(ud)break;
     }
     return xmlnode_is_userdata_valid(ud);  
-}
-
-CXmlNode *get_xmlnode(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_xmlnode(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CXmlNode *)ud->p;
-} 
-
-lua_userdata *xmlnode_new_userdata(lua_State *L,CXmlNode *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_XMLNODE);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int xmlnode_gc_(lua_State *L)
-{
-    if(!is_xmlnode(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CXmlNode *pxmlnode = (CXmlNode*)ud->p;
-        DEL(pxmlnode);
-    }
-    return 0;
-}
-
-static int xmlnode_issame_(lua_State *L)
-{
-    CXmlNode *pxmlnode1 = get_xmlnode(L,1);
-    ASSERT(pxmlnode1);
-    CXmlNode *pxmlnode2 = get_xmlnode(L,2);
-    ASSERT(pxmlnode2);
-    int is_same = (pxmlnode1==pxmlnode2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int xmlnode_tostring_(lua_State *L)
-{
-    CXmlNode *pxmlnode = get_xmlnode(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:xmlnode:%p",pxmlnode);
-    lua_pushstring(L,buf);
-    return 1;
 }
 
 /****************************************************/

@@ -13,15 +13,12 @@
 
 #define CAN_NOT_REACH() ASSERT(0);return 0
 
-static bool filebase_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CFileBase,ud);
-    CFileBase *p = (CFileBase*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CFileBase,filebase)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CFileBase,filebase)
+LUA_NEW_USER_DATA_FUNC(CFileBase,filebase,FILEBASE)
+LUA_GC_FUNC(CFileBase,filebase)
+LUA_IS_SAME_FUNC(CFileBase,filebase)
+LUA_TO_STRING_FUNC(CFileBase,filebase)
 
 bool is_filebase(lua_State *L, int idx)
 {        
@@ -42,64 +39,6 @@ bool is_filebase(lua_State *L, int idx)
         if(ud)break;
     }
     return filebase_is_userdata_valid(ud);  
-}
-
-CFileBase *get_filebase(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_filebase(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CFileBase *)ud->p;
-} 
-
-lua_userdata *filebase_new_userdata(lua_State *L,CFileBase *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_FILEBASE);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int filebase_gc_(lua_State *L)
-{
-    if(!is_filebase(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CFileBase *pfilebase = (CFileBase*)ud->p;
-        DEL(pfilebase);
-    }
-    return 0;
-}
-
-static int filebase_issame_(lua_State *L)
-{
-    CFileBase *pfilebase1 = get_filebase(L,1);
-    ASSERT(pfilebase1);
-    CFileBase *pfilebase2 = get_filebase(L,2);
-    ASSERT(pfilebase2);
-    int is_same = (pfilebase1==pfilebase2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int filebase_tostring_(lua_State *L)
-{
-    CFileBase *pfilebase = get_filebase(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:filebase:%p",pfilebase);
-    lua_pushstring(L,buf);
-    return 1;
 }
 /****************************************/
 static int filebase_isend(lua_State *L)
@@ -878,7 +817,7 @@ static status_t filebase_nextline(lua_State *L)
 static const luaL_Reg filebase_lib[] = {
     {"__gc",filebase_gc_},
     {"__tostring",filebase_tostring_},
-    {"IsSame",filebase_issame_},
+    {"__is_same",filebase_issame_},
     {"IsEnd",filebase_isend},
     {"CharAt",filebase_charat},
     {"GetLastChar",filebase_getlastchar},

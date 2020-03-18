@@ -50,15 +50,12 @@ static status_t resample_image(CxImage *img,int neww, int newh)
     return OK;
 }
 ////////////////////////////////////////////////
-static bool ximage_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CxImage,ud);
-    CxImage *p = (CxImage*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CxImage,ximage)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CxImage,ximage)
+LUA_NEW_USER_DATA_FUNC(CxImage,ximage,XIMAGE)
+LUA_GC_FUNC(CxImage,ximage)
+LUA_IS_SAME_FUNC(CxImage,ximage)
+LUA_TO_STRING_FUNC(CxImage,ximage)
 
 bool is_ximage(lua_State *L, int idx)
 {        
@@ -75,63 +72,6 @@ bool is_ximage(lua_State *L, int idx)
     return ximage_is_userdata_valid(ud);  
 }
 
-CxImage *get_ximage(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_ximage(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CxImage *)ud->p;
-} 
-
-lua_userdata *ximage_new_userdata(lua_State *L,CxImage *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_XIMAGE);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int ximage_gc_(lua_State *L)
-{
-    if(!is_ximage(L,1)) return 0;
-    
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-    
-    if(!(ud->is_attached))
-    {
-        CxImage *pximage = (CxImage*)ud->p;
-        DEL(pximage);
-    }
-    return 0;
-}
-
-static int ximage_issame_(lua_State *L)
-{
-    CxImage *pximage1 = get_ximage(L,1);
-    ASSERT(pximage1);
-    CxImage *pximage2 = get_ximage(L,2);
-    ASSERT(pximage2);
-    int is_same = (pximage1==pximage2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int ximage_tostring_(lua_State *L)
-{
-    CxImage *pximage = get_ximage(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:ximage:%p",pximage);
-    lua_pushstring(L,buf);
-    return 1;
-}
 /****************************************/
 static status_t ximage_new(lua_State *L)
 {

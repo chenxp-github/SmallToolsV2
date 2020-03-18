@@ -3,7 +3,7 @@
 
 #include "cruntime.h"
 #include "filebase.h"
-#include "weakptr.h"
+#include "weak_pointer.h"
 #include "xcommon.h"
 #include "closure.h"
 #include "mem.h"
@@ -13,12 +13,11 @@
 class CxDisplay;
 class CxWindow{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     NativeXWindow m_NativeXWindow;
     uint32_t m_Flags;
-    CWeakPtr<CxDisplay> m_Display;
-
+    CWeakPointer<CxDisplay> m_Display;
     NativeXWindow m_RootWindow;
     NativeXWindow m_ParentWindow;
     NativeXWindow *m_ChildWindows;

@@ -7,15 +7,12 @@
 #include "tasktcpconnector.h"
 #include "lua_helper.h"
 
-static bool tcpsocket_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CTcpSocket,ud);
-    CTcpSocket *p = (CTcpSocket*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CTcpSocket,tcpsocket)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CTcpSocket,tcpsocket)
+LUA_NEW_USER_DATA_FUNC(CTcpSocket,tcpsocket,TCPSOCKET)
+LUA_GC_FUNC(CTcpSocket,tcpsocket)
+LUA_IS_SAME_FUNC(CTcpSocket,tcpsocket)
+LUA_TO_STRING_FUNC(CTcpSocket,tcpsocket)
 
 bool is_tcpsocket(lua_State *L, int idx)
 {        
@@ -30,65 +27,6 @@ bool is_tcpsocket(lua_State *L, int idx)
     }
     return tcpsocket_is_userdata_valid(ud);  
 }
-
-CTcpSocket *get_tcpsocket(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_tcpsocket(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CTcpSocket *)ud->p;
-} 
-
-lua_userdata *tcpsocket_new_userdata(lua_State *L,CTcpSocket *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_TCPSOCKET);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int tcpsocket_gc_(lua_State *L)
-{
-    if(!is_tcpsocket(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CTcpSocket *ptcpsocket = (CTcpSocket*)ud->p;
-        DEL(ptcpsocket);
-    }
-    return 0;
-}
-
-static int tcpsocket_issame_(lua_State *L)
-{
-    CTcpSocket *ptcpsocket1 = get_tcpsocket(L,1);
-    ASSERT(ptcpsocket1);
-    CTcpSocket *ptcpsocket2 = get_tcpsocket(L,2);
-    ASSERT(ptcpsocket2);
-    int is_same = (ptcpsocket1==ptcpsocket2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int tcpsocket_tostring_(lua_State *L)
-{
-    CTcpSocket *ptcpsocket = get_tcpsocket(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:tcpsocket:%p",ptcpsocket);
-    lua_pushstring(L,buf);
-    return 1;
-}
-
 /****************************************************/
 static status_t tcpsocket_new(lua_State *L)
 {
@@ -293,7 +231,6 @@ static status_t tcpsocket_callback_ontcpconnectorevent(lua_State *L, int _funcid
     vm.ClearStack();
     return OK;
 }
-
 
 static status_t tcpsocket_newtcpconnector(lua_State *L)
 {

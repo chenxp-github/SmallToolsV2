@@ -17,7 +17,7 @@ CMMapFile::~CMMapFile()
 }
 status_t CMMapFile::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     m_Data = NULL;
     m_DataSize = 0;
 #if HAVE_WINDOWS_H
@@ -32,11 +32,12 @@ status_t CMMapFile::InitBasic()
 status_t CMMapFile::Init()
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
+    
     return OK;
 }
 status_t CMMapFile::Destroy()
 {
+    WEAK_REF_DESTROY();
     this->Close();
     m_FileName.Destroy();
     this->InitBasic();

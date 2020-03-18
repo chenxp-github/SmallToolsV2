@@ -54,6 +54,7 @@ fsize_t CSerial::GetMaxSize()
 //////////////////////////////////////////////////////////////////
 status_t CSerial::InitBasic()
 {
+    CFileBase::InitBasic();
     this->fd = ERROR_FILE_HANDLE;
     return OK;
 }
@@ -236,6 +237,7 @@ status_t CSerial::EnableDtrHandshake(bool enable)
 //////////////////////////////////////////////////////////////////
 status_t CSerial::InitBasic()
 {
+    CFileBase::InitBasic();
     this->handle = NULL;    
     return OK;
 }

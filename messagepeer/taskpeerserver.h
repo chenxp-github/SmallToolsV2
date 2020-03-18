@@ -10,7 +10,7 @@ public:
     CMem *mRecvDataBuf;
     CMem *mRecvHeadBuf;
     CMem *mSendHeadBuf;
-    CWeakPtr<CPeerProxy> iHostProxy;
+    CWeakPointer<CPeerProxy> iHostProxy;
     bool quit_after_send;
 public:
     status_t QuitAfterSend();

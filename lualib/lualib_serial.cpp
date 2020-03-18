@@ -3,15 +3,12 @@
 #include "syslog.h"
 #include "lualib_filebase.h"
 
-static bool serial_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CSerial,ud);
-    CSerial *p = (CSerial*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CSerial,serial)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CSerial,serial)
+LUA_NEW_USER_DATA_FUNC(CSerial,serial,SERIAL)
+LUA_GC_FUNC(CSerial,serial)
+LUA_IS_SAME_FUNC(CSerial,serial)
+LUA_TO_STRING_FUNC(CSerial,serial)
 
 bool is_serial(lua_State *L, int idx)
 {        
@@ -25,64 +22,6 @@ bool is_serial(lua_State *L, int idx)
         if(ud)break;
     }
     return serial_is_userdata_valid(ud);  
-}
-
-CSerial *get_serial(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_serial(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CSerial *)ud->p;
-} 
-
-lua_userdata *serial_new_userdata(lua_State *L,CSerial *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_SERIAL);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int serial_gc_(lua_State *L)
-{
-    if(!is_serial(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CSerial *pserial = (CSerial*)ud->p;
-        DEL(pserial);
-    }
-    return 0;
-}
-
-static int serial_issame_(lua_State *L)
-{
-    CSerial *pserial1 = get_serial(L,1);
-    ASSERT(pserial1);
-    CSerial *pserial2 = get_serial(L,2);
-    ASSERT(pserial2);
-    int is_same = (pserial1==pserial2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int serial_tostring_(lua_State *L)
-{
-    CSerial *pserial = get_serial(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:serial:%p",pserial);
-    lua_pushstring(L,buf);
-    return 1;
 }
 
 /****************************************************/

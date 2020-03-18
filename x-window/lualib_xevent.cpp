@@ -3,77 +3,41 @@
 #include "mem_tool.h"
 #include "syslog.h"
 
-CXEvent *get_xevent(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_XEVENT);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CXEvent *p = (CXEvent*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *xevent_new_userdata(lua_State *L,CXEvent *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_XEVENT);
-    lua_setmetatable(L,-2);
-    return ud;
-}
+LUA_IS_VALID_USER_DATA_FUNC(CxEvent,xevent)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CxEvent,xevent)
+LUA_NEW_USER_DATA_FUNC(CxEvent,xevent,XEVENT)
+LUA_GC_FUNC(CxEvent,xevent)
+LUA_IS_SAME_FUNC(CxEvent,xevent)
+LUA_TO_STRING_FUNC(CxEvent,xevent)
 
+bool is_xevent(lua_State *L, int idx)
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_XEVENT,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return xevent_is_userdata_valid(ud);  
+}
+/****************************************/
 static int xevent_new(lua_State *L)
 {
-    CXEvent *pt;
-    NEW(pt,CXEvent);
+    CxEvent *pt;
+    NEW(pt,CxEvent);
     pt->Init();
     xevent_new_userdata(L,pt,0);
     return 1;
 }
 
-static bool xevent_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CXEvent *p = (CXEvent*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}
-static int xevent_destroy(lua_State *L)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_XEVENT);
-    if(!xevent_is_userdata_valid(ud))
-        return 0;
-    CXEvent *pxevent = (CXEvent*)ud->p;
-    if(!(ud->is_attached))
-    {
-        DEL(pxevent);
-    }
-    return 0;
-}
-static int xevent_issame(lua_State *L)
-{
-    CXEvent *pxevent1 = get_xevent(L,1);
-    ASSERT(pxevent1);
-    CXEvent *pxevent2 = get_xevent(L,2);
-    ASSERT(pxevent2);
-    int is_same = (pxevent1==pxevent2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-static int xevent_tostring(lua_State *L)
-{
-    lua_pushstring(L,"userdata:xevent");
-    return 1;
-}
-/****************************************/
 static int xevent_copy(lua_State *L)
 {
-    CXEvent *pxevent = get_xevent(L,1);
+    CxEvent *pxevent = get_xevent(L,1);
     ASSERT(pxevent);
-    CXEvent *e = get_xevent(L,2);
+    CxEvent *e = get_xevent(L,2);
     ASSERT(e);
     int _ret_0 = (int)pxevent->Copy(e);
     lua_pushboolean(L,_ret_0);
@@ -81,7 +45,7 @@ static int xevent_copy(lua_State *L)
 }
 static int xevent_gettype(lua_State *L)
 {
-    CXEvent *pxevent = get_xevent(L,1);
+    CxEvent *pxevent = get_xevent(L,1);
     ASSERT(pxevent);
     int _ret_0 = (int)pxevent->GetType();
     lua_pushinteger(L,_ret_0);
@@ -89,7 +53,7 @@ static int xevent_gettype(lua_State *L)
 }
 static int xevent_getserial(lua_State *L)
 {
-    CXEvent *pxevent = get_xevent(L,1);
+    CxEvent *pxevent = get_xevent(L,1);
     ASSERT(pxevent);
     uint32_t _ret_0 = (uint32_t)pxevent->GetSerial();
     lua_pushinteger(L,_ret_0);
@@ -97,7 +61,7 @@ static int xevent_getserial(lua_State *L)
 }
 static int xevent_getsendevent(lua_State *L)
 {
-    CXEvent *pxevent = get_xevent(L,1);
+    CxEvent *pxevent = get_xevent(L,1);
     ASSERT(pxevent);
     uint32_t _ret_0 = (uint32_t)pxevent->GetSendEvent();
     lua_pushinteger(L,_ret_0);
@@ -105,7 +69,7 @@ static int xevent_getsendevent(lua_State *L)
 }
 static int xevent_getwindow(lua_State *L)
 {
-    CXEvent *pxevent = get_xevent(L,1);
+    CxEvent *pxevent = get_xevent(L,1);
     ASSERT(pxevent);
     uint32_t _ret_0 = (uint32_t)pxevent->GetWindow();
     lua_pushinteger(L,_ret_0);
@@ -113,7 +77,7 @@ static int xevent_getwindow(lua_State *L)
 }
 static int xevent_getrootwindow(lua_State *L)
 {
-    CXEvent *pxevent = get_xevent(L,1);
+    CxEvent *pxevent = get_xevent(L,1);
     ASSERT(pxevent);
     uint32_t _ret_0 = (uint32_t)pxevent->GetRootWindow();
     lua_pushinteger(L,_ret_0);
@@ -121,7 +85,7 @@ static int xevent_getrootwindow(lua_State *L)
 }
 static int xevent_tostream(lua_State *L)
 {
-    CXEvent *pxevent = get_xevent(L,1);
+    CxEvent *pxevent = get_xevent(L,1);
     ASSERT(pxevent);
     CStream *stream = get_stream(L,2);
     ASSERT(stream);
@@ -138,10 +102,10 @@ static int xevent_tostream(lua_State *L)
     return 0;
 }
 static const luaL_Reg xevent_lib[] = {
+    {"__gc",xevent_gc_},
+    {"__tostring",xevent_tostring_},
+    {"__is_same",xevent_issame_},
     {"new",xevent_new},
-    {"__gc",xevent_destroy},
-    {"__tostring",xevent_tostring},
-    {"IsSame",xevent_issame},
     {"Copy",xevent_copy},
     {"GetType",xevent_gettype},
     {"GetSerial",xevent_getserial},

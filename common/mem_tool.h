@@ -20,14 +20,12 @@ status_t _leak_printf(const char *szFormat, ...);
 #define NEW(p,obj) \
 do{\
 p = new obj;\
-__ASSERT(p);\
 LEAK_DETECT_PRINT("alloc: addr=0x%x file=%s line=%d obj = %s",p,__FILE__,__LINE__,#obj);\
 }while(0)
 
 #define NEW_ARRAY(p,obj,items) \
 do{\
 p = new obj[items];\
-__ASSERT(p);\
 LEAK_DETECT_PRINT("alloc: addr=0x%x file=%s line=%d obj = %s",p,__FILE__,__LINE__,#obj);\
 }while(0)
 
@@ -48,7 +46,6 @@ p = NULL;\
 #define MALLOC(p,obj,items) \
 do{\
 p = (obj*)malloc(sizeof(obj)*(items));\
-__ASSERT(p);\
 LEAK_DETECT_PRINT("alloc: addr=0x%x file=%s line=%d obj = %s",p,__FILE__,__LINE__,#obj);\
 }while(0)
 

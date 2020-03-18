@@ -15,6 +15,7 @@ CQueueFile::~CQueueFile()
 }
 status_t CQueueFile::InitBasic()
 {
+    CFileBase::InitBasic();
     this->head = 0;
     this->tail = 0;
     this->max_size = 0;

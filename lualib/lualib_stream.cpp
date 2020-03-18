@@ -3,15 +3,13 @@
 #include "lualib_mem.h"
 #include "mem_tool.h"
 #include "syslog.h"
-static bool stream_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CStream,ud);
-    CStream *p = (CStream*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+
+LUA_IS_VALID_USER_DATA_FUNC(CStream,stream)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CStream,stream)
+LUA_NEW_USER_DATA_FUNC(CStream,stream,STREAM)
+LUA_GC_FUNC(CStream,stream)
+LUA_IS_SAME_FUNC(CStream,stream)
+LUA_TO_STRING_FUNC(CStream,stream)
 
 bool is_stream(lua_State *L, int idx)
 {        
@@ -27,63 +25,6 @@ bool is_stream(lua_State *L, int idx)
     return stream_is_userdata_valid(ud);  
 }
 
-CStream *get_stream(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_stream(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CStream *)ud->p;
-} 
-
-lua_userdata *stream_new_userdata(lua_State *L,CStream *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_STREAM);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int stream_gc_(lua_State *L)
-{
-    if(!is_stream(L,1)) return 0;
-	
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-	
-    if(!(ud->is_attached))
-    {
-        CStream *pstream = (CStream*)ud->p;
-        DEL(pstream);
-    }
-    return 0;
-}
-
-static int stream_issame_(lua_State *L)
-{
-    CStream *pstream1 = get_stream(L,1);
-    ASSERT(pstream1);
-    CStream *pstream2 = get_stream(L,2);
-    ASSERT(pstream2);
-    int is_same = (pstream1==pstream2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int stream_tostring_(lua_State *L)
-{
-    CStream *pstream = get_stream(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:stream:%p",pstream);
-    lua_pushstring(L,buf);
-    return 1;
-}
 /****************************************/
 static status_t stream_new(lua_State *L)
 {
@@ -299,10 +240,10 @@ static int stream_mem(lua_State *L)
     return 1;
 }
 static const luaL_Reg stream_lib[] = {
-    {"new",stream_new},
     {"__gc",stream_gc_},
     {"__tostring",stream_tostring_},
-    {"IsSame",stream_issame_},
+    {"__is_same",stream_issame_},
+    {"new",stream_new},
     {"PutString",stream_putstring},
     {"GetString",stream_getstring},
     {"GetBinary",stream_getbinary},

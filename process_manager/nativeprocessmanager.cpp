@@ -15,7 +15,7 @@ CNativeProcessManager::~CNativeProcessManager()
 }
 status_t CNativeProcessManager::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     TASK_CONTAINER_CLEAR();
     this->m_Index = NULL;
     this->m_Top = 0;
@@ -27,7 +27,6 @@ status_t CNativeProcessManager::Init(CTaskMgr *mgr,int init_size)
 {
     int i;
     this->InitBasic();  
-    WEAK_REF_ID_INIT();
     this->SetTaskMgr(mgr);
     this->m_Size = init_size;
     MALLOC(this->m_Index,CNativeProcess* ,this->m_Size);
@@ -38,6 +37,7 @@ status_t CNativeProcessManager::Init(CTaskMgr *mgr,int init_size)
 status_t CNativeProcessManager::Destroy()
 {
     int i;
+    WEAK_REF_DESTROY();
     if(this->m_Index == NULL)
         return ERROR;
     this->StopAllCpu(false);

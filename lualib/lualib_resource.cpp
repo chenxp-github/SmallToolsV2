@@ -4,27 +4,28 @@
 #include "syslog.h"
 #include "memfile.h"
 
-CResource *get_resource(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_RESOURCE);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CResource *p = (CResource*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *resource_new_userdata(lua_State *L,CResource *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_RESOURCE);
-    lua_setmetatable(L,-2);
-    return ud;
+LUA_IS_VALID_USER_DATA_FUNC(CResource,resource)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CResource,resource)
+LUA_NEW_USER_DATA_FUNC(CResource,resource,RESOURCE)
+LUA_GC_FUNC(CResource,resource)
+LUA_IS_SAME_FUNC(CResource,resource)
+LUA_TO_STRING_FUNC(CResource,resource)
+
+bool is_resource(lua_State *L, int idx)
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_RESOURCE,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return resource_is_userdata_valid(ud);  
 }
 
+/****************************************/
 static int resource_new(lua_State *L)
 {
     CResource *pt;
@@ -34,33 +35,6 @@ static int resource_new(lua_State *L)
     return 1;
 }
 
-static int resource_destroy(lua_State *L)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_RESOURCE);
-    ASSERT(ud);
-    CResource *presource = (CResource*)ud->p;
-    if(!(ud->is_attached))
-    {
-        DEL(presource);
-    }
-    return 0;
-}
-static int resource_issame(lua_State *L)
-{
-    CResource *presource1 = get_resource(L,1);
-    ASSERT(presource1);
-    CResource *presource2 = get_resource(L,2);
-    ASSERT(presource2);
-    int is_same = (presource1==presource2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-static int resource_tostring(lua_State *L)
-{
-    lua_pushstring(L,"userdata:resource");
-    return 1;
-}
-/****************************************/
 static int resource_copy(lua_State *L)
 {
     CResource *presource = get_resource(L,1);
@@ -166,10 +140,10 @@ static int resource_setbsondata(lua_State *L)
     return 1;
 }
 static const luaL_Reg resource_lib[] = {
+    {"__gc",resource_gc_},
+    {"__tostring",resource_tostring_},
+    {"__is_same",resource_issame_},
     {"new",resource_new},
-    {"__gc",resource_destroy},
-    {"__tostring",resource_tostring},
-    {"IsSame",resource_issame},
     {"Copy",resource_copy},
     {"Print",resource_print},
     {"GetType",resource_gettype},

@@ -3,11 +3,11 @@
 
 #include "cruntime.h"
 #include "filebase.h"
-#include "weakptr.h"
 #include "luavm.h"
 #include "taskmgr.h"
 #include "memstk.h"
 #include "epoll.h"
+#include "weak_pointer.h"
 
 #define GLOBALS_FLAG_FUNC(func,bit) FLAG_FUNC(m_Flags,func,bit)
 

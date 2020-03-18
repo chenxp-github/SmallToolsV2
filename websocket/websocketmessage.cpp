@@ -14,7 +14,7 @@ CWebSocketMessage::~CWebSocketMessage()
 
 status_t CWebSocketMessage::InitBasic()
 {
-	WEAK_REF_ID_CLEAR();
+	WEAK_REF_CLEAR();
     this->m_Method = 0;
     this->m_CallbackId = 0;
     this->m_DataType = 0;
@@ -27,13 +27,14 @@ status_t CWebSocketMessage::InitBasic()
 status_t CWebSocketMessage::Init()
 {
     this->InitBasic();
-	WEAK_REF_ID_INIT();
+	
     this->m_Data.Init();
     return OK;
 }
 
 status_t CWebSocketMessage::Destroy()
 {
+    WEAK_REF_DESTROY();
     this->m_Data.Destroy();
     this->InitBasic();
     return OK;

@@ -4,27 +4,28 @@
 #include "syslog.h"
 #include "memfile.h"
 
-CResourceManager *get_resourcemanager(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_RESOURCEMANAGER);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CResourceManager *p = (CResourceManager*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *resourcemanager_new_userdata(lua_State *L,CResourceManager *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_RESOURCEMANAGER);
-    lua_setmetatable(L,-2);
-    return ud;
+LUA_IS_VALID_USER_DATA_FUNC(CResourceManager,resourcemanager)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CResourceManager,resourcemanager)
+LUA_NEW_USER_DATA_FUNC(CResourceManager,resourcemanager,RESOURCEMANAGER)
+LUA_GC_FUNC(CResourceManager,resourcemanager)
+LUA_IS_SAME_FUNC(CResourceManager,resourcemanager)
+LUA_TO_STRING_FUNC(CResourceManager,resourcemanager)
+
+bool is_resourcemanager(lua_State *L, int idx)
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_RESOURCEMANAGER,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return resourcemanager_is_userdata_valid(ud);  
 }
 
+/****************************************/
 static int resourcemanager_new(lua_State *L)
 {
     CResourceManager *pt;
@@ -34,33 +35,6 @@ static int resourcemanager_new(lua_State *L)
     return 1;
 }
 
-static int resourcemanager_destroy(lua_State *L)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_RESOURCEMANAGER);
-    ASSERT(ud);
-    CResourceManager *presourcemanager = (CResourceManager*)ud->p;
-    if(!(ud->is_attached))
-    {
-        DEL(presourcemanager);
-    }
-    return 0;
-}
-static int resourcemanager_issame(lua_State *L)
-{
-    CResourceManager *presourcemanager1 = get_resourcemanager(L,1);
-    ASSERT(presourcemanager1);
-    CResourceManager *presourcemanager2 = get_resourcemanager(L,2);
-    ASSERT(presourcemanager2);
-    int is_same = (presourcemanager1==presourcemanager2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-static int resourcemanager_tostring(lua_State *L)
-{
-    lua_pushstring(L,"userdata:resourcemanager");
-    return 1;
-}
-/****************************************/
 static int resourcemanager_loadresourcefile(lua_State *L)
 {
     CResourceManager *presourcemanager = get_resourcemanager(L,1);
@@ -152,10 +126,10 @@ static int resourcemanager_dumpresourcefile(lua_State *L)
 }
 
 static const luaL_Reg resourcemanager_lib[] = {
+    {"__gc",resourcemanager_gc_},
+    {"__tostring",resourcemanager_tostring_},
+    {"__is_same",resourcemanager_issame_},
     {"new",resourcemanager_new},
-    {"__gc",resourcemanager_destroy},
-    {"__tostring",resourcemanager_tostring},
-    {"IsSame",resourcemanager_issame},
     {"LoadResourceFile",resourcemanager_loadresourcefile},
     {"SearchByString",resourcemanager_searchbystring},
     {"SearchResource",resourcemanager_searchresource},

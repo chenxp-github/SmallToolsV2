@@ -5,10 +5,11 @@
 #include "nativeprocess.h"
 #include "luavm.h"
 
-#define LUA_USERDATA_FIVPROCESSMANAGER "lua_userdata_nativeprocessmanager"
+#define LUA_USERDATA_NATIVEPROCESSMANAGER "lua_userdata_nativeprocessmanager"
 
-CNativeProcessManager *get_fivprocessmanager(lua_State *L, int idx);
-lua_userdata *fivprocessmanager_new_userdata(lua_State *L,CNativeProcessManager *pt,int is_weak);
-int luaopen_fivprocessmanager(lua_State *L);
+CNativeProcessManager *get_nativeprocessmanager(lua_State *L, int idx);
+lua_userdata *nativeprocessmanager_new_userdata(lua_State *L,CNativeProcessManager *pt,int is_weak);
+int luaopen_nativeprocessmanager(lua_State *L);
+bool is_nativeprocessmanager(lua_State *L, int idx);
 
 #endif

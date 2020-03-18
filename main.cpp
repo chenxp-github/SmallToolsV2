@@ -45,6 +45,10 @@ int main(int argc, char **argv)
     signal(SIGTERM,on_terminate); 
 #endif
 
+#if _DEBUG_
+    Mem_Tool_Init("/tmp/leak.txt");
+#endif
+
     CSocket::StartNet();
     g_globals.Init();
     g_globals_ptr = &g_globals;
@@ -53,6 +57,10 @@ int main(int argc, char **argv)
     int ok = g_globals.Main(argc, argv);
     g_globals.Destroy();
     CSocket::EndNet();
+
+#if _DEBUG_
+    Mem_Tool_Destroy();
+#endif
 
     if(g_abnormal_exit)
         return 2;

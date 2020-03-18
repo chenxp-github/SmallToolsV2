@@ -2,40 +2,28 @@
 #include "mem_tool.h"
 #include "syslog.h"
 
-static bool cmdentry_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CCmdEntry *p = (CCmdEntry*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}
+LUA_IS_VALID_USER_DATA_FUNC(CCmdEntry,cmdentry)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CCmdEntry,cmdentry)
+LUA_NEW_USER_DATA_FUNC(CCmdEntry,cmdentry,CMDENTRY)
+LUA_GC_FUNC(CCmdEntry,cmdentry)
+LUA_IS_SAME_FUNC(CCmdEntry,cmdentry)
+LUA_TO_STRING_FUNC(CCmdEntry,cmdentry)
+
 bool is_cmdentry(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_testudata(L, idx, LUA_USERDATA_CMDENTRY);
-    return cmdentry_is_userdata_valid(ud);
-}
-CCmdEntry *get_cmdentry(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_CMDENTRY);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CCmdEntry *p = (CCmdEntry*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *cmdentry_new_userdata(lua_State *L,CCmdEntry *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_CMDENTRY);
-    lua_setmetatable(L,-2);
-    return ud;
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_CMDENTRY,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return cmdentry_is_userdata_valid(ud);  
 }
 
+/****************************************/
 static int cmdentry_new(lua_State *L)
 {
     CCmdEntry *pt;
@@ -45,37 +33,6 @@ static int cmdentry_new(lua_State *L)
     return 1;
 }
 
-static int cmdentry_destroy(lua_State *L)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_CMDENTRY);
-    if(!cmdentry_is_userdata_valid(ud))
-        return 0;
-    CCmdEntry *pcmdentry = (CCmdEntry*)ud->p;
-    if(!(ud->is_attached))
-    {
-        DEL(pcmdentry);
-    }
-    return 0;
-}
-static int cmdentry_issame(lua_State *L)
-{
-    CCmdEntry *pcmdentry1 = get_cmdentry(L,1);
-    ASSERT(pcmdentry1);
-    CCmdEntry *pcmdentry2 = get_cmdentry(L,2);
-    ASSERT(pcmdentry2);
-    int is_same = (pcmdentry1==pcmdentry2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-static int cmdentry_tostring(lua_State *L)
-{
-    CCmdEntry *pcmdentry = get_cmdentry(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:cmdentry:%p",pcmdentry);
-    lua_pushstring(L,buf);
-    return 1;
-}
-/****************************************/
 static int cmdentry_setoption(lua_State *L)
 {
     CCmdEntry *pcmdentry = get_cmdentry(L,1);
@@ -174,10 +131,10 @@ static int cmdentry_sethelp(lua_State *L)
     return 1;
 }
 static const luaL_Reg cmdentry_lib[] = {
+    {"__gc",cmdentry_gc_},
+    {"__tostring",cmdentry_tostring_},
+    {"__is_same",cmdentry_issame_},
     {"new",cmdentry_new},
-    {"__gc",cmdentry_destroy},
-    {"__tostring",cmdentry_tostring},
-    {"IsSame",cmdentry_issame},
     {"SetOption",cmdentry_setoption},
     {"GetOption",cmdentry_getoption},
     {"GetKeyType",cmdentry_getkeytype},

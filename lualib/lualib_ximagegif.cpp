@@ -5,15 +5,12 @@
 #include "lualib_filebase.h"
 #include "lua_helper.h"
 
-static bool ximagegif_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CxImageGIF,ud);
-    CxImageGIF *p = (CxImageGIF*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CxImageGIF,ximagegif)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CxImageGIF,ximagegif)
+LUA_NEW_USER_DATA_FUNC(CxImageGIF,ximagegif,XIMAGEGIF)
+LUA_GC_FUNC(CxImageGIF,ximagegif)
+LUA_IS_SAME_FUNC(CxImageGIF,ximagegif)
+LUA_TO_STRING_FUNC(CxImageGIF,ximagegif)
 
 bool is_ximagegif(lua_State *L, int idx)
 {        
@@ -29,63 +26,6 @@ bool is_ximagegif(lua_State *L, int idx)
     return ximagegif_is_userdata_valid(ud);  
 }
 
-CxImageGIF *get_ximagegif(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_ximagegif(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CxImageGIF *)ud->p;
-} 
-
-lua_userdata *ximagegif_new_userdata(lua_State *L,CxImageGIF *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_XIMAGEGIF);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int ximagegif_gc_(lua_State *L)
-{
-    if(!is_ximagegif(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CxImageGIF *pximagegif = (CxImageGIF*)ud->p;
-        DEL(pximagegif);
-    }
-    return 0;
-}
-
-static int ximagegif_issame_(lua_State *L)
-{
-    CxImageGIF *pximagegif1 = get_ximagegif(L,1);
-    ASSERT(pximagegif1);
-    CxImageGIF *pximagegif2 = get_ximagegif(L,2);
-    ASSERT(pximagegif2);
-    int is_same = (pximagegif1==pximagegif2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int ximagegif_tostring_(lua_State *L)
-{
-    CxImageGIF *pximagegif = get_ximagegif(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:ximagegif:%p",pximagegif);
-    lua_pushstring(L,buf);
-    return 1;
-}
 
 /****************************************************/
 static status_t ximagegif_new(lua_State *L)

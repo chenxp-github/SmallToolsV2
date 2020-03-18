@@ -5877,8 +5877,6 @@ BOOL CxImage::Edge(long Ksize)
     return TRUE;
 }
 
-
-
 void CxImage::Mix(CxImage & imgsrc2, ImageOpType op, long lXOffset, long lYOffset, BOOL bMixAlpha)
 {
     long lWide = min(GetWidth(),imgsrc2.GetWidth()-lXOffset);
@@ -9293,27 +9291,29 @@ long CxImage::LayerDrawAll(HDC hdc, long x, long y, long cx, long cy, RECT* pCli
 //////////////////////////////////////////////////////////////
 CxImage::CxImage()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->InitBasic();
-    WEAK_REF_ID_INIT();
+    
 }
 CxImage::~CxImage()
 {
     this->DestroyAll();
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_DESTROY();
 }
 
 CxImage::CxImage(DWORD dwWidth, DWORD dwHeight, DWORD wBpp, DWORD imagetype)
 {
-    WEAK_REF_ID_INIT();
+    WEAK_REF_CLEAR();    
     this->StartUp(imagetype);
     this->Create(dwWidth,dwHeight,wBpp,imagetype);
+    
 }
 CxImage::CxImage(CxImage *src, BOOL copypixels, BOOL copyselection, BOOL copyalpha)
 {   
-    WEAK_REF_ID_INIT();
+    WEAK_REF_CLEAR();   
     StartUp(src->GetType());
     Copy(src,copypixels,copyselection,copyalpha);
+    
 }
 
 CxImage::CxImage(const CxImage &img)
@@ -9329,6 +9329,7 @@ CxImage& CxImage::operator=(const CxImage &img)
 
 int CxImage::InitBasic()
 {
+    WEAK_REF_CLEAR();
     this->pDib = 0; 
     this->pSelection = 0;
     this->pAlpha = 0;
@@ -9342,11 +9343,14 @@ int CxImage::Init()
     this->InitBasic();
     this->info.Init();
     this->StartUp(CXIMAGE_FORMAT_UNKNOWN);
+    
     return OK;
 }
 int CxImage::Destroy()
 {
     long n; 
+    
+    WEAK_REF_DESTROY();
 
     if (info.pGhost==NULL)
     {

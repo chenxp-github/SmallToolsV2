@@ -46,7 +46,7 @@ public:
 		//keep last
 		INDEX_MAX,
     };
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     CMem *mData;
 public:

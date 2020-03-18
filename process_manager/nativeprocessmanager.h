@@ -7,7 +7,7 @@
 
 class CNativeProcessManager{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
     TASK_CONTAINER_DEFINE();
     int m_TaskCpuLimit;
 private:

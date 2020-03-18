@@ -4,15 +4,12 @@
 #include "mem_tool.h"
 #include "syslog.h"
 
-static bool mem_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CMem,ud);
-    CMem *p = (CMem*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CMem,mem)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CMem,mem)
+LUA_NEW_USER_DATA_FUNC(CMem,mem,MEM)
+LUA_GC_FUNC(CMem,mem)
+LUA_IS_SAME_FUNC(CMem,mem)
+LUA_TO_STRING_FUNC(CMem,mem)
 
 bool is_mem(lua_State *L, int idx)
 {        
@@ -29,63 +26,7 @@ bool is_mem(lua_State *L, int idx)
     return mem_is_userdata_valid(ud);  
 }
 
-CMem *get_mem(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_mem(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CMem *)ud->p;
-} 
 
-lua_userdata *mem_new_userdata(lua_State *L,CMem *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_MEM);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int mem_gc_(lua_State *L)
-{
-    if(!is_mem(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CMem *pmem = (CMem*)ud->p;
-        DEL(pmem);
-    }
-    return 0;
-}
-
-static int mem_issame_(lua_State *L)
-{
-    CMem *pmem1 = get_mem(L,1);
-    ASSERT(pmem1);
-    CMem *pmem2 = get_mem(L,2);
-    ASSERT(pmem2);
-    int is_same = (pmem1==pmem2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int mem_tostring_(lua_State *L)
-{
-    CMem *pmem = get_mem(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:mem:%p",pmem);
-    lua_pushstring(L,buf);
-    return 1;
-}
 /****************************************/
 static status_t mem_new(lua_State *L)
 {
@@ -184,23 +125,14 @@ static int mem_cstr(lua_State *L)
     lua_pushlstring(L,pmem->CStr(),pmem->StrLen());
     return 1;
 }
-static int mem_init(lua_State *L)
-{
-    CMem *pmem = get_mem(L,1);
-    ASSERT(pmem);
-    int weak_ref_id = pmem->__weak_ref_id;
-    int _ret_0 = (int)pmem->Init();
-    pmem->__weak_ref_id = weak_ref_id;
-    lua_pushboolean(L,_ret_0);
-    return 1;
-}
+
 static int mem_destroy_(lua_State *L)
 {
     CMem *pmem = get_mem(L,1);
     ASSERT(pmem);
-    int weak_ref_id = pmem->__weak_ref_id;
+    SAVE_WEAK_REF_ID(*pmem,w);
     int _ret_0 = (int)pmem->Destroy();
-    pmem->__weak_ref_id = weak_ref_id;
+    RESTORE_WEAK_REF_ID(*pmem,w);
     lua_pushboolean(L,_ret_0);
     return 1;
 }
@@ -308,7 +240,7 @@ static const luaL_Reg mem_lib[] = {
     {"new",mem_new},
     {"__gc",mem_gc_},
     {"__tostring",mem_tostring_},
-    {"IsSame",mem_issame_},
+    {"__is_same",mem_issame_},
     {"FileBase",mem_filebase},
     {"IsMalloc",mem_ismalloc},
     {"Transfer",mem_transfer},
@@ -319,7 +251,6 @@ static const luaL_Reg mem_lib[] = {
     {"Zero",mem_zero},
     {"Copy",mem_copy},
     {"CStr",mem_cstr},
-    {"Init",mem_init},
     {"Destroy",mem_destroy_},
     {"GetRawBuf",mem_getrawbuf},
     {"SetRawBuf",mem_setrawbuf},

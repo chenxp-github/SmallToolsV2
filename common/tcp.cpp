@@ -17,13 +17,14 @@ CSocket::~CSocket()
 }
 status_t CSocket::InitBasic()
 {
+    CFileBase::InitBasic();
     this->socket_num = -1;
     return OK;
 }
 status_t CSocket::Init()
 {
-    CFileBase::Init();
     this->InitBasic();
+    CFileBase::Init();    
     return OK;
 }
 status_t CSocket::Destroy()

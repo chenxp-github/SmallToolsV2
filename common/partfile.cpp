@@ -12,6 +12,7 @@ CPartFile::~CPartFile()
 }
 int CPartFile::InitBasic()
 {
+    CFileBase::InitBasic();
     this->i_host_file = NULL;
     this->offset = 0;
     this->size = 0;

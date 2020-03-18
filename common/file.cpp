@@ -13,6 +13,7 @@ CFile::~CFile()
 
 status_t CFile::InitBasic()
 {
+    CFileBase::InitBasic();
     this->fp = ERROR_FILE_HANDLE;
     this->buf_size = 0;
     this->buf_start = -1;
@@ -26,11 +27,13 @@ status_t CFile::InitBasic()
 status_t CFile::Init()
 {
     this->InitBasic();
+    CFileBase::Init();
     return OK;
 }
 status_t CFile::Destroy()
 {
     this->CloseFile();
+    CFileBase::Destroy();
     return OK;
 }
 status_t CFile::OpenFile(const char *fn , const char *mode)
@@ -52,7 +55,6 @@ status_t CFile::CloseFile()
         this->fp = ERROR_FILE_HANDLE;
     }
     FREE(this->file_buf);   
-    this->InitBasic();  
     return OK;
 }
 fsize_t CFile::GetSize()

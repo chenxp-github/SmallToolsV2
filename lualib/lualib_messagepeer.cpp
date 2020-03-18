@@ -5,61 +5,60 @@
 #include "mem_tool.h"
 #include "syslog.h"
 
+
 #define CALLBACK_INDEX 15
 
-CMessagePeer *get_messagepeer(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_MESSAGEPEER);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CHECK_IS_UD_READABLE(CMessagePeer,ud);
-    CMessagePeer *p = (CMessagePeer*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *messagepeer_new_userdata(lua_State *L,CMessagePeer *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_MESSAGEPEER);
-    lua_setmetatable(L,-2);
-    return ud;
-}
+#define RELEASE_CALLBACK(p) do{\
+ASSERT(p);\
+if(p->Callback()->GetParamType(CALLBACK_INDEX) == PARAM_TYPE_INT)\
+{\
+    int old_cbid = p->Callback()->GetParamInt(CALLBACK_INDEX);\
+    CLuaVm::ReleaseFunction(L,old_cbid);\
+    p->Callback()->SetParamInt(CALLBACK_INDEX,LUA_REFNIL);\
+}\
+}while(0)\
 
-static int messagepeer_new(lua_State *L)
-{
-    CMessagePeer *pt;
-    NEW(pt,CMessagePeer);
-    pt->Init(how_to_get_global_taskmgr());
-    pt->SetServer("127.0.0.1");
-    pt->SetPort(2086);
 
-    pt->Callback()->SetParamInt(CALLBACK_INDEX,LUA_REFNIL);
-    messagepeer_new_userdata(L,pt,0);
-    return 1;
-}
+LUA_IS_VALID_USER_DATA_FUNC(CMessagePeer,messagepeer)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CMessagePeer,messagepeer)
+LUA_NEW_USER_DATA_FUNC(CMessagePeer,messagepeer,MESSAGEPEER)
+LUA_IS_SAME_FUNC(CMessagePeer,messagepeer)
+LUA_TO_STRING_FUNC(CMessagePeer,messagepeer)
 
-static int messagepeer_destroy(lua_State *L)
+static int messagepeer_gc_(lua_State *L)
 {
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_MESSAGEPEER);
+    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);
     ASSERT(ud);
-    CMessagePeer *pmessagepeer = (CMessagePeer*)ud->p;
+    if(!is_messagepeer(L,1))
+	{
+		ud->weak_ptr.Destroy();
+		return 0;
+	}
     if(!(ud->is_attached))
-    {
-        DEL(pmessagepeer);
-    }
+	{		
+		CMessagePeer *p = (CMessagePeer*)ud->weak_ptr.GetRawPtr();	
+		RELEASE_CALLBACK(p);
+		DEL(p);
+	}
+    ud->weak_ptr.Destroy();
     return 0;
 }
 
-static int messagepeer_tostring(lua_State *L)
-{
-    lua_pushstring(L,"userdata:messagepeer");
-    return 1;
+bool is_messagepeer(lua_State *L, int idx)
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_MESSAGEPEER,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return messagepeer_is_userdata_valid(ud);  
 }
 
+/*********************************************************/
 PEER_SET_ON_MESSAGE_FUNC(messagepeer_setonmessage,CMessagePeer,get_messagepeer)
 
 static int messagepeer_sendmessage(lua_State *L)
@@ -217,14 +216,26 @@ static int messagepeer_destroy_(lua_State *L)
 {
 	CMessagePeer *pmessagepeer = get_messagepeer(L,1);
     ASSERT(pmessagepeer);
+	SAVE_WEAK_REF_ID(*pmessagepeer,w);
     pmessagepeer->Destroy();
+	RESTORE_WEAK_REF_ID(*pmessagepeer,w);
 	return 0;
 }
 
+static status_t messagepeer_new(lua_State *L)
+{
+    CMessagePeer *pmessagepeer;
+    NEW(pmessagepeer,CMessagePeer);
+    pmessagepeer->Init(how_to_get_global_taskmgr());
+    messagepeer_new_userdata(L,pmessagepeer,0);
+    return 1;
+}
+
 static const luaL_Reg messagepeer_lib[] = {
+    {"__gc",messagepeer_gc_},
+    {"__tostring",messagepeer_tostring_},
+    {"__is_same",messagepeer_issame_},
     {"new",messagepeer_new},
-    {"__gc",messagepeer_destroy},
-    {"__tostring",messagepeer_tostring},
     {"SetOnMessage",messagepeer_setonmessage},
     {"SendMessage",messagepeer_sendmessage},
     {"Connect",messagepeer_connect},

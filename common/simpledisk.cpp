@@ -42,7 +42,7 @@ CSimpleDisk::~CSimpleDisk()
 }
 status_t CSimpleDisk::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->mFileSystem = NULL;
     this->mIndexFile = NULL;
     this->iDstFile = NULL;
@@ -52,7 +52,6 @@ status_t CSimpleDisk::InitBasic()
 status_t CSimpleDisk::Init()
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
 
     NEW(this->mFileSystem,CMiniBson);
     this->mFileSystem->Init();
@@ -68,6 +67,7 @@ status_t CSimpleDisk::Init()
 }
 status_t CSimpleDisk::Destroy()
 {
+    WEAK_REF_DESTROY();
     DEL(this->mFastFsIndex);
     DEL(this->mFileSystem);
     DEL(this->mIndexFile);

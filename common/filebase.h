@@ -156,7 +156,7 @@ public:
 //common part
 /////////////////////////////////////////////////
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
     void *user_data_;
     int log_tab_level_;
     bool is_sp_chars_malloc;
@@ -175,6 +175,7 @@ public:
     status_t FillBlock(fsize_t fill_size,char fill_ch);
     status_t Destroy();
     status_t Init();
+    status_t InitBasic();
     status_t ExpandFromOff(fsize_t exp_size);
     fsize_t SeekBack(fsize_t back_bytes);
     status_t Insert(CFileBase *file);

@@ -28,7 +28,7 @@ public:
         ERROR_LINE_IS_TOO_LONG,
     };
 
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 private:
 	CTaskMgr *iTaskMgr;
     CSocket *iSocket;

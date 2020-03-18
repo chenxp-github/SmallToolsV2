@@ -11,7 +11,7 @@ typedef CHashFile<CSimpleDiskFsIndex,CSimpleDiskFsEntry> SimpleDiskHashFile;
 
 class CSimpleDisk{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     CIndexFile *mIndexFile;
     CFileBase *iDstFile;

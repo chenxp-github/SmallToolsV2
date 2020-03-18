@@ -10,18 +10,17 @@
 //////////////////////////////////////////////////////////////////////
 CXmlNode::CXmlNode()
 {
-    WEAK_REF_ID_INIT();    
+    WEAK_REF_CLEAR();
     this->next = NULL;
 }
 
 CXmlNode::~CXmlNode()
 {
-    WEAK_REF_ID_CLEAR();
     this->Destroy();
 }
 
 status_t CXmlNode::Init()
-{    
+{            
     this->mf_attrib = NULL;
     this->mf_value = NULL;
     this->mem_name = NULL;
@@ -38,6 +37,7 @@ status_t CXmlNode::Init()
 
 status_t CXmlNode::Destroy()
 {
+    WEAK_REF_DESTROY();
     DEL(this->mem_name);
     DEL(this->mf_attrib);
     DEL(this->mf_value);
@@ -90,13 +90,11 @@ status_t CXmlNode::Free(CXmlNode *node)
     if( p ) q = p->next;
     while(p)
     {
-        p->Destroy();
         CXmlNode::Free(p);
         p = q;
         if(q != NULL)
             q = q->next;
     }
-    node->Destroy();
     DEL( node );
     return OK;
 }
@@ -526,24 +524,25 @@ float CXmlNode::GetFloatValue()
 /*=======================================================*/
 CXml::CXml()
 {
-    WEAK_REF_ID_INIT();
+    WEAK_REF_CLEAR();
     this->root = NULL;
 }
 
 CXml::~CXml()
 {
-    WEAK_REF_ID_CLEAR();
     Destroy();
 }
 
 status_t CXml::Init()
-{    
+{        
+    WEAK_REF_CLEAR();
     this->root = NULL;
     return OK;
 }
 
 status_t  CXml::Destroy()
 {
+    WEAK_REF_DESTROY();
     if( this->root == NULL)
         return OK;
     CXmlNode::Free(this->root);

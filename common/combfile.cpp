@@ -12,6 +12,7 @@ CCombFile::~CCombFile()
 }
 status_t CCombFile::InitBasic()
 {
+    CFileBase::InitBasic();
     this->mOffset = 0;
     this->mAllFiles = NULL;
     this->mFileNum = 0;

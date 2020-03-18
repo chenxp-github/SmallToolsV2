@@ -5,15 +5,12 @@
 #include "lualib_mem.h"
 #include "lualib_xmlnode.h"
 
-static bool xml_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CXml,ud);
-    CXml *p = (CXml*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CXml,xml)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CXml,xml)
+LUA_NEW_USER_DATA_FUNC(CXml,xml,XML)
+LUA_GC_FUNC(CXml,xml)
+LUA_IS_SAME_FUNC(CXml,xml)
+LUA_TO_STRING_FUNC(CXml,xml)
 
 bool is_xml(lua_State *L, int idx)
 {        
@@ -28,65 +25,6 @@ bool is_xml(lua_State *L, int idx)
     }
     return xml_is_userdata_valid(ud);  
 }
-
-CXml *get_xml(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_xml(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CXml *)ud->p;
-} 
-
-lua_userdata *xml_new_userdata(lua_State *L,CXml *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_XML);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int xml_gc_(lua_State *L)
-{
-    if(!is_xml(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CXml *pxml = (CXml*)ud->p;
-        DEL(pxml);
-    }
-    return 0;
-}
-
-static int xml_issame_(lua_State *L)
-{
-    CXml *pxml1 = get_xml(L,1);
-    ASSERT(pxml1);
-    CXml *pxml2 = get_xml(L,2);
-    ASSERT(pxml2);
-    int is_same = (pxml1==pxml2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int xml_tostring_(lua_State *L)
-{
-    CXml *pxml = get_xml(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:xml:%p",pxml);
-    lua_pushstring(L,buf);
-    return 1;
-}
-
 /****************************************************/
 static status_t xml_new(lua_State *L)
 {
@@ -161,7 +99,9 @@ static status_t xml_destroy(lua_State *L)
 {
     CXml *pxml = get_xml(L,1);
     ASSERT(pxml);
+    SAVE_WEAK_REF_ID(*pxml,w);
     status_t ret0 = pxml->Destroy();
+    RESTORE_WEAK_REF_ID(*pxml,w);
     lua_pushboolean(L,ret0);
     return 1;
 }

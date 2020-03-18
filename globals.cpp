@@ -284,7 +284,7 @@ status_t CGlobals::InitLuaVm()
     
 #if _IS_LINUX_
     luaopen_nativeprocess(L);
-    luaopen_fivprocessmanager(L);
+    luaopen_nativeprocessmanager(L);
 #endif
 
 #if _SUPPORT_X11_

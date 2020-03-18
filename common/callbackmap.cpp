@@ -14,7 +14,7 @@ CCallbackMap::~CCallbackMap()
 status_t CCallbackMap::InitBasic()
 {
 	TASK_CONTAINER_CLEAR();
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
 
 	m_AutoTimeoutTimer = 0;
 	this->m_Capacity = 0;
@@ -26,7 +26,7 @@ status_t CCallbackMap::InitBasic()
 status_t CCallbackMap::Init(CTaskMgr *mgr,int capacity)
 {
 	this->InitBasic();    
-    WEAK_REF_ID_INIT();
+    
     TASK_CONTAINER_INIT(mgr);
 
     this->m_Capacity = capacity;
@@ -38,7 +38,7 @@ status_t CCallbackMap::Destroy()
 {
 	int i;
 	CCallback *q,*p;
-
+	WEAK_REF_DESTROY();
 	QuitTask(&m_AutoTimeoutTimer);
 
 	if(this->m_Data == NULL)

@@ -14,7 +14,7 @@ CResource::~CResource()
 status_t CResource::InitBasic()
 {
     HASH_ENTRY_CLEAR();
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->m_Type = TYPE_UNKNOWN;
     this->m_Id.InitBasic();
     this->m_Theme.InitBasic();
@@ -25,7 +25,6 @@ status_t CResource::InitBasic()
 status_t CResource::Init()
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
     
     this->m_Id.Init();
     m_Id.SetRawBuf(_id_buf,sizeof(_id_buf),false);
@@ -42,6 +41,7 @@ status_t CResource::Init()
 }
 status_t CResource::Destroy()
 {
+    WEAK_REF_DESTROY();
     this->m_Id.Destroy();
     this->m_Theme.Destroy();
     this->m_Language.Destroy();

@@ -16,7 +16,7 @@
 
 class CXmlNode{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     CMem *mem_name;
     CMemFile *mf_attrib;
@@ -71,7 +71,7 @@ public:
 
 class CXml{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     CXmlNode *root;
 public:

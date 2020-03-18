@@ -21,7 +21,7 @@ public:
 		SINGAL = 0x03,
 		PART_RESPONSE = 0x04,
     };
-	WEAK_REF_ID_DEFINE();
+	WEAK_REF_DEFINE();
 public:
     int32_t	m_Method;
     int32_t m_CallbackId;

@@ -6,15 +6,12 @@
 #include "lualib_mem.h"
 #include "lua_helper.h"
 
-static bool websocketserver_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CWebSocketServer,ud);
-    CWebSocketServer *p = (CWebSocketServer*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CWebSocketServer,websocketserver)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CWebSocketServer,websocketserver)
+LUA_NEW_USER_DATA_FUNC(CWebSocketServer,websocketserver,WEBSOCKETSERVER)
+LUA_GC_FUNC(CWebSocketServer,websocketserver)
+LUA_IS_SAME_FUNC(CWebSocketServer,websocketserver)
+LUA_TO_STRING_FUNC(CWebSocketServer,websocketserver)
 
 bool is_websocketserver(lua_State *L, int idx)
 {        
@@ -28,64 +25,6 @@ bool is_websocketserver(lua_State *L, int idx)
         if(ud)break;
     }
     return websocketserver_is_userdata_valid(ud);  
-}
-
-CWebSocketServer *get_websocketserver(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_websocketserver(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CWebSocketServer *)ud->p;
-} 
-
-lua_userdata *websocketserver_new_userdata(lua_State *L,CWebSocketServer *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_WEBSOCKETSERVER);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int websocketserver_gc_(lua_State *L)
-{
-    if(!is_websocketserver(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CWebSocketServer *pwebsocketserver = (CWebSocketServer*)ud->p;
-        DEL(pwebsocketserver);
-    }
-    return 0;
-}
-
-static int websocketserver_issame_(lua_State *L)
-{
-    CWebSocketServer *pwebsocketserver1 = get_websocketserver(L,1);
-    ASSERT(pwebsocketserver1);
-    CWebSocketServer *pwebsocketserver2 = get_websocketserver(L,2);
-    ASSERT(pwebsocketserver2);
-    int is_same = (pwebsocketserver1==pwebsocketserver2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int websocketserver_tostring_(lua_State *L)
-{
-    CWebSocketServer *pwebsocketserver = get_websocketserver(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:websocketserver:%p",pwebsocketserver);
-    lua_pushstring(L,buf);
-    return 1;
 }
 
 /****************************************************/
@@ -142,10 +81,10 @@ static status_t websocketserver_reset(lua_State *L)
 {
     CWebSocketServer *pwebsocketserver = get_websocketserver(L,1);
     ASSERT(pwebsocketserver);
-    int old_ref_id = pwebsocketserver->__weak_ref_id;
+    SAVE_WEAK_REF_ID(*pwebsocketserver,w);
     pwebsocketserver->Destroy();
     pwebsocketserver->Init(how_to_get_global_taskmgr());
-    pwebsocketserver->__weak_ref_id = old_ref_id;
+    RESTORE_WEAK_REF_ID(*pwebsocketserver,w);
     return 0;
 }
 

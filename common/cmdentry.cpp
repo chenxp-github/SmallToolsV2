@@ -12,7 +12,7 @@ CCmdEntry::~CCmdEntry()
 }
 status_t CCmdEntry::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->m_KeyType = 0;
     this->m_Option = OPTIONAL;
     this->m_Key.InitBasic();
@@ -23,7 +23,6 @@ status_t CCmdEntry::InitBasic()
 status_t CCmdEntry::Init()
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
     this->m_Key.Init();
     this->m_Value.Init();
     this->m_Help.Init();
@@ -31,6 +30,7 @@ status_t CCmdEntry::Init()
 }
 status_t CCmdEntry::Destroy()
 {
+    WEAK_REF_DESTROY();
     this->m_Key.Destroy();
     this->m_Value.Destroy();
     this->m_Help.Destroy();

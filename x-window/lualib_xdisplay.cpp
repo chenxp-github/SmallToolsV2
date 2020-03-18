@@ -4,27 +4,28 @@
 #include "lualib_xdisplay.h"
 #include "lualib_xwindow.h"
 
-CxDisplay *get_xdisplay(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_XDISPLAY);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CxDisplay *p = (CxDisplay*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *xdisplay_new_userdata(lua_State *L,CxDisplay *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_XDISPLAY);
-    lua_setmetatable(L,-2);
-    return ud;
+LUA_IS_VALID_USER_DATA_FUNC(CxDisplay,xdisplay)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CxDisplay,xdisplay)
+LUA_NEW_USER_DATA_FUNC(CxDisplay,xdisplay,XDISPLAY)
+LUA_GC_FUNC(CxDisplay,xdisplay)
+LUA_IS_SAME_FUNC(CxDisplay,xdisplay)
+LUA_TO_STRING_FUNC(CxDisplay,xdisplay)
+
+bool is_xdisplay(lua_State *L, int idx)
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_XDISPLAY,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return xdisplay_is_userdata_valid(ud);  
 }
 
+/****************************************/
 static int xdisplay_new(lua_State *L)
 {
     CxDisplay *pt;
@@ -34,43 +35,6 @@ static int xdisplay_new(lua_State *L)
     return 1;
 }
 
-static bool xdisplay_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CxDisplay *p = (CxDisplay*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}
-static int xdisplay_destroy(lua_State *L)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_XDISPLAY);
-    if(!xdisplay_is_userdata_valid(ud))
-        return 0;
-    CxDisplay *pxdisplay = (CxDisplay*)ud->p;
-    if(!(ud->is_attached))
-    {
-        DEL(pxdisplay);
-    }
-    return 0;
-}
-static int xdisplay_issame(lua_State *L)
-{
-    CxDisplay *pxdisplay1 = get_xdisplay(L,1);
-    ASSERT(pxdisplay1);
-    CxDisplay *pxdisplay2 = get_xdisplay(L,2);
-    ASSERT(pxdisplay2);
-    int is_same = (pxdisplay1==pxdisplay2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int xdisplay_tostring(lua_State *L)
-{
-    lua_pushstring(L,"userdata:xdisplay");
-    return 1;
-}
-/****************************************/
 static int xdisplay_defaultscreennumber(lua_State *L)
 {
     CxDisplay *pxdisplay = get_xdisplay(L,1);
@@ -195,7 +159,7 @@ static int xdisplay_peekevent(lua_State *L)
 {
     CxDisplay *pxdisplay = get_xdisplay(L,1);
     ASSERT(pxdisplay);
-    CXEvent *event = get_xevent(L,2);
+    CxEvent *event = get_xevent(L,2);
     ASSERT(event);
     int _ret_0 = (int)pxdisplay->PeekEvent(event->GetNativeXEvent());
     lua_pushboolean(L,_ret_0);
@@ -205,7 +169,7 @@ static int xdisplay_nextevent(lua_State *L)
 {
     CxDisplay *pxdisplay = get_xdisplay(L,1);
     ASSERT(pxdisplay);
-    CXEvent *event = get_xevent(L,2);
+    CxEvent *event = get_xevent(L,2);
     ASSERT(event);
     int _ret_0 = (int)pxdisplay->NextEvent(event->GetNativeXEvent());
     lua_pushboolean(L,_ret_0);
@@ -221,10 +185,10 @@ static int xdisplay_pending(lua_State *L)
 }
 
 static const luaL_Reg xdisplay_lib[] = {
+    {"__gc",xdisplay_gc_},
+    {"__tostring",xdisplay_tostring_},
+    {"__is_same",xdisplay_issame_},
     {"new",xdisplay_new},
-    {"__gc",xdisplay_destroy},
-    {"__tostring",xdisplay_tostring},
-    {"IsSame",xdisplay_issame},
     {"DefaultScreenNumber",xdisplay_defaultscreennumber},
     {"InstallDefaultErrorHandler",xdisplay_installdefaulterrorhandler},
     {"Flush",xdisplay_flush},

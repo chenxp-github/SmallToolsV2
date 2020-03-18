@@ -6,16 +6,16 @@
 #include "peermessage.h"
 #include "memstk.h"
 #include "taskmgr.h"
-#include "weakptr.h"
+#include "weak_pointer.h"
 
 class CPeerProxy;
 class CServerSidePeer{
 public:
     TASK_CONTAINER_DEFINE();
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     bool quit,can_fetch_message;
-    CWeakPtr<CPeerProxy> iHostProxy;
+    CWeakPointer<CPeerProxy> iHostProxy;
     CMem *mName;
     CMemStk *mAllConnectedPeers;
     CClosure *mCallback;

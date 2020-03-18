@@ -54,7 +54,7 @@ status_t CTaskPeerClient::Destroy()
     DEL(this->mMessageHeader);
     DEL(this->mHeaderRecvBuf);
     DEL(this->mDataRecvBuf);
-
+	iHostPeer.Destroy();
     CTaskLinkRpc::Destroy();
     this->InitBasic();
     return OK;

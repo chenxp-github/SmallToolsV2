@@ -6,7 +6,7 @@
 
 class CMMapFile{
 public: 
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
 #if HAVE_WINDOWS_H
     HANDLE m_MapHandle;

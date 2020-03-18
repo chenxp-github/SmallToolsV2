@@ -13,9 +13,9 @@ status_t CxImageHelper::LoadImage(CFileBase *file, CxImage *out)
 {
     ASSERT(file && out);
     
-    int old_weak_ref_id = out->__weak_ref_id;
+    SAVE_WEAK_REF_ID(*out,w);
     out->DestroyAll();
-    out->__weak_ref_id = old_weak_ref_id;
+    RESTORE_WEAK_REF_ID(*out,w);
 
     int32_t type = CxImage::GetTypeByFileHeader(file);
     if(type == CXIMAGE_FORMAT_BMP)

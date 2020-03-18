@@ -5,22 +5,89 @@
 #include "mem.h"
 #include "memstk.h"
 #include "lua.hpp"
+#include "raw_weak_pointer.h"
 
 #define MAX_LUA_FUNCS 4096
 
-#if HAVE_WINDOWS_H
-#define CHECK_IS_UD_READABLE(type,ud)\
-if(IsBadReadPtr(ud->p,sizeof(type)))\
-return 0;
-#else
-#define CHECK_IS_UD_READABLE(type,ud)
-#endif
-
 typedef struct {
-    void *p;
     int is_attached;
-    int __weak_ref_id;
+    CRawWeakPointer weak_ptr;
 }lua_userdata;
+
+#define LUA_IS_VALID_USER_DATA_FUNC(ctype,type_lwr) \
+static bool type_lwr##_is_userdata_valid(lua_userdata *ud)\
+{\
+    if(ud == NULL)return false;\
+    if(!ud->weak_ptr.IsValid())return false;\
+    return true;\
+}\
+
+#define LUA_GET_OBJ_FROM_USER_DATA_FUNC(ctype,type_lwr)\
+ctype *get_##type_lwr(lua_State *L, int idx)\
+{\
+    lua_userdata *ud = NULL;\
+    if(is_##type_lwr(L,idx))\
+    {\
+        ud = (lua_userdata*)lua_touserdata(L,idx);\
+    }\
+    ASSERT(ud);\
+    return (ctype*)ud->weak_ptr.GetRawPtr();\
+}\
+
+#define LUA_NEW_USER_DATA_FUNC(ctype,type_lwr,type_upr)\
+lua_userdata *type_lwr##_new_userdata(lua_State *L,ctype *pobj,int is_weak)\
+{\
+    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));\
+    ASSERT(ud && pobj);\
+    ud->weak_ptr.Init();\
+    WEAK_REF_CONTEXT_CREATE(pobj->__weak_ref_context);\
+    ud->weak_ptr.WeakRef(pobj,pobj->__weak_ref_context);\
+    ud->is_attached = is_weak;\
+    luaL_getmetatable(L,LUA_USERDATA_##type_upr);\
+    lua_setmetatable(L,-2);\
+    return ud;\
+}\
+
+#define LUA_GC_FUNC(ctype,type_lwr)\
+static int type_lwr##_gc_(lua_State *L)\
+{\
+    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);\
+    ASSERT(ud);\
+    if(!is_##type_lwr(L,1))\
+    {\
+        ud->weak_ptr.Destroy();\
+        return 0;\
+    }\
+    if(!(ud->is_attached))\
+    {\
+        ctype *p = (ctype*)ud->weak_ptr.GetRawPtr();\
+        DEL(p);\
+    }\
+    ud->weak_ptr.Destroy();\
+    return 0;\
+}\
+
+#define LUA_IS_SAME_FUNC(ctype,type_lwr)\
+static int type_lwr##_issame_(lua_State *L)\
+{\
+    ctype *p1 = get_##type_lwr(L,1);\
+    ASSERT(p1);\
+    ctype *p2 = get_##type_lwr(L,2);\
+    ASSERT(p2);\
+    int is_same = (p1==p2);\
+    lua_pushboolean(L,is_same);\
+    return 1;\
+}\
+
+#define LUA_TO_STRING_FUNC(ctype,type_lwr)\
+static int type_lwr##_tostring_(lua_State *L)\
+{\
+    ctype *p = get_##type_lwr(L,1);\
+    char buf[1024];\
+    sprintf(buf,"userdata:%s:%p",#type_lwr,p);\
+    lua_pushstring(L,buf);\
+    return 1;\
+}\
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,1 @@
+bc . ..\..\StringToolsV2\main_window\lualib

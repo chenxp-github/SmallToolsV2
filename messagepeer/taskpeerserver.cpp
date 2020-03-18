@@ -48,6 +48,7 @@ status_t CTaskPeerServer::Destroy()
             "peer server \"%s\" exit",this->iHostProxy->GetNameStr()
         );
     }
+	iHostProxy.Destroy();
     DEL(this->mSendHeadBuf);
     DEL(this->mRecvHeadBuf);
     DEL(this->mRecvDataBuf);

@@ -8,7 +8,7 @@
 #include "syslog.h"
 #include "mem_tool.h"
 
-#define _MAX_PATH_ (LBUF_SIZE*2)
+#define _MAX_PATH_ (1024)
 
 //////////////////////////////////////////////////////////////////////
 #if _ASC_
@@ -141,6 +141,7 @@ status_t CDirMgr::SearchDir_Interruptable(CMem *dir, bool recursive, CClosure *c
         );
         return ERROR;
     }
+
     while(crt_read_dir(p))
     {
         if(running && !(*running))break;

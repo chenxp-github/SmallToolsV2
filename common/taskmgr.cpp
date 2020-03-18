@@ -16,7 +16,7 @@ CTask::~CTask()
 }
 status_t CTask::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     TASK_CONTAINER_CLEAR();
     this->mId = 0;
     this->mName = NULL;
@@ -34,7 +34,7 @@ status_t CTask::InitBasic()
 status_t CTask::Init(CTaskMgr *mgr)
 {
     this->Destroy();
-    WEAK_REF_ID_INIT();
+    
     TASK_CONTAINER_INIT(mgr);
     this->mLastRunTime = crt_get_sys_timer();
     this->mLastSleepTime = this->mLastRunTime;
@@ -47,6 +47,7 @@ status_t CTask::Init(CTaskMgr *mgr)
 }
 status_t CTask::Destroy()
 {
+    WEAK_REF_DESTROY();
     FREE(mName);
     this->InitBasic();
     return OK;
@@ -238,8 +239,9 @@ status_t CTaskMgr::Init(int init_size)
 status_t CTaskMgr::Destroy()
 {
     int i;
+
     if(this->index == NULL)
-        return ERROR;
+        return ERROR;    
     DEL(callback);
     CTask **p = this->index;
     this->index = NULL;

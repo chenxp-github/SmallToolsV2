@@ -13,7 +13,7 @@ CCommandLine::~CCommandLine()
 }
 status_t CCommandLine::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     m_CmdEntries.InitBasic();
     m_EntryTypes.InitBasic();
     return OK;
@@ -21,13 +21,13 @@ status_t CCommandLine::InitBasic()
 status_t CCommandLine::Init()
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
     m_CmdEntries.Init(1024);
     m_EntryTypes.Init(1024);
     return OK;
 }
 status_t CCommandLine::Destroy()
 {
+    WEAK_REF_DESTROY();
     m_CmdEntries.Destroy();
     m_EntryTypes.Destroy();
     this->InitBasic();

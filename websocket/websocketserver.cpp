@@ -16,7 +16,7 @@ CWebSocketServer::~CWebSocketServer()
 
 status_t CWebSocketServer::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     TASK_CONTAINER_CLEAR();
     m_TaskWebSocketServer = 0;
     m_SendingQueue.InitBasic();
@@ -27,7 +27,7 @@ status_t CWebSocketServer::InitBasic()
 status_t CWebSocketServer::Init(CTaskMgr *_taskmgr)
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
+    
     TASK_CONTAINER_INIT(_taskmgr);
     m_SendingQueue.Init(MAX_SENDING_QUEUE_LEN);
 	m_Callback.Init();
@@ -36,6 +36,7 @@ status_t CWebSocketServer::Init(CTaskMgr *_taskmgr)
 
 status_t CWebSocketServer::Destroy()
 {
+    WEAK_REF_DESTROY();
 	m_Callback.Destroy();
     m_SendingQueue.Destroy();
     QuitTask(&m_TaskWebSocketServer);

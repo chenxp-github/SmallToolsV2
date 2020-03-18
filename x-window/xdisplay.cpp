@@ -13,19 +13,19 @@ CxDisplay::~CxDisplay()
 }
 status_t CxDisplay::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->m_NativeXDisplay = 0;
     m_Flags = 0;
     return OK;
 }
 status_t CxDisplay::Init()
 {
-    this->InitBasic();
-    WEAK_REF_ID_INIT();
+    this->InitBasic();    
     return OK;
 }
 status_t CxDisplay::Destroy()
 {
+    WEAK_REF_DESTROY();
     this->CloseDisplay();
     this->InitBasic();
     return OK;

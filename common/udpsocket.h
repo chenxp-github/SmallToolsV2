@@ -6,7 +6,7 @@
 
 class CUdpSocket{
 public: 
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
 	int m_sock_fd;
 	struct sockaddr_in m_addr;

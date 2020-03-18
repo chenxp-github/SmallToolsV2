@@ -15,7 +15,7 @@ CSocketReaderWriter::~CSocketReaderWriter()
 }
 status_t CSocketReaderWriter::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->iSocket = NULL;
     this->iReadDestFile = NULL;
     this->iWriteSrcFile = NULL;
@@ -35,7 +35,7 @@ status_t CSocketReaderWriter::InitBasic()
 status_t CSocketReaderWriter::Init(CTaskMgr *taskmgr)
 {
     this->Destroy();
-    WEAK_REF_ID_INIT();
+    
     NEW(mCallback,CClosure);
     mCallback->Init();
 	iTaskMgr = taskmgr;
@@ -43,6 +43,7 @@ status_t CSocketReaderWriter::Init(CTaskMgr *taskmgr)
 }
 status_t CSocketReaderWriter::Destroy()
 {
+    WEAK_REF_DESTROY();
     DEL(mCallback);
     this->InitBasic();
     return OK;

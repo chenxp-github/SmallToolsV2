@@ -5,64 +5,37 @@
 #include "syslog.h"
 #include "memstk.h"
 
-bool lua_is_minibson(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_testudata(L, idx, LUA_USERDATA_MINIBSON);
-    if(!ud)return false;
-    if(!ud->p)return false;
-    CHECK_IS_UD_READABLE(CMiniBson,ud);
-    CMiniBson *p = (CMiniBson*)ud->p;
-    if(p->__weak_ref_id != ud->__weak_ref_id)
-        return false;
-    return true;
-}
+LUA_IS_VALID_USER_DATA_FUNC(CMiniBson,minibson)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CMiniBson,minibson)
+LUA_NEW_USER_DATA_FUNC(CMiniBson,minibson,MINIBSON)
+LUA_GC_FUNC(CMiniBson,minibson)
+LUA_IS_SAME_FUNC(CMiniBson,minibson)
+LUA_TO_STRING_FUNC(CMiniBson,minibson)
 
-CMiniBson *get_minibson(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_MINIBSON);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CMiniBson *p = (CMiniBson*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *minibson_new_userdata(lua_State *L,CMiniBson *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_MINIBSON);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-static int minibson_new(lua_State *L)
-{
-    CMiniBson *pt;
-    NEW(pt,CMiniBson);
-    pt->Init();
-    minibson_new_userdata(L,pt,0);
-    return 1;
-}
-
-static int minibson_destroy(lua_State *L)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_MINIBSON);
-    ASSERT(ud);
-    CMiniBson *pminibson = (CMiniBson*)ud->p;
-    if(!(ud->is_attached))
+bool is_minibson(lua_State *L, int idx)
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_MINIBSON,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
     {
-        DEL(pminibson);
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
     }
-    return 0;
+    return minibson_is_userdata_valid(ud);  
 }
 
-static int minibson_tostring(lua_State *L)
+/*************************************************/
+static status_t minibson_new(lua_State *L)
 {
-    lua_pushstring(L,"userdata:minibson");
+    CMiniBson *pminibson;
+    NEW(pminibson,CMiniBson);
+    pminibson->Init();
+    minibson_new_userdata(L,pminibson,0);
     return 1;
 }
+
 static int minibson_isend(lua_State *L)
 {
     CMiniBson *pminibson = get_minibson(L,1);
@@ -76,12 +49,12 @@ static int minibson_getdocument(lua_State *L)
     CMiniBson *pminibson = get_minibson(L,1);
     ASSERT(pminibson);
     const char* name = (const char*)lua_tostring(L,2);
-
+    
     CMiniBson *_ret;
     NEW(_ret,CMiniBson);
     _ret->Init();
     pminibson->GetDocument(name,_ret);
-
+    
     minibson_new_userdata(L,_ret,false);
     return 1;
 }
@@ -89,14 +62,14 @@ static int minibson_startdocument(lua_State *L)
 {
     CMiniBson *pminibson = get_minibson(L,1);
     ASSERT(pminibson);
-
+    
     if(!lua_isstring(L,2))
     {
         int _ret = pminibson->StartDocument();
         lua_pushinteger(L,_ret);
         return 1;
     }
-
+    
     const char* name = (const char*)lua_tostring(L,2);
     fsize_t off = 0;
     pminibson->StartDocument(name,&off);
@@ -576,9 +549,11 @@ static int minibson_getbinary(lua_State *L)
 }
 
 static const luaL_Reg minibson_lib[] = {
+
+    {"__gc",minibson_gc_},
+    {"__tostring",minibson_tostring_},
+    {"__is_same",minibson_issame_},
     {"new",minibson_new},
-    {"__gc",minibson_destroy},
-    {"__tostring",minibson_tostring},
     {"IsEnd",minibson_isend},
     {"GetDocument",minibson_getdocument},
     {"StartDocument",minibson_startdocument},

@@ -10,7 +10,7 @@
 
 class CxDisplay{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     uint32_t m_Flags;
     NativeXDisplay m_NativeXDisplay;

@@ -8,14 +8,16 @@ int_ptr_t off = (int_ptr_t)(raw_offset & this->mod_n)\
 
 CMemFile::CMemFile()
 {
-
+    this->InitBasic();
 }
+
 CMemFile::~CMemFile()
 {
     this->Destroy();
 }
 status_t CMemFile::InitBasic()
 {
+    CFileBase::InitBasic();
     this->mSize = 0;
     this->mBase = NULL;
     this->mMaxPages = 0;
@@ -71,6 +73,7 @@ status_t CMemFile::Destroy()
         }
         FREE(this->mBase);
     }
+    CFileBase::Destroy();
     this->InitBasic();
     return OK;
 }

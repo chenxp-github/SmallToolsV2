@@ -3,40 +3,27 @@
 #include "mem_tool.h"
 #include "syslog.h"
 
-static bool simpledisk_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CSimpleDisk *p = (CSimpleDisk*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}
-bool is_simpledisk(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_testudata(L, idx, LUA_USERDATA_SIMPLEDISK);
-    return simpledisk_is_userdata_valid(ud);
-}
-CSimpleDisk *get_simpledisk(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_SIMPLEDISK);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CSimpleDisk *p = (CSimpleDisk*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *simpledisk_new_userdata(lua_State *L,CSimpleDisk *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_SIMPLEDISK);
-    lua_setmetatable(L,-2);
-    return ud;
-}
+LUA_IS_VALID_USER_DATA_FUNC(CSimpleDisk,simpledisk)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CSimpleDisk,simpledisk)
+LUA_NEW_USER_DATA_FUNC(CSimpleDisk,simpledisk,SIMPLEDISK)
+LUA_GC_FUNC(CSimpleDisk,simpledisk)
+LUA_IS_SAME_FUNC(CSimpleDisk,simpledisk)
+LUA_TO_STRING_FUNC(CSimpleDisk,simpledisk)
 
+bool is_simpledisk(lua_State *L, int idx)
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_SIMPLEDISK,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return simpledisk_is_userdata_valid(ud);  
+}
+/****************************************/
 static int simpledisk_new(lua_State *L)
 {
     CSimpleDisk *pt;
@@ -46,37 +33,6 @@ static int simpledisk_new(lua_State *L)
     return 1;
 }
 
-static int simpledisk_destroy(lua_State *L)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_SIMPLEDISK);
-    if(!simpledisk_is_userdata_valid(ud))
-        return 0;
-    CSimpleDisk *psimpledisk = (CSimpleDisk*)ud->p;
-    if(!(ud->is_attached))
-    {
-        DEL(psimpledisk);
-    }
-    return 0;
-}
-static int simpledisk_issame(lua_State *L)
-{
-    CSimpleDisk *psimpledisk1 = get_simpledisk(L,1);
-    ASSERT(psimpledisk1);
-    CSimpleDisk *psimpledisk2 = get_simpledisk(L,2);
-    ASSERT(psimpledisk2);
-    int is_same = (psimpledisk1==psimpledisk2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-static int simpledisk_tostring(lua_State *L)
-{
-    CSimpleDisk *psimpledisk = get_simpledisk(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:simpledisk:%p",psimpledisk);
-    lua_pushstring(L,buf);
-    return 1;
-}
-/****************************************/
 static int simpledisk_buildfastfsindex(lua_State *L)
 {
     CSimpleDisk *psimpledisk = get_simpledisk(L,1);
@@ -232,10 +188,10 @@ static int simpledisk_beginfolder(lua_State *L)
     return 1;
 }
 static const luaL_Reg simpledisk_lib[] = {
+    {"__gc",simpledisk_gc_},
+    {"__tostring",simpledisk_tostring_},
+    {"__is_same",simpledisk_issame_},
     {"new",simpledisk_new},
-    {"__gc",simpledisk_destroy},
-    {"__tostring",simpledisk_tostring},
-    {"IsSame",simpledisk_issame},
     {"BuildFastFsIndex",simpledisk_buildfastfsindex},
     {"RebuildFastIndex",simpledisk_rebuildfastindex},
     {"AddFastFsIndex",simpledisk_addfastfsindex},

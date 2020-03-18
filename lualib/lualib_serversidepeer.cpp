@@ -5,84 +5,38 @@
 #include "syslog.h"
 #include "lua_helper.h"
 
-
 #define CALLBACK_INDEX 15
 
-static bool serversidepeer_is_userdata_valid(lua_userdata *ud)
-{
-	if(ud == NULL)return false;
-	if(ud->p == NULL)return false;
-	if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CServerSidePeer,ud);
-	CServerSidePeer *p = (CServerSidePeer*)ud->p;
-	return p->__weak_ref_id == ud->__weak_ref_id;
-}
+LUA_IS_VALID_USER_DATA_FUNC(CServerSidePeer,serversidepeer)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CServerSidePeer,serversidepeer)
+LUA_NEW_USER_DATA_FUNC(CServerSidePeer,serversidepeer,SERVERSIDEPEER)
+LUA_GC_FUNC(CServerSidePeer,serversidepeer)
+LUA_IS_SAME_FUNC(CServerSidePeer,serversidepeer)
+LUA_TO_STRING_FUNC(CServerSidePeer,serversidepeer)
+
 bool is_serversidepeer(lua_State *L, int idx)
-{
-	lua_userdata *ud = (lua_userdata*)luaL_testudata(L, idx, LUA_USERDATA_SERVERSIDEPEER);
-	return serversidepeer_is_userdata_valid(ud);
-}
-CServerSidePeer *get_serversidepeer(lua_State *L, int idx)
-{
-	lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_SERVERSIDEPEER);
-	ASSERT(ud && ud->p);
-	ASSERT(ud->__weak_ref_id != 0);
-	CServerSidePeer *p = (CServerSidePeer*)ud->p;
-	ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-	return p;
-}
-lua_userdata *serversidepeer_new_userdata(lua_State *L,CServerSidePeer *pt,int is_weak)
-{
-	lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-	ASSERT(ud && pt);
-	ud->p = pt;
-	ud->is_attached = is_weak;
-	ud->__weak_ref_id = pt->__weak_ref_id;
-	luaL_getmetatable(L,LUA_USERDATA_SERVERSIDEPEER);
-	lua_setmetatable(L,-2);
-	return ud;
-}
-
-static int serversidepeer_new(lua_State *L)
-{	
-	CServerSidePeer *pt;
-	NEW(pt,CServerSidePeer);
-	pt->Init(how_to_get_global_taskmgr());
-	serversidepeer_new_userdata(L,pt,0);
-	return 1;
-}
-
-static int serversidepeer_destroy__(lua_State *L)
-{
-	lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_SERVERSIDEPEER);
-	if(!serversidepeer_is_userdata_valid(ud))
-		return 0;
-	CServerSidePeer *pserversidepeer = (CServerSidePeer*)ud->p;
-	if(!(ud->is_attached))
-	{
-		DEL(pserversidepeer);
-	}
-	return 0;
-}
-static int serversidepeer_issame(lua_State *L)
-{
-	CServerSidePeer *pserversidepeer1 = get_serversidepeer(L,1);
-	ASSERT(pserversidepeer1);
-	CServerSidePeer *pserversidepeer2 = get_serversidepeer(L,2);
-	ASSERT(pserversidepeer2);
-	int is_same = (pserversidepeer1==pserversidepeer2);
-	lua_pushboolean(L,is_same);
-	return 1;
-}
-static int serversidepeer_tostring(lua_State *L)
-{
-	CServerSidePeer *pserversidepeer = get_serversidepeer(L,1);
-	char buf[1024];
-	sprintf(buf,"userdata:serversidepeer:%p",pserversidepeer);
-	lua_pushstring(L,buf);
-	return 1;
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_SERVERSIDEPEER,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return serversidepeer_is_userdata_valid(ud);  
 }
 /****************************************/
+static int serversidepeer_new(lua_State *L)
+{	
+    CServerSidePeer *pt;
+    NEW(pt,CServerSidePeer);
+    pt->Init(how_to_get_global_taskmgr());
+    serversidepeer_new_userdata(L,pt,0);
+    return 1;
+}
+
 static int serversidepeer_clearsendingqueue(lua_State *L)
 {
 	CServerSidePeer *pserversidepeer = get_serversidepeer(L,1);
@@ -235,10 +189,10 @@ static status_t serversidepeer_getaliveclientnumber(lua_State *L)
     return 1;
 }
 static const luaL_Reg serversidepeer_lib[] = {
-	{"new",serversidepeer_new},
-	{"__gc",serversidepeer_destroy__},
-	{"__tostring",serversidepeer_tostring},
-	{"IsSame",serversidepeer_issame},
+    {"__gc",serversidepeer_gc_},
+    {"__tostring",serversidepeer_tostring_},
+    {"__is_same",serversidepeer_issame_},
+    {"new",serversidepeer_new},
 	{"ClearSendingQueue",serversidepeer_clearsendingqueue},
 	{"GetSendingQueueLength",serversidepeer_getsendingqueuelength},
 	{"ResumeFetchMessageTask",serversidepeer_resumefetchmessagetask},

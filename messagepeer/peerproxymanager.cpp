@@ -90,3 +90,27 @@ CPeerProxy * CPeerProxyManager::GetPeerByName(const char *name)
     CMem mem(name);
     return this->GetPeerByName(&mem);
 }
+
+status_t CPeerProxyManager::GetPeerProxyIpAddress(const char *peer_name, CMem *ip, int *port)
+{
+	ASSERT(peer_name && ip && port);
+
+	*port = 0;
+	ip->SetSize(0);
+
+	CPeerProxy *proxy = this->GetPeerByName(peer_name);
+	ASSERT(proxy);
+	CSocket *socket = proxy->GetSocket();
+	ASSERT(socket);
+
+	struct sockaddr_in addr;
+	socklen_t addrlen = sizeof(addr);
+	memset(&addr,0,sizeof(addr));
+	getpeername(socket->GetSocketFd(),(struct sockaddr*)&addr,&addrlen);
+
+	ip->StrCpy(inet_ntoa(addr.sin_addr));
+	*port = ntohs(addr.sin_port);
+
+	return OK;
+}
+

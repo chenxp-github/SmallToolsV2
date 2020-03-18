@@ -6,8 +6,9 @@
 
 #define LUA_USERDATA_XEVENT "lua_userdata_xevent"
 
-CXEvent *get_xevent(lua_State *L, int idx);
-lua_userdata *xevent_new_userdata(lua_State *L,CXEvent *pt,int is_weak);
+CxEvent *get_xevent(lua_State *L, int idx);
+lua_userdata *xevent_new_userdata(lua_State *L,CxEvent *pt,int is_weak);
 int luaopen_xevent(lua_State *L);
+bool is_xevent(lua_State *L, int idx);
 
 #endif

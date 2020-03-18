@@ -53,12 +53,8 @@
 #if _ANDROID_
 #include "crt_android.h"
 #endif
-/////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////
-#define WEAK_REF_ID_DEFINE() int __weak_ref_id
-#define WEAK_REF_ID_INIT()  __weak_ref_id = crt_get_unique_id()
-#define WEAK_REF_ID_CLEAR() __weak_ref_id = 0
+#include "weak_ref.h"
 ////////////////////////////////////////////////////////////
 #define C_WEAK_REF_ID_DEFINE() int __weak_ref_id
 #define C_WEAK_REF_ID_CLEAR(self) self->__weak_ref_id = 0
@@ -114,13 +110,6 @@ bool_t _class##_##func(struct _class *self) \
 #define X_UNUSED(x) (void)(x)
 ////////////////////////////////////////////////////////////
 #define DEFAULT_STACK_SIZE 1024
-////////////////////////////////////////////////////////////
-#define SAVE_WEAK_REF_ID(obj,tmp)\
-	int tmp = (obj).__weak_ref_id\
-	
-#define RESTORE_WEAK_REF_ID(obj,tmp)\
-	(obj).__weak_ref_id = tmp\
-
 //////////////////////////////////////////////////////////////
 #define OFFSET_OF(TYPE, MEMBER) ((size_t) & ((TYPE *)0)->MEMBER)
 

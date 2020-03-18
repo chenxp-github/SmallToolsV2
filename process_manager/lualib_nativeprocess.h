@@ -9,5 +9,6 @@
 CNativeProcess *get_nativeprocess(lua_State *L, int idx);
 lua_userdata *nativeprocess_new_userdata(lua_State *L,CNativeProcess *pt,int is_weak);
 int luaopen_nativeprocess(lua_State *L);
+bool is_nativeprocess(lua_State *L, int idx);
 
 #endif

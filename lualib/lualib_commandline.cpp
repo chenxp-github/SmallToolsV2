@@ -4,27 +4,27 @@
 #include "syslog.h"
 #include "memfile.h"
 
-CCommandLine *get_commandline(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_COMMANDLINE);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CCommandLine *p = (CCommandLine*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *commandline_new_userdata(lua_State *L,CCommandLine *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_COMMANDLINE);
-    lua_setmetatable(L,-2);
-    return ud;
-}
+LUA_IS_VALID_USER_DATA_FUNC(CCommandLine,commandline)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CCommandLine,commandline)
+LUA_NEW_USER_DATA_FUNC(CCommandLine,commandline,COMMANDLINE)
+LUA_GC_FUNC(CCommandLine,commandline)
+LUA_IS_SAME_FUNC(CCommandLine,commandline)
+LUA_TO_STRING_FUNC(CCommandLine,commandline)
 
+bool is_commandline(lua_State *L, int idx)
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_COMMANDLINE,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return commandline_is_userdata_valid(ud);  
+}
+/****************************************/
 static int commandline_new(lua_State *L)
 {
     CCommandLine *pt;
@@ -34,42 +34,6 @@ static int commandline_new(lua_State *L)
     return 1;
 }
 
-static bool commandline_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CCommandLine *p = (CCommandLine*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}
-static int commandline_destroy(lua_State *L)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_COMMANDLINE);
-    if(!commandline_is_userdata_valid(ud))
-        return 0;
-    CCommandLine *pcommandline = (CCommandLine*)ud->p;
-    if(!(ud->is_attached))
-    {
-        DEL(pcommandline);
-    }
-    return 0;
-}
-static int commandline_issame(lua_State *L)
-{
-    CCommandLine *pcommandline1 = get_commandline(L,1);
-    ASSERT(pcommandline1);
-    CCommandLine *pcommandline2 = get_commandline(L,2);
-    ASSERT(pcommandline2);
-    int is_same = (pcommandline1==pcommandline2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-static int commandline_tostring(lua_State *L)
-{
-    lua_pushstring(L,"userdata:commandline");
-    return 1;
-}
-/****************************************/
 static int commandline_printhelp(lua_State *L)
 {
     CCommandLine *pcommandline = get_commandline(L,1);
@@ -232,10 +196,10 @@ static status_t commandline_getallvaluesbykey(lua_State *L)
 }
 
 static const luaL_Reg commandline_lib[] = {
+    {"__gc",commandline_gc_},
+    {"__tostring",commandline_tostring_},
+    {"__is_same",commandline_issame_},
     {"new",commandline_new},
-    {"__gc",commandline_destroy},
-    {"__tostring",commandline_tostring},
-    {"IsSame",commandline_issame},
     {"PrintHelp",commandline_printhelp},
     {"CheckForErrors",commandline_checkforerrors},
     {"GetValueByKey",commandline_getvaluebykey},

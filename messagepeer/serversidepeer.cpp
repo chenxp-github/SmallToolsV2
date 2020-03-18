@@ -16,7 +16,7 @@ CServerSidePeer::~CServerSidePeer()
 }
 status_t CServerSidePeer::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->quit = false;
     this->iHostProxy.InitBasic();
     this->mName = NULL;
@@ -29,7 +29,7 @@ status_t CServerSidePeer::InitBasic()
 status_t CServerSidePeer::Init(CTaskMgr *mgr)
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
+    
     this->SetTaskMgr(mgr);
     NEW(this->mName,CMem);
     this->mName->Init();
@@ -43,6 +43,7 @@ status_t CServerSidePeer::Init(CTaskMgr *mgr)
 }
 status_t CServerSidePeer::Destroy()
 {
+    WEAK_REF_DESTROY();
     DEL(this->mCallback);
     DEL(this->mAllConnectedPeers);
     DEL(this->mName);

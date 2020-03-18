@@ -4,41 +4,28 @@
 #include "syslog.h"
 #include "lua_helper.h"
 
-static bool mmapfile_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CMMapFile,ud);
-    CMMapFile *p = (CMMapFile*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}
+LUA_IS_VALID_USER_DATA_FUNC(CMMapFile,mmapfile)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CMMapFile,mmapfile)
+LUA_NEW_USER_DATA_FUNC(CMMapFile,mmapfile,MMAPFILE)
+LUA_GC_FUNC(CMMapFile,mmapfile)
+LUA_IS_SAME_FUNC(CMMapFile,mmapfile)
+LUA_TO_STRING_FUNC(CMMapFile,mmapfile)
+
 bool is_mmapfile(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_testudata(L, idx, LUA_USERDATA_MMAPFILE);
-    return mmapfile_is_userdata_valid(ud);
-}
-CMMapFile *get_mmapfile(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_MMAPFILE);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CMMapFile *p = (CMMapFile*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *mmapfile_new_userdata(lua_State *L,CMMapFile *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_MMAPFILE);
-    lua_setmetatable(L,-2);
-    return ud;
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_MMAPFILE,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return mmapfile_is_userdata_valid(ud);  
 }
 
+/****************************************/
 static int mmapfile_new(lua_State *L)
 {
     CMMapFile *pt;
@@ -48,37 +35,15 @@ static int mmapfile_new(lua_State *L)
     return 1;
 }
 
-static int mmapfile_destroy(lua_State *L)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_MMAPFILE);
-    if(!mmapfile_is_userdata_valid(ud))
-        return 0;
-    CMMapFile *pmmapfile = (CMMapFile*)ud->p;
-    if(!(ud->is_attached))
-    {
-        DEL(pmmapfile);
-    }
-    return 0;
-}
-static int mmapfile_issame(lua_State *L)
-{
-    CMMapFile *pmmapfile1 = get_mmapfile(L,1);
-    ASSERT(pmmapfile1);
-    CMMapFile *pmmapfile2 = get_mmapfile(L,2);
-    ASSERT(pmmapfile2);
-    int is_same = (pmmapfile1==pmmapfile2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-static int mmapfile_tostring(lua_State *L)
+static status_t mmapfile_destroy(lua_State *L)
 {
     CMMapFile *pmmapfile = get_mmapfile(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:mmapfile:%p",pmmapfile);
-    lua_pushstring(L,buf);
-    return 1;
+    ASSERT(pmmapfile);
+    SAVE_WEAK_REF_ID(*pmmapfile,w);
+    pmmapfile->Destroy();
+    RESTORE_WEAK_REF_ID(*pmmapfile,w);
+    return 0;
 }
-/****************************************/
 static int mmapfile_unlink(lua_State *L)
 {
     CMMapFile *pmmapfile = get_mmapfile(L,1);
@@ -168,10 +133,11 @@ static int mmapfile_stream(lua_State *L)
     return 1;
 }
 static const luaL_Reg mmapfile_lib[] = {
+    {"__gc",mmapfile_gc_},
+    {"__tostring",mmapfile_tostring_},
+    {"__is_same",mmapfile_issame_},
     {"new",mmapfile_new},
-    {"__gc",mmapfile_destroy},
-    {"__tostring",mmapfile_tostring},
-    {"IsSame",mmapfile_issame},
+    {"Destroy",mmapfile_destroy},
     {"Unlink",mmapfile_unlink},
     {"Sync",mmapfile_sync},
     {"GetSize",mmapfile_getsize},

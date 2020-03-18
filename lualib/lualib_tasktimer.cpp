@@ -14,27 +14,26 @@ if(ptasktimer->Callback()->GetParamType(CBID_PARAM_INDEX) == PARAM_TYPE_INT)\
 }\
 }while(0)\
 
-CTaskTimer *get_tasktimer(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_TASKTIMER);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CTaskTimer *p = (CTaskTimer*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *tasktimer_new_userdata(lua_State *L,CTaskTimer *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_TASKTIMER);
-    lua_setmetatable(L,-2);
-    return ud;
-}
+LUA_IS_VALID_USER_DATA_FUNC(CTaskTimer,tasktimer)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CTaskTimer,tasktimer)
+LUA_NEW_USER_DATA_FUNC(CTaskTimer,tasktimer,TASKTIMER)
+LUA_IS_SAME_FUNC(CTaskTimer,tasktimer)
+LUA_TO_STRING_FUNC(CTaskTimer,tasktimer)
 
+bool is_tasktimer(lua_State *L, int idx)
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_TASKTIMER,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return tasktimer_is_userdata_valid(ud);  
+}
+/*************************************************/
 static int tasktimer_new(lua_State *L)
 {
     CTaskTimer *pt;
@@ -45,46 +44,27 @@ static int tasktimer_new(lua_State *L)
     return 1;
 }
 
-static bool tasktimer_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CTaskTimer,ud);
-    CTaskTimer *p = (CTaskTimer*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}
-
-static int tasktimer_destroy(lua_State *L)
+static int tasktimer_gc_(lua_State *L)
 {
     lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_TASKTIMER);
-    if(!tasktimer_is_userdata_valid(ud))
-        return 0;
+	ASSERT(ud);
 
-    CTaskTimer *ptasktimer = (CTaskTimer*)ud->p;
+    if(!tasktimer_is_userdata_valid(ud))
+    {
+		ud->weak_ptr.Destroy();
+		return 0;
+	}
+
+    CTaskTimer *ptasktimer = (CTaskTimer*)ud->weak_ptr.GetRawPtr();
     if(!(ud->is_attached))
     {
         RELEASE_CALLBACK(ptasktimer);
         ptasktimer->Quit();//do not use DEL()
     }
+	ud->weak_ptr.Destroy();
     return 0;
 }
-static int tasktimer_issame(lua_State *L)
-{
-    CTaskTimer *ptasktimer1 = get_tasktimer(L,1);
-    ASSERT(ptasktimer1);
-    CTaskTimer *ptasktimer2 = get_tasktimer(L,2);
-    ASSERT(ptasktimer2);
-    int is_same = (ptasktimer1==ptasktimer2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
 
-static int tasktimer_tostring(lua_State *L)
-{
-    lua_pushstring(L,"userdata:tasktimer");
-    return 1;
-}
 /****************************************/
 static int tasktimer_gettimeout(lua_State *L)
 {
@@ -175,10 +155,10 @@ static int tasktimer_setcallback(lua_State *L)
 }
 
 static const luaL_Reg tasktimer_lib[] = {
+    {"__gc",tasktimer_gc_},
+    {"__tostring",tasktimer_tostring_},
+    {"__is_same",tasktimer_issame_},
     {"new",tasktimer_new},
-    {"__gc",tasktimer_destroy},
-    {"__tostring",tasktimer_tostring},
-    {"IsSame",tasktimer_issame},
     {"GetTimeout",tasktimer_gettimeout},
     {"SetOneShot",tasktimer_setoneshot},
     {"SetTimeout",tasktimer_settimeout},

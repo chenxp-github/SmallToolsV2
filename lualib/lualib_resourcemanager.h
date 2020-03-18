@@ -10,5 +10,6 @@
 CResourceManager *get_resourcemanager(lua_State *L, int idx);
 lua_userdata *resourcemanager_new_userdata(lua_State *L,CResourceManager *pt,int is_weak);
 int luaopen_resourcemanager(lua_State *L);
+bool is_resourcemanager(lua_State *L, int idx);
 
 #endif

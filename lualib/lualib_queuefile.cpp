@@ -4,15 +4,12 @@
 #include "lualib_mem.h"
 #include "lualib_filebase.h"
 
-static bool queuefile_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CQueueFile,ud);
-    CQueueFile *p = (CQueueFile*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CQueueFile,queuefile)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CQueueFile,queuefile)
+LUA_NEW_USER_DATA_FUNC(CQueueFile,queuefile,QUEUEFILE)
+LUA_GC_FUNC(CQueueFile,queuefile)
+LUA_IS_SAME_FUNC(CQueueFile,queuefile)
+LUA_TO_STRING_FUNC(CQueueFile,queuefile)
 
 bool is_queuefile(lua_State *L, int idx)
 {        
@@ -27,65 +24,6 @@ bool is_queuefile(lua_State *L, int idx)
     }
     return queuefile_is_userdata_valid(ud);  
 }
-
-CQueueFile *get_queuefile(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_queuefile(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CQueueFile *)ud->p;
-} 
-
-lua_userdata *queuefile_new_userdata(lua_State *L,CQueueFile *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_QUEUEFILE);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int queuefile_gc_(lua_State *L)
-{
-    if(!is_queuefile(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CQueueFile *pqueuefile = (CQueueFile*)ud->p;
-        DEL(pqueuefile);
-    }
-    return 0;
-}
-
-static int queuefile_issame_(lua_State *L)
-{
-    CQueueFile *pqueuefile1 = get_queuefile(L,1);
-    ASSERT(pqueuefile1);
-    CQueueFile *pqueuefile2 = get_queuefile(L,2);
-    ASSERT(pqueuefile2);
-    int is_same = (pqueuefile1==pqueuefile2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int queuefile_tostring_(lua_State *L)
-{
-    CQueueFile *pqueuefile = get_queuefile(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:queuefile:%p",pqueuefile);
-    lua_pushstring(L,buf);
-    return 1;
-}
-
 /****************************************************/
 static status_t queuefile_new(lua_State *L)
 {
@@ -174,7 +112,7 @@ static status_t queuefile_skip(lua_State *L)
 {
     CQueueFile *pqueuefile = get_queuefile(L,1);
     ASSERT(pqueuefile);
-    int_ptr_t size = lua_tointeger(L,2);
+    int_ptr_t size = (int_ptr_t)lua_tointeger(L,2);
     int_ptr_t rs = pqueuefile->Read(NULL,size);
     lua_pushinteger(L,rs);
     return 1;

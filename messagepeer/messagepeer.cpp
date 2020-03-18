@@ -14,7 +14,7 @@ CMessagePeer::~CMessagePeer()
 status_t CMessagePeer::InitBasic()
 {
     TASK_CONTAINER_CLEAR();
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->mName = NULL;
     this->mServer = NULL;
     this->mPort = 0;
@@ -27,10 +27,7 @@ status_t CMessagePeer::InitBasic()
     return OK;
 }
 status_t CMessagePeer::Init(CTaskMgr *mgr)
-{
-    this->Destroy();
-    WEAK_REF_ID_INIT();
-
+{   
     this->SetTaskMgr(mgr);
 
     NEW(this->mName,CMem);
@@ -52,6 +49,7 @@ status_t CMessagePeer::Init(CTaskMgr *mgr)
 }
 status_t CMessagePeer::Destroy()
 {
+    WEAK_REF_DESTROY();
     QuitTask(&this->mTaskPeerClient);
     DEL(this->mName);
     DEL(this->mServer);

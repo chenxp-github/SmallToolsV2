@@ -5,7 +5,7 @@
 #include "tasklinkrpc.h"
 #include "peermessagestk.h"
 #include "messagepeer.h"
-#include "weakptr.h"
+#include "weak_pointer.h"
 
 class CTaskPeerClient:public CTaskLinkRpc{
 public:
@@ -13,7 +13,7 @@ public:
         ERROR_INIT_CHECK_FAIL = 1,
     };
 
-    CWeakPtr<CMessagePeer> iHostPeer;
+    CWeakPointer<CMessagePeer> iHostPeer;
     int mTaskTcpConnectror;
 
     CMem *mDataRecvBuf;

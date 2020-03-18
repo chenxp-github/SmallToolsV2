@@ -23,6 +23,7 @@ public:
     status_t Destroy();
 
     int GetAliveClientNumber();
+    status_t GetPeerProxyIpAddress(const char *peer_name, CMem *ip, int *port);
 };
 
 #endif

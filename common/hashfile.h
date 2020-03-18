@@ -260,7 +260,8 @@ public:
         ASSERT(mem);
         m_IndexDataFile_Mem.Destroy();
         m_IndexDataFile_Mem.Init();
-        m_IndexDataFile_Mem.SetRawBuf(mem->GetRawBuf(),mem->GetSize(),true);
+        m_IndexDataFile_Mem.SetRawBuf(
+            mem->GetRawBuf(),(int_ptr_t)mem->GetSize(),true);
         return LoadHashFile(&m_IndexDataFile_Mem);
     }
 

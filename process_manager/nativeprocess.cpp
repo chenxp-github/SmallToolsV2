@@ -30,7 +30,7 @@ CNativeProcess::~CNativeProcess()
 }
 status_t CNativeProcess::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->m_Pid = 0;
     this->m_ExeName.InitBasic();
     this->m_CmdLine.InitBasic();
@@ -43,13 +43,13 @@ status_t CNativeProcess::InitBasic()
 status_t CNativeProcess::Init()
 {   
     this->InitBasic();
-    WEAK_REF_ID_INIT();
     this->m_ExeName.Init();
     this->m_CmdLine.Init(0);
     return OK;
 }
 status_t CNativeProcess::Destroy()
 {
+    WEAK_REF_DESTROY();
     this->m_ExeName.Destroy();
     this->m_CmdLine.Destroy();
     this->InitBasic();

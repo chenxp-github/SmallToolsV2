@@ -10,7 +10,7 @@
 
 class CNativeProcess{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     int_ptr_t m_Pid;
     CMem m_ExeName;

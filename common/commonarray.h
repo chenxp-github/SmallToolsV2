@@ -9,7 +9,7 @@ template <class T>
 class CCommonArray{
     typedef status_t (*HOW_TO_COMP)(T* t1,T* t2);
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 private:
     T **m_Index;
     int m_Top;
@@ -27,7 +27,7 @@ CCommonArray()
 }
 status_t InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->m_Index = NULL;
     this->m_Top = 0;
     this->m_Size = 0;   
@@ -39,7 +39,7 @@ status_t Init(int init_size=256,bool is_weak_table=false)
 {
     int i;
     this->InitBasic();  
-    WEAK_REF_ID_INIT();
+    
     this->m_IsWeakTable = is_weak_table;
     this->m_Size = init_size;
     MALLOC(this->m_Index,T* ,this->m_Size);
@@ -50,6 +50,8 @@ status_t Init(int init_size=256,bool is_weak_table=false)
 status_t Destroy()
 {
     int i;    
+    
+    WEAK_REF_DESTROY();
     if(this->m_Index == NULL)
         return ERROR;
     if(!m_IsWeakTable)

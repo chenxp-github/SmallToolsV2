@@ -30,14 +30,14 @@ CMiniBson::~CMiniBson()
 }
 status_t CMiniBson::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     this->mData = NULL;
     return OK;
 }
 status_t CMiniBson::Init()
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
+    
 
     NEW(this->mData,CMem);
     this->mData->Init();
@@ -46,6 +46,7 @@ status_t CMiniBson::Init()
 }
 status_t CMiniBson::Destroy()
 {
+    WEAK_REF_DESTROY();
     DEL(this->mData);
     this->InitBasic();
     return OK;
@@ -958,7 +959,7 @@ status_t CMiniBson::PeekNext(int *type, CMem *name)
 status_t CMiniBson::LoadRawBuf(CMem *buf)
 {
     ASSERT(buf);
-    return this->LoadRawBuf(buf->GetRawBuf(),buf->GetSize());
+    return this->LoadRawBuf(buf->GetRawBuf(),(int_ptr_t)buf->GetSize());
 }
 
 status_t CMiniBson::LoadRawBuf(const void *buf, int_ptr_t size)

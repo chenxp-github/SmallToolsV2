@@ -3,15 +3,12 @@
 #include "syslog.h"
 #include "lualib_mem.h"
 
-static bool udpsocket_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CUdpSocket,ud);
-    CUdpSocket *p = (CUdpSocket*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CUdpSocket,udpsocket)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CUdpSocket,udpsocket)
+LUA_NEW_USER_DATA_FUNC(CUdpSocket,udpsocket,UDPSOCKET)
+LUA_GC_FUNC(CUdpSocket,udpsocket)
+LUA_IS_SAME_FUNC(CUdpSocket,udpsocket)
+LUA_TO_STRING_FUNC(CUdpSocket,udpsocket)
 
 bool is_udpsocket(lua_State *L, int idx)
 {        
@@ -25,64 +22,6 @@ bool is_udpsocket(lua_State *L, int idx)
         if(ud)break;
     }
     return udpsocket_is_userdata_valid(ud);  
-}
-
-CUdpSocket *get_udpsocket(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_udpsocket(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CUdpSocket *)ud->p;
-} 
-
-lua_userdata *udpsocket_new_userdata(lua_State *L,CUdpSocket *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_UDPSOCKET);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int udpsocket_gc_(lua_State *L)
-{
-    if(!is_udpsocket(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CUdpSocket *pudpsocket = (CUdpSocket*)ud->p;
-        DEL(pudpsocket);
-    }
-    return 0;
-}
-
-static int udpsocket_issame_(lua_State *L)
-{
-    CUdpSocket *pudpsocket1 = get_udpsocket(L,1);
-    ASSERT(pudpsocket1);
-    CUdpSocket *pudpsocket2 = get_udpsocket(L,2);
-    ASSERT(pudpsocket2);
-    int is_same = (pudpsocket1==pudpsocket2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int udpsocket_tostring_(lua_State *L)
-{
-    CUdpSocket *pudpsocket = get_udpsocket(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:udpsocket:%p",pudpsocket);
-    lua_pushstring(L,buf);
-    return 1;
 }
 
 /****************************************************/

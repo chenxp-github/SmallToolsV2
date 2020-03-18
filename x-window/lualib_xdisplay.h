@@ -10,5 +10,6 @@
 CxDisplay *get_xdisplay(lua_State *L, int idx);
 lua_userdata *xdisplay_new_userdata(lua_State *L,CxDisplay *pt,int is_weak);
 int luaopen_xdisplay(lua_State *L);
+bool is_xdisplay(lua_State *L, int idx);
 
 #endif

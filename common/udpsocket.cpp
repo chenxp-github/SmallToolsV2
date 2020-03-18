@@ -12,7 +12,7 @@ CUdpSocket::~CUdpSocket()
 }
 status_t CUdpSocket::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
 	m_sock_fd = 0;
 	memset(&m_addr,0,sizeof(m_addr));
 	memset(&m_destaddr,0,sizeof(m_destaddr));
@@ -22,11 +22,12 @@ status_t CUdpSocket::InitBasic()
 status_t CUdpSocket::Init()
 {
 	this->InitBasic();
-    WEAK_REF_ID_INIT();
+    
 	return OK;
 }
 status_t CUdpSocket::Destroy()
 {
+	WEAK_REF_DESTROY();
 	if(m_sock_fd)
 	{
 		close(m_sock_fd);

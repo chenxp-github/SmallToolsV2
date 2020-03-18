@@ -365,7 +365,7 @@ public:
 
 class CxImage{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     void*               pDib; //contains the header, the palette, the pixels
     BITMAPINFOHEADER    head; //standard header

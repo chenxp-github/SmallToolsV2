@@ -6,7 +6,7 @@
 
 CMem::CMem()
 {
-    this->Init();
+    this->InitBasic();
 }
 
 CMem::~CMem()
@@ -22,6 +22,7 @@ CMem::CMem(const char *str)
 
 status_t CMem::InitBasic()
 {
+    CFileBase::InitBasic();
     this->mBuf = NULL;
     this->mSelfAlloc = false;
     this->mSize = 0;
@@ -32,8 +33,8 @@ status_t CMem::InitBasic()
 }
 status_t CMem::Init()
 {
-    CFileBase::Init();
     this->InitBasic();
+    CFileBase::Init();    
     return OK;
 }
 

@@ -29,7 +29,7 @@ public:
         TYPE_PACKED_IMAGE,
         TYPE_RAW_IMAGE,
     };
-	WEAK_REF_ID_DEFINE();
+	WEAK_REF_DEFINE();
     HASH_ENTRY_DEFINE(CResource);
 public:
     int32_t m_Type;

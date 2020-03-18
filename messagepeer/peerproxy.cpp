@@ -15,7 +15,7 @@ CPeerProxy::~CPeerProxy()
 status_t CPeerProxy::InitBasic()
 {
     TASK_CONTAINER_CLEAR();
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
 
     this->mPeerName = NULL;
     this->mConnectedNames = NULL;
@@ -29,7 +29,7 @@ status_t CPeerProxy::InitBasic()
 status_t CPeerProxy::Init(CTaskMgr *mgr)
 {
     this->Destroy();
-    WEAK_REF_ID_INIT();
+    
     this->SetTaskMgr(mgr);
 
     NEW(this->mPeerName,CMem);
@@ -45,11 +45,13 @@ status_t CPeerProxy::Init(CTaskMgr *mgr)
 }
 status_t CPeerProxy::Destroy()
 {
+    WEAK_REF_DESTROY();
     QuitTask(&this->mTaskPeerServer);
     DEL(this->mPendingMessages);
     DEL(this->mConnectedNames);
     DEL(this->mPeerName);
 	DEL(this->mCallback);
+	mServerSidePeer.Destroy();
     this->InitBasic();
     return OK;
 }

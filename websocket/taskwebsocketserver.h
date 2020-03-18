@@ -8,7 +8,7 @@
 #include "memfile.h"
 #include "httpheader.h"
 #include "websocketframeheader.h"
-#include "weakptr.h"
+#include "weak_pointer.h"
 #include "websocketserver.h"
 #include "combfile.h"
 
@@ -41,7 +41,7 @@ public:
 	CWebSocketFrameHeader m_TmpHeader;
     int m_SubTaskReader;
     int m_SubTaskWriter;
-    CWeakPtr<CWebSocketServer> m_HostPtr;
+    CWeakPointer<CWebSocketServer> m_HostPtr;
 public:
 	status_t RunReader(uint32_t interval);
 	status_t StartSubTaskReader();

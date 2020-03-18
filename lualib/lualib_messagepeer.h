@@ -9,6 +9,7 @@
 CMessagePeer *get_messagepeer(lua_State *L, int idx);
 lua_userdata *messagepeer_new_userdata(lua_State *L,CMessagePeer *pt,int is_weak);
 void luaopen_messagepeer(lua_State *L);
+bool is_messagepeer(lua_State *L, int idx);
 
 #define PEER_SET_ON_MESSAGE_FUNC(func_name, peer_type, get_peer)\
 static int func_name(lua_State *L)\

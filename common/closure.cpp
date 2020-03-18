@@ -2,6 +2,7 @@
 #include "syslog.h"
 #include "mem_tool.h"
 #include "minibson.h"
+#include "raw_weak_pointer.h"
 
 #define CHECK_INDEX_RANGE(index) ASSERT(index >= 0 && index < MAX_PARAMS)
 
@@ -70,7 +71,7 @@ CClosure::~CClosure()
 }
 status_t CClosure::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     m_Func = NULL;
     m_Flags = 0;
     memset(m_Params,0,sizeof(m_Params));
@@ -81,11 +82,12 @@ status_t CClosure::InitBasic()
 status_t CClosure::Init()
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
+    
     return OK;
 }
 status_t CClosure::Destroy()
 {
+    WEAK_REF_DESTROY();
     for(int i = 0; i < MAX_PARAMS; i++)
     {
         FreeParam(i);
@@ -118,9 +120,9 @@ status_t CClosure::Print(CFileBase *_buf)
         }
         else if(type == PARAM_TYPE_WEAKPTR)
         {
-            int weak_id;
-            void *p = this->GetParamWeakPointer(i,&weak_id);
-            _buf->Printf("<%p>\r\n",p);
+            CRawWeakPointer *weak_ptr = this->GetParamWeakPointer(i);
+            ASSERT(weak_ptr);
+            _buf->Printf("<%p>\r\n",weak_ptr->GetRawPtr());
         }
         else if(type == PARAM_TYPE_POINTER)
         {
@@ -188,9 +190,9 @@ status_t CClosure::CopyParams(CClosure *closure, int from_start,int to_start, in
         }
         else if(type == PARAM_TYPE_WEAKPTR)
         {
-            int weak_ref_id;
-            void *ptr = closure->GetParamWeakPointer(from,&weak_ref_id);
-            this->SetParamWeakPointer(to,ptr,weak_ref_id);
+            CRawWeakPointer *weak_ptr = closure->GetParamWeakPointer(from);
+            ASSERT(weak_ptr);
+            this->SetParamWeakPointer(to,weak_ptr);
         }
         else if(type == PARAM_TYPE_OBJECT)
         {
@@ -231,9 +233,16 @@ CLOSURE_FUNC CClosure::GetFunc()
 status_t CClosure::FreeParam(int index)
 {
     CHECK_INDEX_RANGE(index);
+
+    if(m_Types[index] == PARAM_TYPE_WEAKPTR)
+    {
+        CRawWeakPointer *weak_ptr = GetParamWeakPointer(index);
+        ASSERT(weak_ptr);
+        DEL(weak_ptr);
+    }
+
     if(    m_Types[index] == PARAM_TYPE_STRING
-        || m_Types[index] == PARAM_TYPE_MALLOC
-        || m_Types[index] == PARAM_TYPE_WEAKPTR)
+        || m_Types[index] == PARAM_TYPE_MALLOC)
     {
         void *p = TO_POINTER(index);
         FREE(p);
@@ -331,14 +340,15 @@ status_t CClosure::SetParamString(int index, const char *str)
     ASSERT(str);
     return this->SetParamString(index,str,crt_strlen(str));
 }
-status_t CClosure::SetParamWeakPointer(int index,void *ptr, int weak_ref_id)
+
+status_t CClosure::SetParamWeakPointer(int index, CRawWeakPointer *weak_ptr)
 {
-    int_ptr_t *tmp;
+    ASSERT(weak_ptr);
     CHECK_INDEX_RANGE(index);
-    MALLOC(tmp,int_ptr_t,2);
-    tmp[0] = (int_ptr_t)ptr;
-    tmp[1] = (int_ptr_t)weak_ref_id;
-    SET_PARAM(PARAM_TYPE_WEAKPTR,tmp);
+    CRawWeakPointer *new_weak_ptr;
+    NEW(new_weak_ptr,CRawWeakPointer);
+    new_weak_ptr->Copy(weak_ptr);
+    SET_PARAM(PARAM_TYPE_WEAKPTR,new_weak_ptr);
     return OK;
 }
 
@@ -419,12 +429,10 @@ CMiniBson* CClosure::GetParamBson(int index)
     return _bson;
 }
 
-void* CClosure::GetParamWeakPointer(int index,int *weak_ref_id)
+CRawWeakPointer* CClosure::GetParamWeakPointer(int index)
 {
     CHECK_TYPE(index,PARAM_TYPE_WEAKPTR);
-    int_ptr_t *p = (int_ptr_t*)TO_POINTER(index);
-    *weak_ref_id = (int)p[1];
-    return (void*)p[0];
+    return (CRawWeakPointer*)TO_POINTER(index);
 }
 
 void* CClosure::Malloc(int index, int size)

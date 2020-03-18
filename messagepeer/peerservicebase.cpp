@@ -16,7 +16,7 @@ CPeerServiceBase::~CPeerServiceBase()
 }
 status_t CPeerServiceBase::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
     TASK_CONTAINER_CLEAR();
     m_Flags = 0;
     m_ServerSidePeer.InitBasic();
@@ -28,7 +28,7 @@ status_t CPeerServiceBase::InitBasic()
 status_t CPeerServiceBase::Init(CTaskMgr *mgr)
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
+    
     this->SetTaskMgr(mgr);
     m_CreateThreadId = crt_get_current_thread_id();
     return OK;
@@ -55,6 +55,7 @@ status_t CPeerServiceBase::InitClientSidePeer(const char *server, int port)
 
 status_t CPeerServiceBase::Destroy()
 {
+    WEAK_REF_DESTROY();
     m_ClientSidePeer.Destroy();
     m_ServerSidePeer.Destroy();
     this->InitBasic();

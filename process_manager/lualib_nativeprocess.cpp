@@ -2,27 +2,28 @@
 #include "mem_tool.h"
 #include "syslog.h"
 
-CNativeProcess *get_nativeprocess(lua_State *L, int idx)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, idx, LUA_USERDATA_NATIVEPROCESS);
-    ASSERT(ud && ud->p);
-    ASSERT(ud->__weak_ref_id != 0);
-    CNativeProcess *p = (CNativeProcess*)ud->p;
-    ASSERT(p->__weak_ref_id == ud->__weak_ref_id);
-    return p;
-}
-lua_userdata *nativeprocess_new_userdata(lua_State *L,CNativeProcess *pt,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pt);
-    ud->p = pt;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pt->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_NATIVEPROCESS);
-    lua_setmetatable(L,-2);
-    return ud;
+LUA_IS_VALID_USER_DATA_FUNC(CNativeProcess,nativeprocess)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CNativeProcess,nativeprocess)
+LUA_NEW_USER_DATA_FUNC(CNativeProcess,nativeprocess,NATIVEPROCESS)
+LUA_GC_FUNC(CNativeProcess,nativeprocess)
+LUA_IS_SAME_FUNC(CNativeProcess,nativeprocess)
+LUA_TO_STRING_FUNC(CNativeProcess,nativeprocess)
+
+bool is_nativeprocess(lua_State *L, int idx)
+{        
+    const char* ud_names[] = {
+        LUA_USERDATA_NATIVEPROCESS,
+    };            
+    lua_userdata *ud = NULL;
+    for(size_t i = 0; i < sizeof(ud_names)/sizeof(ud_names[0]); i++)
+    {
+        ud = (lua_userdata*)luaL_testudata(L, idx, ud_names[i]);
+        if(ud)break;
+    }
+    return nativeprocess_is_userdata_valid(ud);  
 }
 
+/****************************************/
 static int nativeprocess_new(lua_State *L)
 {
     CNativeProcess *pt;
@@ -31,34 +32,6 @@ static int nativeprocess_new(lua_State *L)
     nativeprocess_new_userdata(L,pt,0);
     return 1;
 }
-
-static int nativeprocess_destroy(lua_State *L)
-{
-    lua_userdata *ud = (lua_userdata*)luaL_checkudata(L, 1, LUA_USERDATA_NATIVEPROCESS);
-    ASSERT(ud);
-    CNativeProcess *pnativeprocess = (CNativeProcess*)ud->p;
-    if(!(ud->is_attached))
-    {
-        DEL(pnativeprocess);
-    }
-    return 0;
-}
-static int nativeprocess_issame(lua_State *L)
-{
-    CNativeProcess *pnativeprocess1 = get_nativeprocess(L,1);
-    ASSERT(pnativeprocess1);
-    CNativeProcess *pnativeprocess2 = get_nativeprocess(L,2);
-    ASSERT(pnativeprocess2);
-    int is_same = (pnativeprocess1==pnativeprocess2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-static int nativeprocess_tostring(lua_State *L)
-{
-    lua_pushstring(L,"userdata:nativeprocess");
-    return 1;
-}
-/****************************************/
 static int nativeprocess_limitcpu(lua_State *L)
 {
     CNativeProcess *pnativeprocess = get_nativeprocess(L,1);
@@ -335,10 +308,10 @@ static int nativeprocess_schedgetprioritymin(lua_State *L)
     return 1;
 }
 static const luaL_Reg nativeprocess_lib[] = {
+    {"__gc",nativeprocess_gc_},
+    {"__tostring",nativeprocess_tostring_},
+    {"__is_same",nativeprocess_issame_},
     {"new",nativeprocess_new},
-    {"__gc",nativeprocess_destroy},
-    {"__tostring",nativeprocess_tostring},
-    {"IsSame",nativeprocess_issame},
     {"LimitCpu",nativeprocess_limitcpu},
     {"IsCpuUsageLimited",nativeprocess_iscpuusagelimited},
     {"StopCpu",nativeprocess_stopcpu},

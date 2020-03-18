@@ -7,19 +7,20 @@
 #include "peermessagestk.h"
 #include "taskmgr.h"
 #include "serversidepeer.h"
-#include "weakptr.h"
+#include "weak_pointer.h"
 #include "tcp.h"
 
 class CPeerProxy{
 public:
     TASK_CONTAINER_DEFINE();
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
+public:
     CMem *mPeerName;
     CMemStk *mConnectedNames;
     int mMaxConnectedPeer;
     CPeerMessageStk *mPendingMessages;
     int mTaskPeerServer;
-    CWeakPtr<CServerSidePeer> mServerSidePeer;
+    CWeakPointer<CServerSidePeer> mServerSidePeer;
     uint32_t mLifeTime;
 	CClosure *mCallback;
 public:

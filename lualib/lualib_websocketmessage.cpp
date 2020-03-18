@@ -4,15 +4,12 @@
 #include "lualib_mem.h"
 #include "lualib_filebase.h"
 
-static bool websocketmessage_is_userdata_valid(lua_userdata *ud)
-{
-    if(ud == NULL)return false;
-    if(ud->p == NULL)return false;
-    if(ud->__weak_ref_id == 0) return false;
-    CHECK_IS_UD_READABLE(CWebSocketMessage,ud);
-    CWebSocketMessage *p = (CWebSocketMessage*)ud->p;
-    return p->__weak_ref_id == ud->__weak_ref_id;
-}    
+LUA_IS_VALID_USER_DATA_FUNC(CWebSocketMessage,websocketmessage)
+LUA_GET_OBJ_FROM_USER_DATA_FUNC(CWebSocketMessage,websocketmessage)
+LUA_NEW_USER_DATA_FUNC(CWebSocketMessage,websocketmessage,WEBSOCKETMESSAGE)
+LUA_GC_FUNC(CWebSocketMessage,websocketmessage)
+LUA_IS_SAME_FUNC(CWebSocketMessage,websocketmessage)
+LUA_TO_STRING_FUNC(CWebSocketMessage,websocketmessage)
 
 bool is_websocketmessage(lua_State *L, int idx)
 {        
@@ -26,64 +23,6 @@ bool is_websocketmessage(lua_State *L, int idx)
         if(ud)break;
     }
     return websocketmessage_is_userdata_valid(ud);  
-}
-
-CWebSocketMessage *get_websocketmessage(lua_State *L, int idx)
-{
-    lua_userdata *ud = NULL;
-    if(is_websocketmessage(L,idx))
-    {
-        ud = (lua_userdata*)lua_touserdata(L,idx);		
-    }
-    ASSERT(ud);
-    return (CWebSocketMessage *)ud->p;
-} 
-
-lua_userdata *websocketmessage_new_userdata(lua_State *L,CWebSocketMessage *pobj,int is_weak)
-{
-    lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));
-    ASSERT(ud && pobj);
-    ud->p = pobj;
-    ud->is_attached = is_weak;
-    ud->__weak_ref_id = pobj->__weak_ref_id;
-    luaL_getmetatable(L,LUA_USERDATA_WEBSOCKETMESSAGE);
-    lua_setmetatable(L,-2);
-    return ud;
-}
-
-static int websocketmessage_gc_(lua_State *L)
-{
-    if(!is_websocketmessage(L,1)) return 0;
-
-    lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);		
-    ASSERT(ud);
-
-    if(!(ud->is_attached))
-    {
-        CWebSocketMessage *pwebsocketmessage = (CWebSocketMessage*)ud->p;
-        DEL(pwebsocketmessage);
-    }
-    return 0;
-}
-
-static int websocketmessage_issame_(lua_State *L)
-{
-    CWebSocketMessage *pwebsocketmessage1 = get_websocketmessage(L,1);
-    ASSERT(pwebsocketmessage1);
-    CWebSocketMessage *pwebsocketmessage2 = get_websocketmessage(L,2);
-    ASSERT(pwebsocketmessage2);
-    int is_same = (pwebsocketmessage1==pwebsocketmessage2);
-    lua_pushboolean(L,is_same);
-    return 1;
-}
-
-static int websocketmessage_tostring_(lua_State *L)
-{
-    CWebSocketMessage *pwebsocketmessage = get_websocketmessage(L,1);
-    char buf[1024];
-    sprintf(buf,"userdata:websocketmessage:%p",pwebsocketmessage);
-    lua_pushstring(L,buf);
-    return 1;
 }
 
 /****************************************************/

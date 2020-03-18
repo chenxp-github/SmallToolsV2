@@ -19,7 +19,7 @@ CxWindow::~CxWindow()
 }
 status_t CxWindow::InitBasic()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_CLEAR();
 
     this->m_NativeXWindow = 0;
     m_Flags = 0;
@@ -35,11 +35,11 @@ status_t CxWindow::InitBasic()
 status_t CxWindow::Init()
 {
     this->InitBasic();
-    WEAK_REF_ID_INIT();
     return OK;
 }
 status_t CxWindow::Destroy()
 {
+    WEAK_REF_DESTROY();
     FreeChildWindows();
     m_Display.Destroy();
     this->InitBasic();

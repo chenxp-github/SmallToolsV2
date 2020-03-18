@@ -9,5 +9,6 @@
 CCommandLine *get_commandline(lua_State *L, int idx);
 lua_userdata *commandline_new_userdata(lua_State *L,CCommandLine *pt,int is_weak);
 int luaopen_commandline(lua_State *L);
+bool is_commandline(lua_State *L, int idx);
 
 #endif

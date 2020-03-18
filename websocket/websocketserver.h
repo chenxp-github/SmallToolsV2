@@ -13,7 +13,7 @@ public:
 		EVENT_TASK_STOPPED=1,
 		EVENT_GOT_PAYLOAD,
 	};
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
     TASK_CONTAINER_DEFINE();
 public:
 	CClosure m_Callback;

@@ -9,7 +9,7 @@
 
 class CCommandLine{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     CCommonArray<CCmdEntry> m_EntryTypes;
     CCommonArray<CCmdEntry> m_CmdEntries;

@@ -10,5 +10,6 @@
 CxWindow *get_xwindow(lua_State *L, int idx);
 lua_userdata *xwindow_new_userdata(lua_State *L,CxWindow *pt,int is_weak);
 int luaopen_xwindow(lua_State *L);
+bool is_xwindow(lua_State *L, int idx);
 
 #endif

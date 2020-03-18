@@ -5,22 +5,22 @@
 #include "filebase.h"
 #include "xcommon.h"
 
-class CXEvent{
+class CxEvent{
 public:
-    WEAK_REF_ID_DEFINE();
+    WEAK_REF_DEFINE();
 public:
     NativeXEvent m_Event;
 public:
     int Size();
     NativeXEvent* GetNativeXEvent();
-    CXEvent();
-    virtual ~CXEvent();
+    CxEvent();
+    virtual ~CxEvent();
     status_t InitBasic();
     status_t Init();
     status_t Destroy();
-    status_t Copy(CXEvent *_p);
+    status_t Copy(CxEvent *_p);
     status_t Copy(NativeXEvent *event);
-    int Comp(CXEvent *_p);
+    int Comp(CxEvent *_p);
     status_t Print(CFileBase *_buf);
     int GetType();
     uint32_t GetSerial();

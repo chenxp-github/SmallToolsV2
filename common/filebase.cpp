@@ -11,14 +11,14 @@
 ///////////////////////////////////////////////////////////////////
 CFileBase::CFileBase()
 {
-    WEAK_REF_ID_CLEAR();
-    this->Init();
+    this->InitBasic();
 }
 
 CFileBase::~CFileBase()
 {
     this->Destroy();
 }
+
 char CFileBase::Getc()
 {
     char ch = 0;
@@ -111,7 +111,7 @@ fsize_t CFileBase::SeekEnd()
 
 status_t CFileBase::Destroy()
 {
-    WEAK_REF_ID_CLEAR();
+    WEAK_REF_DESTROY();
     FREE(this->file_name);
     this->SetSplitChars(NULL);
     return OK;
@@ -740,9 +740,9 @@ status_t CFileBase::ReadString_Reverse(CFileBase *file)
     return ERROR;
 }
 
-status_t CFileBase::Init()
-{   
-    WEAK_REF_ID_INIT();
+status_t CFileBase::InitBasic()
+{
+    WEAK_REF_CLEAR();
     this->SetDefaultSpChars();
 #if _UNICODE_
     this->SetDefaultSpCharsW();
@@ -751,6 +751,12 @@ status_t CFileBase::Init()
     this->file_name = NULL;
     this->log_tab_level_ = 0;
     this->is_sp_chars_malloc = false;
+    return OK;
+}
+
+status_t CFileBase::Init()
+{   
+    this->InitBasic();    
     return OK;
 }
 
