@@ -47,6 +47,7 @@ status_t CServerSidePeer::Destroy()
     DEL(this->mCallback);
     DEL(this->mAllConnectedPeers);
     DEL(this->mName);
+    iHostProxy.Destroy();
     this->InitBasic();
     return OK;
 }

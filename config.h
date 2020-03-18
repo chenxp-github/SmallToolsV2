@@ -16,7 +16,7 @@
 
 #define _ASC_		1
 #define _UNICODE_	1
-#define _DEBUG_		0
+#define _DEBUG_		1
 
 #ifdef __x86_64__
 #define _LINUX64_   1

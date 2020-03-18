@@ -123,6 +123,7 @@ status_t CGlobals::Init()
     m_MainLoopRunning = false;
     m_MainLuaFileList.Init(1024);
     m_LuaFilesPath.Init();
+
 	PEER_GLOBALS(g);
 	g->Init(&m_TaskMgr);
 
@@ -137,6 +138,10 @@ status_t CGlobals::Destroy()
     {
         SetIsInitiated(false);
     }
+    
+	PEER_GLOBALS(g);
+	g->Destroy();
+
     m_LuaVm.Destroy();
     m_TaskMgr.Destroy();
     m_MainLuaFileList.Destroy();
