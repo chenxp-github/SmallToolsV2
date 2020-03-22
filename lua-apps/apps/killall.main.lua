@@ -34,7 +34,7 @@ function app_main(args)
     cmd:AddKeyType(kPattern,TYPE_KEY_EQUAL_VALUE,MUST,
         "command line match pattern,(lua pattern)");
     
-    cmd:AddKeyType(kPattern,TYPE_KEY_EQUAL_VALUE,OPTIONAL,
+    cmd:AddKeyType(kSignal,TYPE_KEY_EQUAL_VALUE,OPTIONAL,
         "signal to send, default is 15(SIGKILL)");
 
     cmd:AddKeyType(kTestOnly,TYPE_KEY,OPTIONAL,
