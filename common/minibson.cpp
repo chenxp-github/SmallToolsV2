@@ -243,11 +243,25 @@ status_t CMiniBson::PutInt16(const char *name, int16_t i)
     CMem mem(name);
     return this->PutInt32(&mem,i);
 }
+
+status_t CMiniBson::PutUInt16(const char *name, uint16_t i)
+{
+    CMem mem(name);
+    return this->PutInt32(&mem,i);
+}
+
 status_t CMiniBson::PutInt8(const char *name, int8_t i)
 {
     CMem mem(name);
     return this->PutInt32(&mem,i);
 }
+
+status_t CMiniBson::PutUInt8(const char *name, uint8_t i)
+{
+    CMem mem(name);
+    return this->PutInt32(&mem,i);
+}
+
 status_t CMiniBson::PutString(CMem *name, CMem *str)
 {
     ASSERT(name && str);
@@ -480,6 +494,15 @@ status_t CMiniBson::GetInt16(const char *name, int16_t *pInt)
     *pInt = (int16_t)tmp;
     return ret;
 }
+
+status_t CMiniBson::GetUInt16(const char *name, uint16_t *pInt)
+{
+    int32_t tmp;
+    status_t ret = GetInt32(name,&tmp);
+    *pInt = (uint16_t)tmp;
+    return ret;
+}
+
 status_t CMiniBson::GetInt8(const char *name, int8_t *pInt)
 {
     int32_t tmp;
@@ -487,6 +510,15 @@ status_t CMiniBson::GetInt8(const char *name, int8_t *pInt)
     *pInt = (int8_t)tmp;
     return ret;
 }
+
+status_t CMiniBson::GetUInt8(const char *name, uint8_t *pInt)
+{
+    int32_t tmp;
+    status_t ret = GetInt32(name,&tmp);
+    *pInt = (uint8_t)tmp;
+    return ret;
+}
+
 status_t CMiniBson::GetInt64(const char *name, int64_t *pInt)
 {
     ASSERT(pInt);    

@@ -86,7 +86,9 @@ public:
     status_t GetInt32(const char *name, int32_t *pInt);
     status_t GetUInt32(const char *name, uint32_t *pInt);
     status_t GetInt16(const char *name, int16_t *pInt);
+    status_t GetUInt16(const char *name, uint16_t *pInt);
     status_t GetInt8(const char *name, int8_t *pInt);
+    status_t GetUInt8(const char *name, uint8_t *pInt);
     status_t PutDouble(const char *name, double d);
     status_t PutDouble(CMem *name, double d);
     status_t ReadString(CMem *str);
@@ -109,7 +111,9 @@ public:
     status_t PutInt32(const char *name, int32_t i);
     status_t PutUInt32(const char *name, uint32_t i);
     status_t PutInt16(const char *name,int16_t i);
+    status_t PutUInt16(const char *name,uint16_t i);
     status_t PutInt8(const char *name,int8_t i);
+    status_t PutUInt8(const char *name,uint8_t i);
     status_t WriteByte(int8_t b);
     status_t PutInt32(CMem *name,int32_t i);
     status_t PutUInt32(CMem *name,uint32_t i);
