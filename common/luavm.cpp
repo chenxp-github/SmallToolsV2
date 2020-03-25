@@ -9,7 +9,7 @@ extern "C"{
 
 static void hook_yield(lua_State *L, lua_Debug *ar) 
 { 
-   lua_yield(L, 0); 
+    lua_yield(L, 0); 
 } 
 
 static const char __Key = 'k';
@@ -228,7 +228,9 @@ status_t CLuaVm::SetRunTimeout(uint32_t to)
 
 status_t CLuaVm::FullGC()
 {
+#ifndef NOT_USE_LUA_FULL_GC
     luaC_fullgc(mL,0);
+#endif
     return OK;
 }
 
