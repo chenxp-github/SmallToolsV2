@@ -20,33 +20,33 @@ status_t _leak_printf(const char *szFormat, ...);
 #define NEW(p,obj) \
 do{\
 p = new obj;\
-LEAK_DETECT_PRINT("alloc: addr=0x%x file=%s line=%d obj = %s",p,__FILE__,__LINE__,#obj);\
+LEAK_DETECT_PRINT("alloc: addr=%p file=%s line=%d obj = %s",p,__FILE__,__LINE__,#obj);\
 }while(0)
 
 #define NEW_ARRAY(p,obj,items) \
 do{\
 p = new obj[items];\
-LEAK_DETECT_PRINT("alloc: addr=0x%x file=%s line=%d obj = %s",p,__FILE__,__LINE__,#obj);\
+LEAK_DETECT_PRINT("alloc: addr=%p file=%s line=%d obj = %s",p,__FILE__,__LINE__,#obj);\
 }while(0)
 
 #define DEL(p) if(p)\
 do{\
 delete p;\
-LEAK_DETECT_PRINT("free: addr=0x%x file=%s line=%d",p,__FILE__,__LINE__);\
+LEAK_DETECT_PRINT("free: addr=%p file=%s line=%d",p,__FILE__,__LINE__);\
 p = NULL;\
 }while(0)
 
 #define DEL_ARRAY(p) if(p)\
 do{\
 delete [] p;\
-LEAK_DETECT_PRINT("free: addr=0x%x file=%s line=%d",p,__FILE__,__LINE__);\
+LEAK_DETECT_PRINT("free: addr=%p file=%s line=%d",p,__FILE__,__LINE__);\
 p = NULL;\
 }while(0)
 
 #define MALLOC(p,obj,items) \
 do{\
 p = (obj*)malloc(sizeof(obj)*(items));\
-LEAK_DETECT_PRINT("alloc: addr=0x%x file=%s line=%d obj = %s",p,__FILE__,__LINE__,#obj);\
+LEAK_DETECT_PRINT("alloc: addr=%p file=%s line=%d obj = %s",p,__FILE__,__LINE__,#obj);\
 }while(0)
 
 #define ZALLOC(p,obj,items) \
@@ -58,7 +58,7 @@ memset(p,0,sizeof(obj)*(items));\
 #define FREE(p) if(p)\
 do{\
 free(p);\
-LEAK_DETECT_PRINT("free: addr=0x%x file=%s line=%d",p,__FILE__,__LINE__);\
+LEAK_DETECT_PRINT("free: addr=%p file=%s line=%d",p,__FILE__,__LINE__);\
 p = NULL;\
 }while(0)
 

@@ -69,6 +69,11 @@ status_t CMem::Free()
         FREE(this->mBuf);
         this->mSelfAlloc = false;
     }
+    else
+    {
+        this->mBuf = NULL;
+        this->mSelfAlloc = false;
+    }
     return OK;
 }
 

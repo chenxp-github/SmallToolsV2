@@ -343,7 +343,7 @@ void CFileBase::SetUserData(void *ud)
     char szBuffer [FILEBASE_LBUF_SIZE]; \
     crt_va_list pArgList;\
     crt_va_start(pArgList, szFormat);\
-    crt_vsprintf(szBuffer, szFormat, pArgList);\
+    crt_vsnprintf(szBuffer, FILEBASE_LBUF_SIZE, szFormat, pArgList);\
     crt_va_end (pArgList)\
 
 fsize_t CFileBase::Log(const char *szFormat, ...)

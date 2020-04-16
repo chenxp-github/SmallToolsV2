@@ -69,6 +69,7 @@ __LOG("assertion fail \"%s\" at file=%s line=%d"),\
 #define PS(p) __LOG("%s = %s"),#p,p)
 #define PF(p) __LOG("%s = %f"),#p,p)
 #define PP(p) __LOG("%s = %p"),#p,(void*)((int_ptr_t)p))
+#define PX(p) __LOG("%s = 0x%x"),#p,((int)p))
 
 #define PRINT_OBJ(obj) do{\
     CMemFile _mf;\

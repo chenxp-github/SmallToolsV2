@@ -124,9 +124,6 @@ status_t CMMapFile::OpenReadOnly(const char *filename)
 
     if(m_FileHandle == INVALID_HANDLE_VALUE)
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "CreateFile file %s fail",filename
-        );
         return ERROR;
     }
 
@@ -137,9 +134,6 @@ status_t CMMapFile::OpenReadOnly(const char *filename)
 
     if(!m_MapHandle)
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "CreateFileMapping %s fail",filename
-        );
         return ERROR;
     }
 
@@ -170,9 +164,6 @@ status_t CMMapFile::OpenCreate(const char *filename, int_ptr_t size)
 
     if(m_FileHandle == INVALID_HANDLE_VALUE)
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "CreateFile file %s fail",filename
-        );
         return ERROR;
     }
 
@@ -185,9 +176,6 @@ status_t CMMapFile::OpenCreate(const char *filename, int_ptr_t size)
 
     if(!m_MapHandle)
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "CreateFileMapping %s fail",filename
-        );
         return ERROR;
     }
     
@@ -215,9 +203,6 @@ status_t CMMapFile::OpenReadWrite(const char *filename)
     );
     if(m_FileHandle == INVALID_HANDLE_VALUE)
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "CreateFile file %s fail",filename
-        );
         return ERROR;
     }
 
@@ -228,9 +213,6 @@ status_t CMMapFile::OpenReadWrite(const char *filename)
     
     if(!m_MapHandle)
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "CreateFileMapping %s fail",filename
-        );
         return ERROR;
     }
     
@@ -300,9 +282,6 @@ status_t CMMapFile::OpenReadOnly(const char *filename)
     m_FileHandle = open(filename,O_RDONLY);
     if(!crt_is_file_handle(m_FileHandle))
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "open file %s error",filename
-        );
         return ERROR;
     }
 
@@ -329,9 +308,6 @@ status_t CMMapFile::OpenCreate(const char *filename, int_ptr_t size)
     m_FileHandle = open(filename,O_CREAT|O_RDWR,0755);
     if(!crt_is_file_handle(m_FileHandle))
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "create file %s error",filename
-            );
         return ERROR;
     }
     
@@ -364,9 +340,6 @@ status_t CMMapFile::OpenReadWrite(const char *filename)
     m_FileHandle = open(filename,O_RDWR);
     if(!crt_is_file_handle(m_FileHandle))
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "open file %s error",filename
-            );
         return ERROR;
     }
     

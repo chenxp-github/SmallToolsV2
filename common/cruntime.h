@@ -103,7 +103,7 @@ bool_t _class##_##func(struct _class *self) \
     char szBuffer [FILEBASE_LBUF_SIZE]; \
     crt_va_list pArgList;\
     crt_va_start(pArgList, format);\
-    crt_vsprintf(szBuffer, format, pArgList);\
+    crt_vsnprintf(szBuffer,FILEBASE_LBUF_SIZE,format, pArgList);\
     crt_va_end (pArgList)\
 	
 /////////////////////////////////////////////////////////////
