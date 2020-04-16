@@ -41,6 +41,7 @@
 #if _IS_LINUX_
 #include "lualib_nativeprocess.h"
 #include "lualib_nativeprocessmanager.h"
+#include "lualib_sharedmemory.h"
 #endif
 
 #if _SUPPORT_X11_ 
@@ -290,6 +291,7 @@ status_t CGlobals::InitLuaVm()
 #if _IS_LINUX_
     luaopen_nativeprocess(L);
     luaopen_nativeprocessmanager(L);
+	luaopen_sharedmemory(L);
 #endif
 
 #if _SUPPORT_X11_
