@@ -141,6 +141,7 @@ typedef struct global_State {
   TString *tmname[TM_N];  /* array with tag-method names */
   struct Table *mt[LUA_NUMTAGS];  /* metatables for basic types */
   TString *strcache[STRCACHE_N][STRCACHE_M];  /* cache for strings in API */
+  int running_flag; //by chenxp
 } global_State;
 
 
@@ -170,7 +171,7 @@ struct lua_State {
   unsigned short nny;  /* number of non-yieldable calls in stack */
   unsigned short nCcalls;  /* number of nested C calls */
   lu_byte hookmask;
-  lu_byte allowhook;
+  lu_byte allowhook;  
 };
 
 

@@ -89,6 +89,7 @@ static int type_lwr##_tostring_(lua_State *L)\
     return 1;\
 }\
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
 class CLuaVm{
@@ -102,6 +103,8 @@ public:
     static status_t ToStringArray(lua_State *L, int index, CMemStk *stk);
     static status_t ToIntArray(lua_State *L, int index, int *a, int *size);
 	static status_t PushIntArray(lua_State *L,int *a, int size);
+
+    status_t SetRunningFlag(int running);
     int ToFunction(int index);
     status_t PushFunction(int ref_);
     status_t ReleaseFunction(int ref_);
@@ -132,6 +135,7 @@ public:
     status_t Run(int nargs, int nresults);
     status_t LoadFile(const char *filename);
     status_t ReportError();
+
     CLuaVm();
     virtual ~CLuaVm();
     status_t Init();

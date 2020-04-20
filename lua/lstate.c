@@ -334,6 +334,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
     close_state(L);
     L = NULL;
   }
+  g->running_flag = 1;//chenxp
   return L;
 }
 
@@ -344,4 +345,10 @@ LUA_API void lua_close (lua_State *L) {
   close_state(L);
 }
 
-
+//chenxp
+LUA_API void lua_set_running_flag(lua_State *L, int running)
+{
+  if(L && G(L)){
+    G(L)->running_flag = running;
+  }
+}

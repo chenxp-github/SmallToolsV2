@@ -4,7 +4,8 @@
 #include "dirmgr.h"
 
 extern "C"{
-    void luaC_fullgc (lua_State *L, int isemergency);
+    void luaC_fullgc (lua_State *L, int isemergency);    
+    void lua_set_running_flag(lua_State *L, int running);
 }
 
 static void hook_yield(lua_State *L, lua_Debug *ar) 
@@ -519,5 +520,13 @@ status_t CLuaVm::AddLuaSearchPath(lua_State *L,const char *path, const char *typ
     tmp_vm.LoadMem(&code,"lua_package_path");
     tmp_vm.Run(0,0);
     tmp_vm.ClearStack();
+    return OK;
+}
+
+status_t CLuaVm::SetRunningFlag(int running)
+{
+#ifndef NOT_USE_LUA_SET_RUNNING_FLAG
+    lua_set_running_flag(mL,running);
+#endif
     return OK;
 }

@@ -758,7 +758,6 @@ void luaV_finishOp (lua_State *L) {
     Protect(luaV_finishset(L,t,k,v,slot)); }
 
 
-
 void luaV_execute (lua_State *L) {
   CallInfo *ci = L->ci;
   LClosure *cl;
@@ -777,6 +776,13 @@ void luaV_execute (lua_State *L) {
     if (L->hookmask & (LUA_MASKLINE | LUA_MASKCOUNT))
       Protect(luaG_traceexec(L));
     /* WARNING: several calls may realloc the stack and invalidate 'ra' */
+    
+    //by chenxp
+    if(G(L)->running_flag == 0){
+        luaD_throw(L, LUA_YIELD);
+        return;
+    }
+
     ra = RA(i);
     lua_assert(base == ci->u.l.base);
     lua_assert(base <= L->top && L->top < L->stack + L->stacksize);
