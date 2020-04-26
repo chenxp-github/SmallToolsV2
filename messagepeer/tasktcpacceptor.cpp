@@ -66,6 +66,7 @@ status_t CTaskTcpAcceptor::Run(uint32_t interval)
         int32_t fd = this->mServer->Accept();
         if(fd > 0)
         {
+            crt_set_blocking_mode(fd,0);
 			GetTaskMgr()->OnSocketConnected(fd);
             mCallback->SetParamInt(1,fd);
             mCallback->SetParamPointer(2,mServer);

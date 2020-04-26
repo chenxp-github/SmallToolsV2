@@ -13,6 +13,7 @@ CTaskPeerServer::~CTaskPeerServer()
 }
 status_t CTaskPeerServer::InitBasic()
 {
+    PEER_GLOBAL_CONTEXT_CLEAR();
     CTaskLinkRpc::InitBasic();
     this->mRecvDataBuf = NULL;
     this->mRecvHeadBuf = NULL;
@@ -21,10 +22,11 @@ status_t CTaskPeerServer::InitBasic()
     this->quit_after_send = false;
     return OK;
 }
-status_t CTaskPeerServer::Init(CTaskMgr *mgr)
+status_t CTaskPeerServer::Init(CTaskMgr *mgr,const void *peer_globals)
 {
     this->Destroy();
     CTaskLinkRpc::Init(mgr);
+    this->SetPeerGlobalContext(peer_globals);
 
     NEW(this->mRecvDataBuf,CMem);
     this->mRecvDataBuf->Init();
@@ -133,9 +135,15 @@ status_t CTaskPeerServer::OnInitNameMessage(CPeerMessage *msg)
 		return ERROR;
 	}
 	
+    ASSERT(body->GetSize() >= sizeof(init_param));
+
 	CMem all_peers;
 	all_peers.Init();
-	all_peers.SetRawBuf(body->GetRawBuf(),sizeof(init_param),true);
+	all_peers.SetRawBuf(
+        body->GetRawBuf()+sizeof(init_param),
+        (int_ptr_t)(body->GetSize()-sizeof(init_param)),
+        true
+    );
 
 	if(peer != NULL)
 	{
@@ -169,6 +177,7 @@ status_t CTaskPeerServer::OnInitNameMessage(CPeerMessage *msg)
         );
 		NEW(peer,CPeerProxy);
 		peer->Init(this->GetTaskMgr());
+        PASS_GLOBAL_PEER_CONTEXT(this,peer);
 		peer->SetMaxConnectedPeers(64);
 		peer->SetName(name);
 		iHostProxy.WeakRef(peer);

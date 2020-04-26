@@ -70,6 +70,12 @@ static int* get_lua_running_flag()
     static int running = 1;
     return &running;
 }
+
+static const void *get_peer_globals()
+{
+    GLOBAL_PEER_GLOBALS(g);
+    return g;
+}
 /////////////////////////////////////////////////////
 
 CGlobals::CGlobals()
@@ -91,6 +97,7 @@ status_t CGlobals::InitBasic()
     m_LuaFilesPath.InitBasic();
 	m_Turbo = 0;
 	m_Epoll.InitBasic();
+    m_PeerGlobals.InitBasic();
     return OK;
 }
 
@@ -125,12 +132,12 @@ status_t CGlobals::Init()
     m_MainLuaFileList.Init(1024);
     m_LuaFilesPath.Init();
 
-	PEER_GLOBALS(g);
-	g->Init(&m_TaskMgr);
+	m_PeerGlobals.Init(&m_TaskMgr);
 
 	how_to_get_global_luavm = get_global_luavm;
 	how_to_get_global_taskmgr = get_global_taskmgr;
     how_to_get_lua_running_flag = get_lua_running_flag;
+    how_to_get_peer_globals = get_peer_globals;
     return OK;
 }
 status_t CGlobals::Destroy()
@@ -140,9 +147,7 @@ status_t CGlobals::Destroy()
         SetIsInitiated(false);
     }
     
-	PEER_GLOBALS(g);
-	g->Destroy();
-
+	m_PeerGlobals.Destroy();
     m_LuaVm.Destroy();
     m_TaskMgr.Destroy();
     m_MainLuaFileList.Destroy();

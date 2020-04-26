@@ -11,6 +11,7 @@
 class CPeerProxy;
 class CServerSidePeer{
 public:
+    PEER_GLOBAL_CONTEXT_DEFINE();
     TASK_CONTAINER_DEFINE();
     WEAK_REF_DEFINE();
 public:
@@ -42,7 +43,7 @@ public:
     CServerSidePeer();
     virtual ~CServerSidePeer();
     status_t InitBasic();
-    status_t Init(CTaskMgr *mgr);
+    status_t Init(CTaskMgr *mgr,const void *peer_globals);
     status_t Destroy();
 };
 

@@ -14,6 +14,7 @@ class CPeerProxy{
 public:
     TASK_CONTAINER_DEFINE();
     WEAK_REF_DEFINE();
+    PEER_GLOBAL_CONTEXT_DEFINE();
 public:
     CMem *mPeerName;
     CMemStk *mConnectedNames;

@@ -29,10 +29,15 @@ bool is_serversidepeer(lua_State *L, int idx)
 }
 /****************************************/
 static int serversidepeer_new(lua_State *L)
-{	
+{
     CServerSidePeer *pt;
     NEW(pt,CServerSidePeer);
-    pt->Init(how_to_get_global_taskmgr());
+    
+	pt->Init(
+		how_to_get_global_taskmgr(),
+		how_to_get_peer_globals()
+	);
+
     serversidepeer_new_userdata(L,pt,0);
     return 1;
 }

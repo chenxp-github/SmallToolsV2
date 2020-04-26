@@ -121,10 +121,11 @@ static status_t on_accept(CClosure *closure)
 	
 	if(event == CTaskTcpAcceptor::EVENT_NEW_CLIENT)
 	{
+        GLOBAL_PEER_GLOBALS(peer_globals);
 		CLOSURE_PARAM_INT(fd,1);
 		CTaskPeerServer *server;
 		NEW(server,CTaskPeerServer);
-		server->Init(mgr);
+		server->Init(mgr,peer_globals);
 		server->SetMaxRetries(1);
 		server->SetSocket(fd);
 		server->Start();

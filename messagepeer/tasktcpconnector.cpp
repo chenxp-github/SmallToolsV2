@@ -140,6 +140,7 @@ status_t CTaskTcpConnector::Run(uint32_t interval)
     {
         if(this->mTcpClient->IsConnectComplete())
         {
+            mTcpClient->SetBlocking(0);
             XLOG(LOG_MODULE_MESSAGEPEER,LOG_LEVEL_INFO,
                 "connect to %s:%d ok",
                 this->mServerName->CStr(),this->mPort

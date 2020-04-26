@@ -16,7 +16,7 @@ status_t CPeerProxy::InitBasic()
 {
     TASK_CONTAINER_CLEAR();
     WEAK_REF_CLEAR();
-
+    PEER_GLOBAL_CONTEXT_CLEAR();
     this->mPeerName = NULL;
     this->mConnectedNames = NULL;
     this->mPendingMessages = NULL;

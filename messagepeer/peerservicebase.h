@@ -16,6 +16,7 @@ class CPeerServiceBase{
 public:
     WEAK_REF_DEFINE();
     TASK_CONTAINER_DEFINE();
+    PEER_GLOBAL_CONTEXT_DEFINE();
 public:
     CServerSidePeer m_ServerSidePeer;
     CMessagePeer m_ClientSidePeer;
@@ -32,8 +33,8 @@ public:
     const char * GetName();
     status_t Connect(const char *peer_name);
     status_t SendMessage(CPeerMessage *msg);
-    status_t InitClientSidePeer(const char *server, int port);
-    status_t InitServiceSidePeer();
+    status_t InitClientSidePeer(const void *peer_globals, const char *server, int port);
+    status_t InitServiceSidePeer(const void *peer_globals);
     status_t PostCallback(CClosure *closure, int cb_id);
     status_t OnResponse(CPeerMessage *msg);
 	status_t OnPartResponse(CPeerMessage *msg);

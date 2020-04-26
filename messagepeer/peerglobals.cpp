@@ -6,8 +6,6 @@
 
 #define _PEER_PROXY_MAX_LIFE_TIME (30*1000)
 
-CPeerGlobals g_peer_globals;
-
 CPeerGlobals::CPeerGlobals()
 {
     this->InitBasic();
@@ -180,7 +178,7 @@ status_t CPeerGlobals::StartAccept(int port)
             CLOSURE_PARAM_INT(fd,1);
             CTaskPeerServer *server;
             NEW(server,CTaskPeerServer);
-            server->Init(mgr);
+            server->Init(mgr,self);
             server->SetMaxRetries(1);
             server->SetSocket(fd);
             server->Start();
@@ -280,4 +278,14 @@ int CPeerGlobals::GetTotalSendingQueueLength()
 		t += peer->GetSendingQueueLength();
 	}
 	return t;
+}
+
+CCallbackMap *CPeerGlobals::GetCallbackMap()
+{
+    return mCallbackMap;
+}
+
+CPeerProxyManager *CPeerGlobals::GetPeerProxyManager()
+{
+    return mPeerManager;
 }

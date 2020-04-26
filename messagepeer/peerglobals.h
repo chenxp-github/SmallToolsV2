@@ -25,6 +25,8 @@ public:
     bool mTrustMode;
     CClosure *mCallback;
 public:
+    CPeerProxyManager *GetPeerProxyManager();
+    CCallbackMap *GetCallbackMap();
 	int GetTotalSendingQueueLength();
     bool InTrustMode();
     status_t SetTrustMode(bool enable);
@@ -44,11 +46,5 @@ public:
     status_t Init(CTaskMgr *mgr);
     status_t Destroy();
 };
-
-extern CPeerGlobals g_peer_globals;
-
-#define PEER_GLOBALS(p) CPeerGlobals *p=&g_peer_globals;__ASSERT(p)
-#define GLOBAL_PEER_MANAGER(mgr) CPeerProxyManager *mgr=g_peer_globals.mPeerManager;__ASSERT(mgr)
-#define GLOBAL_PEER_CALLBACK_MAP(map) CCallbackMap *map=g_peer_globals.mCallbackMap;__ASSERT(map)
 
 #endif

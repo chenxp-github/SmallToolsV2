@@ -18,6 +18,7 @@ status_t CPeerServiceBase::InitBasic()
 {
     WEAK_REF_CLEAR();
     TASK_CONTAINER_CLEAR();
+    PEER_GLOBAL_CONTEXT_CLEAR();
     m_Flags = 0;
     m_ServerSidePeer.InitBasic();
     m_ClientSidePeer.InitBasic();
@@ -34,17 +35,24 @@ status_t CPeerServiceBase::Init(CTaskMgr *mgr)
     return OK;
 }
 
-status_t CPeerServiceBase::InitServiceSidePeer()
+status_t CPeerServiceBase::InitServiceSidePeer(const void *peer_globals)
 {
-    m_ServerSidePeer.Init(GetTaskMgr());
+    SetPeerGlobalContext(peer_globals);
+
+    m_ServerSidePeer.Init(
+        GetTaskMgr(),
+        peer_globals
+    );
+
     SetIsPeerInitiated(true);
     SetIsInServiceSide(true);
     return OK;
 }
 
-status_t CPeerServiceBase::InitClientSidePeer(const char *server, int port)
+status_t CPeerServiceBase::InitClientSidePeer(const void *peer_globals,const char *server, int port)
 {
     ASSERT(server);
+    this->SetPeerGlobalContext(peer_globals);
     m_ClientSidePeer.Init(GetTaskMgr());
     m_ClientSidePeer.SetServer(server);
     m_ClientSidePeer.SetPort(port);

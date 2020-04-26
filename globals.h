@@ -8,6 +8,7 @@
 #include "memstk.h"
 #include "epoll.h"
 #include "weak_pointer.h"
+#include "peerglobals.h"
 
 #define GLOBALS_FLAG_FUNC(func,bit) FLAG_FUNC(m_Flags,func,bit)
 
@@ -22,6 +23,7 @@ public:
     CMem m_LuaFilesPath;
 	int m_Turbo;
 	CEpoll m_Epoll;
+    CPeerGlobals m_PeerGlobals;
 public:
     CMem * GetLuaFilesPath();
     status_t SetLuaFilesPath(CMem *path);
@@ -59,6 +61,7 @@ extern CGlobals *g_globals_ptr;
 #define GLOBALS(g) CGlobals *g = g_globals_ptr
 #define GLOBAL_TASKMGR(mgr) CTaskMgr *mgr=&g_globals_ptr->m_TaskMgr
 #define GLOBAL_LUAVM(vm) CLuaVm *vm = &g_globals_ptr->m_LuaVm
+#define GLOBAL_PEER_GLOBALS(p) CPeerGlobals *p=&g_globals_ptr->m_PeerGlobals
 //////////////////////////////////////////
 #endif
 

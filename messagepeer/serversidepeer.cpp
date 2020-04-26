@@ -17,6 +17,7 @@ CServerSidePeer::~CServerSidePeer()
 status_t CServerSidePeer::InitBasic()
 {
     WEAK_REF_CLEAR();
+    PEER_GLOBAL_CONTEXT_CLEAR();
     this->quit = false;
     this->iHostProxy.InitBasic();
     this->mName = NULL;
@@ -26,10 +27,10 @@ status_t CServerSidePeer::InitBasic()
     this->can_fetch_message = false;
     return OK;
 }
-status_t CServerSidePeer::Init(CTaskMgr *mgr)
+status_t CServerSidePeer::Init(CTaskMgr *mgr,const void *peer_globals)
 {
     this->InitBasic();
-    
+    this->SetPeerGlobalContext(peer_globals);
     this->SetTaskMgr(mgr);
     NEW(this->mName,CMem);
     this->mName->Init();
@@ -137,6 +138,7 @@ status_t CServerSidePeer::OnInitNameMessage(CPeerMessage *msg)
         );
 		NEW(peer,CPeerProxy);
 		peer->Init(GetTaskMgr());
+        PASS_GLOBAL_PEER_CONTEXT(this,peer);
 		peer->SetMaxConnectedPeers(64);
 		peer->SetName(name);
 		peer->AttachServerSidePeer(this);

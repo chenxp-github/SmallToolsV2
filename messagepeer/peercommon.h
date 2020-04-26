@@ -24,4 +24,35 @@ typedef struct {
 	int32_t socket_rw_timeout;
 }MessagePeerInitParam_t;
 
+#define PEER_GLOBAL_CONTEXT_DEFINE()\
+const void *_peer_global_context_;\
+void SetPeerGlobalContext(const void *g)\
+{\
+	_peer_global_context_=g;\
+}\
+const void* GetPeerGlobalContext()\
+{\
+    return _peer_global_context_;\
+}\
+
+#define PEER_GLOBAL_CONTEXT_CLEAR()\
+_peer_global_context_=NULL;
+
+#define PEER_GLOBALS(p)\
+CPeerGlobals *p=(CPeerGlobals*)_peer_global_context_;\
+ASSERT(p)\
+
+#define GLOBAL_PEER_CALLBACK_MAP(map)\
+PEER_GLOBALS(_g##map);\
+CCallbackMap *map=_g##map->GetCallbackMap();\
+ASSERT(map)\
+
+#define GLOBAL_PEER_MANAGER(mgr)\
+PEER_GLOBALS(_g##mgr);\
+CPeerProxyManager *mgr=_g##mgr->GetPeerProxyManager();\
+ASSERT(mgr)\
+
+#define PASS_GLOBAL_PEER_CONTEXT(from,to)\
+(to)->SetPeerGlobalContext((from)->GetPeerGlobalContext())\
+
 #endif

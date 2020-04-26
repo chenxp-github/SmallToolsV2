@@ -2,6 +2,7 @@
 #include "syslog.h"
 #include "tasktcpconnector.h"
 #include "peercommon.h"
+#include "memfile.h"
 
 CTaskPeerClient::CTaskPeerClient()
 {

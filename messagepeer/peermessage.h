@@ -4,6 +4,7 @@
 #include "minibson.h"
 #include "refcnt.h"
 #include "mem.h"
+#include "peercommon.h"
 
 class CPeerMessage{
 public:

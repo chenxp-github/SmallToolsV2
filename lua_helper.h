@@ -21,9 +21,11 @@ const wchar_t* lua_to_unicode_string(lua_State *L, int index,CMem *out);
 typedef CTaskMgr* (*HOW_TO_GET_GLOBAL_TASKMGR)(void);
 typedef CLuaVm* (*HOW_TO_GET_GLOBAL_LUAVM)(void);
 typedef int* (*HOW_TO_GET_LUA_RUNNING_FLAG)(void);
+typedef const void* (*HOW_TO_GET_PEER_GLOBALS)(void);
 
 extern HOW_TO_GET_GLOBAL_TASKMGR how_to_get_global_taskmgr;
 extern HOW_TO_GET_GLOBAL_LUAVM how_to_get_global_luavm;
 extern HOW_TO_GET_LUA_RUNNING_FLAG how_to_get_lua_running_flag;
+extern HOW_TO_GET_PEER_GLOBALS how_to_get_peer_globals;
 
 #endif

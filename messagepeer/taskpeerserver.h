@@ -4,9 +4,11 @@
 #include "cruntime.h"
 #include "tasklinkrpc.h"
 #include "peerproxy.h"
+#include "peercommon.h"
 
 class CTaskPeerServer:public CTaskLinkRpc{
 public:
+    PEER_GLOBAL_CONTEXT_DEFINE();
     CMem *mRecvDataBuf;
     CMem *mRecvHeadBuf;
     CMem *mSendHeadBuf;
@@ -18,7 +20,7 @@ public:
     CTaskPeerServer();
     virtual ~CTaskPeerServer();
     status_t InitBasic();
-    status_t Init(CTaskMgr *mgr);
+    status_t Init(CTaskMgr *mgr, const void *peer_globals);
     status_t Destroy();
 	status_t OnInitNameMessage(CPeerMessage *msg);
 
