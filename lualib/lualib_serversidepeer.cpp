@@ -169,14 +169,19 @@ static int serversidepeer_sendmessage(lua_State *L)
     if(body_type == CPeerMessage::JSON || body_type == CPeerMessage::STRING)
     {
         const char* str = (const char*)lua_tostring(L,6);
-        msg->SetBodyString(str);
-        
+		if(str)
+		{
+			msg->SetBodyString(str);
+		}        
     }
     else if(msg->GetBodyType() == CPeerMessage::BSON)
     {
-        CMiniBson *bson = get_minibson(L,6);
-        ASSERT(bson);
-        msg->TransferBody(bson->GetRawData());  
+		if(is_minibson(L,6))
+		{
+			CMiniBson *bson = get_minibson(L,6);
+			ASSERT(bson);
+			msg->TransferBody(bson->GetRawData());  
+		}
     }
 
     msg->SetBodyType(body_type);

@@ -571,3 +571,7 @@ class QueueFile:FileBase{
 }
 
 
+class ServerSidePeer{
+    array<string> GetAllPeerNames();
+}
+

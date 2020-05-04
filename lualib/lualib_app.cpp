@@ -132,7 +132,7 @@ static status_t on_accept(CClosure *closure)
 	}
 	return OK;
 }
-static status_t start_message_center(int port)
+static status_t start_message_center(int port, int trust_mode)
 {
 	GLOBAL_TASKMGR(taskmgr);
 	CTaskTcpAcceptor *acceptor;
@@ -144,15 +144,43 @@ static status_t start_message_center(int port)
 	acceptor->Callback()->SetParamPointer(10,taskmgr);
 	acceptor->Start();
 
+    GLOBAL_PEER_GLOBALS(peer_globals);
+    peer_globals->SetTrustMode(trust_mode);
 	return OK;
 }
 //////////////////////////////////////
 static int app_startmessagecenter(lua_State *L)
 {
 	int port = (int)lua_tointeger(L,1);
-	int _ret_0 = (int)start_message_center(port);
+    int trust_mode = lua_toboolean(L,2);
+
+	int _ret_0 = (int)start_message_center(port,trust_mode);
 	lua_pushinteger(L,_ret_0);
 	return 1;
+}
+
+static status_t app_getallpeernames(lua_State *L)
+{
+    GLOBAL_PEER_GLOBALS(g);
+    CPeerProxyManager *mgr = g->GetPeerProxyManager();
+	ASSERT(mgr);
+
+	CMemStk all_names;
+	all_names.Init();
+
+	for(int i = 0; i < mgr->GetTotalPeers(); i++)
+	{
+		CPeerProxy *proxy = mgr->GetPeer(i);
+		ASSERT(proxy);
+		all_names.Push(proxy->GetName());
+	}
+
+	if(all_names.GetLen() > 0)
+	{
+		CLuaVm::PushStringArray(L,&all_names);
+		return 1;
+	}
+    return 0;
 }
 
 static status_t app_sleep(lua_State *L)
@@ -216,6 +244,7 @@ static const luaL_Reg app_lib[] = {
     {"LuaMain",app_luamain},
     {"PutEnv",app_putenv},
 	{"StartMessageCenter",app_startmessagecenter},
+    {"GetAllPeerNames",app_getallpeernames},	    
     {"Sleep",app_sleep},	
     {"GetArgs",app_getargs},
 	{"MakeOrderSimpleDiskFromDir",app_makeordersimplediskfromdir},

@@ -155,6 +155,7 @@ function PeerServiceBase:OnMessage(msg)
     }
 
     if msg.msg_type == MSG_TYPE_REQUEST then
+        self:SetDestPeerName(msg.from);
         self:OnRequest(context,BsonToObject(msg.body));
     elseif msg.msg_type == MSG_TYPE_RESPONSE then
         self:OnResponse(msg)
@@ -209,7 +210,6 @@ function PeerServiceBase:SendRequest(obj, method,callback_id)
         body = bson,
         flags = BODY_TYPE_BSON | MSG_TYPE_REQUEST,
     };
-
     self:SendMessage(msg);
 end
 
