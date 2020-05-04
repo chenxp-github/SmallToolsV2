@@ -20,7 +20,6 @@ end
 --@@Begin Method OnGetAllPeerNames @@--
 function MessageCenterServer:OnGetAllPeerNames(_context,_param)
     local names = App.GetAllPeerNames();    
-    print_table(names);
     if not names then names = {}; end
     local _ret={
         RetVal0 = names,
