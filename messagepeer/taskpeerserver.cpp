@@ -155,6 +155,7 @@ status_t CTaskPeerServer::OnInitNameMessage(CPeerMessage *msg)
 			LOCAL_MEM(mem);
 			mem.Printf("peer name \"%s\" already exist",name->CStr());
 			tmp.SetFrom(&mem);
+			tmp.SetBodyType(CPeerMessage::RAW);
 			this->mSendHeadBuf->SetSize(0);
 			tmp.SerializeHeader(this->mSendHeadBuf);
 			this->quit_after_send = true;

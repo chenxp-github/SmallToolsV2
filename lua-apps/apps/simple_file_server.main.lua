@@ -64,7 +64,7 @@ function app_main(args)
     end
 
     if not as_tcp_client then
-        App.StartMessageCenter(port);
+        App.StartMessageCenter(port,true);
         printfnl("start message center on port %d",port);
     end
 
