@@ -8,6 +8,7 @@
 #include "mkdisk.h"
 #include "lua_helper.h"
 #include "lualib_simpledisk.h"
+#include "dirmgr.h"
 /****************************************/
 static int app_getsystemtimer(lua_State *L)
 {
@@ -95,6 +96,17 @@ static int app_luamain(lua_State *L)
     }
     lua_settop(L,top);
     
+    if(argc >= 2)
+    {
+        LOCAL_MEM(mem);
+        CDirMgr::GetFileName(argv[1],&mem,FN_PATH);
+        if(CDirMgr::IsDirExist(&mem))
+        {
+            GLOBALS(g);
+            g->AddLuaSearchPath(mem.CStr(),"path","lua",false);
+        }
+    }
+
     int ret = lua_main(new_L,argc,argv);
     new_world.m_LuaVm.mL = NULL; //already call lua_close()
 
