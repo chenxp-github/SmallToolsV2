@@ -94,14 +94,12 @@ static int app_luamain(lua_State *L)
         argv[argc++] = strdup(lua_tostring(L,-1));
         lua_pop(L, 1);
     }
+    argv[argc] = NULL;
     lua_settop(L,top);
 
     if(argc >= 2)
     {        
-        CMem mem;
-        mem.Init();        
-        mem.Malloc(LBUF_SIZE);
-    
+        LOCAL_MEM(mem);
         CDirMgr::GetFileName(argv[1],&mem,FN_PATH);
         if(CDirMgr::IsDirExist(&mem))
         {
