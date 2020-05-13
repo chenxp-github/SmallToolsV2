@@ -425,6 +425,13 @@ static status_t filemanager_md5sum(lua_State *L)
 	
     return 0;
 }
+static int filemanager_isabspath(lua_State *L)
+{
+    LUA_TO_LOCAL_STRING(fn,L,1);
+    bool is = CDirMgr::IsAbsPath(fn);
+    lua_pushboolean(L,is);
+    return 1;
+}
 
 static const luaL_Reg filemanager_lib[] = {
     {"ToAbsPath",filemanager_toabspath},
@@ -445,6 +452,7 @@ static const luaL_Reg filemanager_lib[] = {
 	{"DeleteDir",filemanager_deletedir},	
     {"EncodingConvert",filemanager_encodingconvert},
     {"Md5Sum",filemanager_md5sum},	
+    {"IsAbsPath",filemanager_isabspath},	
     {NULL, NULL}
 };
 

@@ -83,7 +83,7 @@ static int app_luamain(lua_State *L)
 
     int top = lua_gettop(L);
     lua_pushnil(L);
-    
+
     const int _MAX = 1024;
     char *argv[_MAX];
     
@@ -95,10 +95,13 @@ static int app_luamain(lua_State *L)
         lua_pop(L, 1);
     }
     lua_settop(L,top);
-    
+
     if(argc >= 2)
-    {
-        LOCAL_MEM(mem);
+    {        
+        CMem mem;
+        mem.Init();        
+        mem.Malloc(LBUF_SIZE);
+    
         CDirMgr::GetFileName(argv[1],&mem,FN_PATH);
         if(CDirMgr::IsDirExist(&mem))
         {
@@ -106,7 +109,7 @@ static int app_luamain(lua_State *L)
             g->AddLuaSearchPath(mem.CStr(),"path","lua",false);
         }
     }
-
+    
     int ret = lua_main(new_L,argc,argv);
     new_world.m_LuaVm.mL = NULL; //already call lua_close()
 
