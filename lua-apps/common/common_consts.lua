@@ -20,6 +20,11 @@ EVENT_BEGIN_DIR = 1;
 EVENT_END_DIR = 2;
 EVENT_SINGLE_FILE = 3;
 
+--tcp acceptor & connector event
+EVENT_NEW_CLIENT = 1;
+EVENT_STOP = 2;
+EVENT_CONNECTED = 1;
+
 --cmdline key types    
 TYPE_KEY = 1;
 TYPE_VALUE = 2;
