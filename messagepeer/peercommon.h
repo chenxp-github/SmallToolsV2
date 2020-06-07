@@ -42,6 +42,10 @@ _peer_global_context_=NULL;
 CPeerGlobals *p=(CPeerGlobals*)_peer_global_context_;\
 ASSERT(p)\
 
+#define PEER_GLOBALS_FROM_OBJ(p,obj)\
+CPeerGlobals *p=(CPeerGlobals*)(obj)->_peer_global_context_;\
+ASSERT(p)\
+
 #define GLOBAL_PEER_CALLBACK_MAP(map)\
 PEER_GLOBALS(_g##map);\
 CCallbackMap *map=_g##map->GetCallbackMap();\

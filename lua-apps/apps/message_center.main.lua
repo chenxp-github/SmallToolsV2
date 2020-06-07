@@ -19,10 +19,19 @@ end
 
 --@@Begin Method OnGetAllPeerNames @@--
 function MessageCenterServer:OnGetAllPeerNames(_context,_param)
-    local names = App.GetAllPeerNames();    
-    if not names then names = {}; end
+    local peers = App.GetAllPeers();    
+    local ret = {};
+    if peers then 
+        for _,p in ipairs(peers) do
+            table.insert(ret,{
+                name = p:GetName(),
+                sending_queue = p:GetSendingQueueLength(),
+            });
+        end
+    end
+
     local _ret={
-        RetVal0 = names,
+        RetVal0 = ret,
     };
     self:SendReturnValue(_context,_ret);
 end

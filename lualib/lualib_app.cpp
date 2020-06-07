@@ -8,6 +8,7 @@
 #include "mkdisk.h"
 #include "lua_helper.h"
 #include "lualib_simpledisk.h"
+#include "lualib_peerproxy.h"
 #include "dirmgr.h"
 /****************************************/
 static int app_getsystemtimer(lua_State *L)
@@ -172,28 +173,26 @@ static int app_startmessagecenter(lua_State *L)
 	return 1;
 }
 
-static status_t app_getallpeernames(lua_State *L)
+static status_t app_getallpeers(lua_State *L)
 {
     GLOBAL_PEER_GLOBALS(g);
     CPeerProxyManager *mgr = g->GetPeerProxyManager();
 	ASSERT(mgr);
 
-	CMemStk all_names;
-	all_names.Init();
+    if(mgr->GetTotalPeers() <= 0)
+        return 0;
 
+    lua_newtable(L);
+    int top = lua_gettop(L);
+    
 	for(int i = 0; i < mgr->GetTotalPeers(); i++)
 	{
-		CPeerProxy *proxy = mgr->GetPeer(i);
-		ASSERT(proxy);
-		all_names.Push(proxy->GetName());
+        lua_pushinteger(L,i+1);
+        peerproxy_new_userdata(L,mgr->GetPeer(i),1);
+        lua_settable(L, top);    
 	}
 
-	if(all_names.GetLen() > 0)
-	{
-		CLuaVm::PushStringArray(L,&all_names);
-		return 1;
-	}
-    return 0;
+    return 1;
 }
 
 static status_t app_sleep(lua_State *L)
@@ -202,7 +201,6 @@ static status_t app_sleep(lua_State *L)
     crt_msleep(ms);
     return 0;
 }
-
 
 extern int g_argc;
 extern char **g_argv;
@@ -257,7 +255,7 @@ static const luaL_Reg app_lib[] = {
     {"LuaMain",app_luamain},
     {"PutEnv",app_putenv},
 	{"StartMessageCenter",app_startmessagecenter},
-    {"GetAllPeerNames",app_getallpeernames},	    
+    {"GetAllPeers",app_getallpeers},
     {"Sleep",app_sleep},	
     {"GetArgs",app_getargs},
 	{"MakeOrderSimpleDiskFromDir",app_makeordersimplediskfromdir},

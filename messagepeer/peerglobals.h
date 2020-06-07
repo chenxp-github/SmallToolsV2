@@ -25,6 +25,8 @@ public:
     bool mTrustMode;
     CClosure *mCallback;
 public:
+    bool IsPeerConnected(const char *name);
+    CPeerProxy *GetPeerProxyByName(const char *name);
     CPeerProxyManager *GetPeerProxyManager();
     CCallbackMap *GetCallbackMap();
 	int GetTotalSendingQueueLength();

@@ -36,6 +36,8 @@
 #include "lualib_xmlnode.h"
 #include "lualib_serial.h"
 #include "lualib_queuefile.h"
+#include "lualib_peerproxy.h"
+
 #include "_build_time_.h"
 
 #if _IS_LINUX_
@@ -292,6 +294,7 @@ status_t CGlobals::InitLuaVm()
     luaopen_xml(L);
     luaopen_serial(L);
     luaopen_queuefile(L);
+    luaopen_peerproxy(L);
     
 #if _IS_LINUX_
     luaopen_nativeprocess(L);

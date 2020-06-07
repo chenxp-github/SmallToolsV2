@@ -59,6 +59,7 @@ public:
 
 	status_t OnSocketConnected();
 	status_t OnSocketDisconnected();
+    bool IsConnected();
 };
 
 #endif

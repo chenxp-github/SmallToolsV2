@@ -289,3 +289,18 @@ CPeerProxyManager *CPeerGlobals::GetPeerProxyManager()
 {
     return mPeerManager;
 }
+
+CPeerProxy *CPeerGlobals::GetPeerProxyByName(const char *name)
+{
+    ASSERT(name);
+    return mPeerManager->GetPeerByName(name);
+}
+
+bool CPeerGlobals::IsPeerConnected(const char *name)
+{
+    ASSERT(name);
+    CPeerProxy *proxy = this->GetPeerProxyByName(name);
+    if(!proxy)return false;
+    return proxy->IsConnected();
+}
+

@@ -96,7 +96,7 @@ status_t CServerSidePeer::OnInitNameMessage(CPeerMessage *msg)
 			mem.Printf("message peer size check fail %d vs %d",sizeof(init_param),init_param.size);
 		else if(init_param.socket_rw_timeout != SOCKETRW_TIMEOUT)
 			mem.Printf("message peer SOCKETRW_TIMEOUT check fail %d vs %d",SOCKETRW_TIMEOUT,init_param.socket_rw_timeout);
-		tmp.SetBodyType(CPeerMessage::RAW);
+        tmp.SetBodyType(CPeerMessage::RAW);
 		tmp.SetFrom(&mem);
 		this->OnGotMessage(&tmp);
 		this->quit = true;
@@ -113,7 +113,7 @@ status_t CServerSidePeer::OnInitNameMessage(CPeerMessage *msg)
 		{
 			CPeerMessage tmp;
 			tmp.Init();
-			tmp.SetFunc(PEER_FUNC_INIT_CHECK_FAIL);            
+			tmp.SetFunc(PEER_FUNC_INIT_CHECK_FAIL);
 			LOCAL_MEM(mem);
 			mem.Printf("peer name \"%s\" already exist",name->CStr());
 			tmp.SetFrom(&mem);

@@ -249,3 +249,10 @@ CSocket *CPeerProxy::GetSocket()
     return pt->GetSocket();
 }
 
+bool CPeerProxy::IsConnected()
+{
+    if(IsServerSide())return true;
+    CSocket *sock = this->GetSocket();
+    if(sock==NULL)return false;
+    return sock->IsConnected();
+}

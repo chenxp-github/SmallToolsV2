@@ -575,3 +575,16 @@ class ServerSidePeer{
     array<string> GetAllPeerNames();
 }
 
+
+class PeerProxy{
+    bool IsServerSide();
+    status_t ClearSendingQueue();
+    int GetSendingQueueLength();  
+    bool IsPeerConnectedMe(PeerProxy peer);
+    array<string> GetAllConnectedPeerNames();
+    status_t AddPeer(string name);
+    status_t SetMaxConnectedPeers(int max);
+    string GetName();
+    bool IsConnected();
+}
+
