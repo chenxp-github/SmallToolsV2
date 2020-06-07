@@ -2,7 +2,8 @@ require("common");
 require("utils");
 require("peer_service_base");
 
-METHOD_MC_GETALLPEERNAMES = 8000001;
+METHOD_WC_GETALLPEERS = 8000001;
+
 MessageCenterServer = class(PeerServiceBase);
 
 function MessageCenterServer:ctor()
@@ -11,14 +12,14 @@ end
 function MessageCenterServer:OnRequest(_context,_param)
 --##Begin OnRequest ##--
     local method = _context.method;
-    if method == METHOD_MC_GETALLPEERNAMES then
-        self:OnGetAllPeerNames(_context,_param);
+    if method == METHOD_WC_GETALLPEERS then
+        self:OnGetAllPeer(_context,_param);
     end
 --##End OnRequest ##--
 end
 
 --@@Begin Method OnGetAllPeerNames @@--
-function MessageCenterServer:OnGetAllPeerNames(_context,_param)
+function MessageCenterServer:OnGetAllPeer(_context,_param)
     local peers = App.GetAllPeers();    
     local ret = {};
     if peers then 
