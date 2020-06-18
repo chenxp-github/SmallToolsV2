@@ -13,13 +13,20 @@ public:
 #if CXIMAGE_SUPPORT_WINDOWS
     static status_t DrawString(CxImage *img, LOGFONTW *log_font, CRect *layout,COLORREF color, const wchar_t *text);
     static status_t MeasureTextSize(const wchar_t *text, LOGFONTW *log_font, int *w, int *h);
+	static status_t CreateImageFromHdc(
+		CxImage *img,
+		int nXOriginDest, int nYOriginDest, 
+		int nWidthDest, int nHeightDest, 
+		HDC hdcSrc, 
+		int nXOriginSrc, int nYOriginSrc, 
+		int nWidthSrc, int nHeightSrc);
 #endif
 
     static status_t ImageToRawRgba(CxImage *img, CMem *rgba);
     static status_t SaveImage(CxImage *img, const char *filename);
     static status_t SaveImage(CxImage *img, const char *type,CFileBase *dst);
     static status_t LoadImage(const char *filename, CxImage *out);
-    static status_t LoadImage(CFileBase *file, CxImage *out);
+    static status_t LoadImage(CFileBase *file, CxImage *out);    
 };
 
 #endif

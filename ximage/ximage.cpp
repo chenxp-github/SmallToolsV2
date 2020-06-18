@@ -9726,9 +9726,11 @@ int CxImage::Clear(BYTE bval)
 int CxImage::Transfer(CxImage *from, BOOL bTransferFrames)
 {
     ASSERT(from);
-
+	
+	SAVE_WEAK_REF_ID(*this,w);
     if (!Destroy())
         return ERROR;
+	RESTORE_WEAK_REF_ID(*this,w);
 
     memcpy(&head,&from->head,sizeof(BITMAPINFOHEADER));
     this->info.Copy(&from->info);

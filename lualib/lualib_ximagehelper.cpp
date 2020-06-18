@@ -7,6 +7,10 @@
 #include "mem_tool.h"
 #include "syslog.h"
 
+#if CXIMAGE_SUPPORT_WINDOWS
+#include "lualib_luahdc.h"
+#endif
+
 static int ximagehelper_imagetorawrgba(lua_State *L)
 {
     CxImage *img = get_ximage(L,1);
@@ -112,12 +116,39 @@ static int ximagehelper_calcusimilarity(lua_State *L)
     lua_pushnumber(L,_ret_0);
     return 1;
 }
+
+#if CXIMAGE_SUPPORT_WINDOWS
+static status_t ximagehelper_createimagefromhdc(lua_State *L)
+{
+    CxImage *img = get_ximage(L,1);
+    ASSERT(img);
+    int nxorigindest = (int)lua_tointeger(L,2);
+    int nyorigindest = (int)lua_tointeger(L,3);
+    int nwidthdest = (int)lua_tointeger(L,4);
+    int nheightdest = (int)lua_tointeger(L,5);
+    CLuaHdc *hdcsrc = get_luahdc(L,6);
+    ASSERT(hdcsrc);
+    int nxoriginsrc = (int)lua_tointeger(L,7);
+    int nyoriginsrc = (int)lua_tointeger(L,8);
+    int nwidthsrc = (int)lua_tointeger(L,9);
+    int nheightsrc = (int)lua_tointeger(L,10);
+    status_t ret0 = CxImageHelper::CreateImageFromHdc(img,nxorigindest,nyorigindest,nwidthdest,nheightdest,hdcsrc->hdc,nxoriginsrc,nyoriginsrc,nwidthsrc,nheightsrc);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+#endif
+
 static const luaL_Reg ximagehelper_lib[] = {
     {"ImageToRawRgba",ximagehelper_imagetorawrgba},
     {"SaveImage",ximagehelper_saveimage},
     {"LoadImage",ximagehelper_loadimage},
     {"Convert9Png",ximagehelper_convert9png},    
 	{"CalcuSimilarity",ximagehelper_calcusimilarity},
+
+#if CXIMAGE_SUPPORT_WINDOWS
+	{"CreateImageFromHdc",ximagehelper_createimagefromhdc},
+#endif
+
     {NULL, NULL}
 };
 static int luaL_register_ximagehelper(lua_State *L)

@@ -256,6 +256,44 @@ status_t CxImageHelper::DrawString(CxImage *img, LOGFONTW *log_font, CRect *layo
     }
     return OK;
 }
+
+status_t CxImageHelper::CreateImageFromHdc(
+		CxImage *img,
+		int nXOriginDest, int nYOriginDest, 
+		int nWidthDest, int nHeightDest, 
+		HDC hdcSrc, 
+		int nXOriginSrc, int nYOriginSrc, 
+		int nWidthSrc, int nHeightSrc)
+{
+	ASSERT(img);
+	ASSERT(nWidthDest > 0 && nHeightDest > 0);
+	ASSERT(nWidthSrc > 0 && nHeightSrc > 0);
+
+	HBITMAP hbmWnd = ::CreateCompatibleBitmap(hdcSrc, nWidthSrc, nHeightSrc);
+	ASSERT(hbmWnd);
+	
+	HDC hdcMem = ::CreateCompatibleDC(hdcSrc);
+	ASSERT(hdcMem);
+
+	::SelectObject(hdcMem, hbmWnd);
+	::StretchBlt(hdcMem, nXOriginDest, nYOriginDest, nWidthDest, nHeightDest, 
+		hdcSrc, nXOriginSrc, nYOriginSrc,nWidthSrc,nHeightSrc,SRCCOPY);
+
+
+	SAVE_WEAK_REF_ID(*img,w);
+	img->DestroyAll();
+	img->Create(nWidthDest,nHeightDest,24,CXIMAGE_FORMAT_BMP);
+	RESTORE_WEAK_REF_ID(*img,w);
+
+	::GetDIBits(hdcMem, hbmWnd, 0,nHeightDest,
+		img->GetBits(0),
+		(LPBITMAPINFO)img->pDib,
+		DIB_RGB_COLORS);
+
+	::DeleteDC(hdcMem);
+	::DeleteObject(hbmWnd);
+	return OK;
+}
 /////////////////////////////////////////////////////////////////////////////////////////////
 #endif
 /////////////////////////////////////////////////////////////////////////////////////////////
