@@ -98,8 +98,9 @@ function CoThread:ScheduleOnce(interval)
     end
 
     local ok,err = coroutine.resume(self.m_thread);
-    if not ok then
+    if not ok then        
         print("CoThread dead with error:"..err);
+        print(debug.traceback(self.m_thread, err));
         self:Quit();
     end
 end
