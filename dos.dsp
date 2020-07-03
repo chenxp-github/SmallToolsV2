@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "common" /I "platform" /I "lualib" /I "ximage" /I "resource_manager" /I "messagepeer" /I "lua" /I "websocket" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FR /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "common" /I "platform" /I "lualib" /I "ximage" /I "resource_manager" /I "messagepeer" /I "lua" /I "websocket" /I "win32" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FR /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x804 /d "NDEBUG"
 # ADD RSC /l 0x804 /d "NDEBUG"
@@ -702,6 +702,14 @@ SOURCE=.\lua\lua.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\win32\lua_hdc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\win32\lua_hdc.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lua_helper.cpp
 # End Source File
 # Begin Source File
@@ -774,6 +782,14 @@ SOURCE=.\lualib\lualib_filemanager.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lualib\lualib_luahdc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_luahdc.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lualib\lualib_mem.cpp
 # End Source File
 # Begin Source File
@@ -811,6 +827,14 @@ SOURCE=.\lualib\lualib_mmapfile.cpp
 # Begin Source File
 
 SOURCE=.\lualib\lualib_mmapfile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_peerproxy.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_peerproxy.h
 # End Source File
 # Begin Source File
 
