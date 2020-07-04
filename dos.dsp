@@ -67,7 +67,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MT /W3 /Gm /GX /ZI /Od /I "." /I "common" /I "platform" /I "lualib" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FD /GZ /c
+# ADD CPP /nologo /MT /W3 /Gm /GX /ZI /Od /I "." /I "common" /I "platform" /I "lualib" /I "ximage" /I "resource_manager" /I "messagepeer" /I "lua" /I "websocket" /I "win32" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FD /GZ /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x804 /d "_DEBUG"
 # ADD RSC /l 0x804 /d "_DEBUG"
@@ -782,11 +782,11 @@ SOURCE=.\lualib\lualib_filemanager.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\lualib\lualib_luahdc.cpp
+SOURCE=.\win32\lualib_luahdc.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\lualib\lualib_luahdc.h
+SOURCE=.\win32\lualib_luahdc.h
 # End Source File
 # Begin Source File
 
