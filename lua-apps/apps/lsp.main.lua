@@ -173,7 +173,7 @@ function split_lsp_file(lsp,lsp_name)
     return blocks;
 end
 
-function add_lsp_file(code,filename)
+function add_lsp_file(code,filename,param)
     local old_path = FileManager.GetCurDir();
     local tmp = new_mem(filename);
     if not tmp then
@@ -181,25 +181,25 @@ function add_lsp_file(code,filename)
     end    
     local path = FileManager.SliceFileName(filename,FN_PATH);
     FileManager.ChangeDir(path);        
-    expand_lsp(tmp,filename,code:GetInnerFile());
+    expand_lsp(tmp,filename,code:GetInnerFile(),param);
     FileManager.ChangeDir(old_path);
 end
 
-function add_code_block(block,out)    
+function add_code_block(block,out,param)    
     local code = PrintBuffer.new();
     __gen_code__ = nil;
 
-    local new_lua_code = "function __gen_code__(code)"..EOL;
+    local new_lua_code = "function __gen_code__(code,param)"..EOL;
     new_lua_code = new_lua_code..block.code..EOL;
     new_lua_code = new_lua_code.."end";
     if not exec_string(new_lua_code,block.attributes.name) then
         exit("execute lua chunk fail: "..block.attributes.name);
     end
-    __gen_code__(code);
+    __gen_code__(code,param);
     out:Puts(code:GetInnerFile());
 end
 
-function expand_lsp(lsp,lsp_name,out)
+function expand_lsp(lsp,lsp_name,out,param)
     local blocks = split_lsp_file(lsp,lsp_name);
     if not blocks then return end
     for _,block in ipairs(blocks) do
@@ -207,7 +207,7 @@ function expand_lsp(lsp,lsp_name,out)
             out:Puts(block.text);
         elseif block.code then
             local tmp = new_memfile();
-            add_code_block(block,tmp);
+            add_code_block(block,tmp,param);
             expand_lsp(tmp,block.attributes.name,out);
             tmp:Destroy();
         end
