@@ -158,6 +158,7 @@ function for_each_line(filename,callback)
     local mem = new_mem();    
     list_file:Seek(0);
     while list_file:ReadLine(mem) do
+		mem:Seek(0);
         if callback(mem) then
             break;
         end
