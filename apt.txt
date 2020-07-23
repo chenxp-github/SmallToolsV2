@@ -1,0 +1,6 @@
+libx11-dev
+libxi-dev
+libxrandr-dev 
+libxcursor-dev
+libglib2.0-dev
+libgtk3-dev
