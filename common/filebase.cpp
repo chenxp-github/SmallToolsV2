@@ -348,18 +348,28 @@ void CFileBase::SetUserData(void *ud)
 
 fsize_t CFileBase::Log(const char *szFormat, ...)
 {   
-    for(int i = 0; i < log_tab_level_; i++)
-        this->Write("    ",4);
-
+    this->Tab();
     if(szFormat == NULL)
         return OK;
-
     MAKE_SZ_BUFFER();
-
     this->Puts(szBuffer);
     this->Puts("\r\n");
     return OK;
 }
+
+status_t CFileBase::Eol()
+{
+    this->Puts("\r\n");
+    return OK;
+}
+
+status_t CFileBase::Tab()
+{
+    for(int i = 0; i < log_tab_level_; i++)
+        this->Write("    ",4);
+    return OK;
+}
+
 status_t CFileBase::IncLogLevel(int inc)
 {
     return this->SetLogLevel(log_tab_level_+inc);

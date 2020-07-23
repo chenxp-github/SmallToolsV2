@@ -30,13 +30,17 @@ public:
     fsize_t  Seek(fsize_t o);
     status_t AddBlock(fsize_t bsize);
     fsize_t GetMaxSize();
-    status_t Configure(int baudrate,int databits,int stopbits,int parity);
+    status_t Configure(int baudrate = 115200,
+        int databits = 8, int stopbits = 1,int parity='n');
     status_t Open(const char *dev_name);
     CSerial();
     virtual ~CSerial();
     status_t Init();
     status_t Destroy();
     status_t InitBasic();
+
+    status_t Copy(CSerial *p){return OK;};
+    status_t Print(CFileBase *buf){return OK;}
 };
 
 #endif

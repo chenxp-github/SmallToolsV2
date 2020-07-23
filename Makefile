@@ -112,6 +112,7 @@ DEPS = $(patsubst %.$(TARGET_NAME).o,%.$(TARGET_NAME).d,$(OBJS))
 .PHONY : all objs clean cleanall rebuild
 
 all : $(PROGRAM)
+-include $(DEPS)
 
 # Rules for creating the dependency files (.d).
 #---------------------------------------------------
@@ -120,28 +121,21 @@ all : $(PROGRAM)
 #---------------------------------------------------
 objs : $(OBJS)
 %.$(TARGET_NAME).o : %.c
-	$(CC) -c $(CFLAGS) $< -o $@
-
+	$(CC) -c $(CFLAGS) $< -o $@ -MMD -MF $*.$(TARGET_NAME).d -MP
 %.$(TARGET_NAME).o : %.C
-	$(CC) -c $(CXXFLAGS) $< -o $@
-
+	$(CC) -c $(CXXFLAGS) $< -o $@ -MMD -MF $*.$(TARGET_NAME).d -MP
 %.$(TARGET_NAME).o : %.cc
-	$(CC) -c $(CXXFLAGS) $< -o $@
-
+	$(CC) -c $(CXXFLAGS) $< -o $@ -MMD -MF $*.$(TARGET_NAME).d -MP
 %.$(TARGET_NAME).o : %.cpp
-	$(CXX) -c $(CXXFLAGS) $< -o $@
-
+	$(CXX) -c $(CXXFLAGS) $< -o $@ -MMD -MF $*.$(TARGET_NAME).d -MP
 %.$(TARGET_NAME).o : %.CPP
-	$(CXX) -c $(CXXFLAGS) $< -o $@
-
+	$(CXX) -c $(CXXFLAGS) $< -o $@ -MMD -MF $*.$(TARGET_NAME).d -MP
 %.$(TARGET_NAME).o : %.c++
-	$(CXX) -c $(CXXFLAGS) $< -o $@
-
+	$(CXX) -c $(CXXFLAGS) $< -o $@ -MMD -MF $*.$(TARGET_NAME).d -MP
 %.$(TARGET_NAME).o : %.cp
-	$(CXX) -c $(CXXFLAGS) $< -o $@
-
+	$(CXX) -c $(CXXFLAGS) $< -o $@ -MMD -MF $*.$(TARGET_NAME).d -MP
 %.$(TARGET_NAME).o : %.cxx
-	$(CXX) -c $(CXXFLAGS) $< -o $@
+	$(CXX) -c $(CXXFLAGS) $< -o $@ -MMD -MF $*.$(TARGET_NAME).d -MP
 
 # Rules for producing the executable.
 #----------------------------------------------
@@ -159,7 +153,7 @@ rebuild: clean all
 clean :
 	for name in `echo $(SRCDIRS)`; \
     do \
-        $(RM) $$name/*.o $$name/*.d $(PROGRAM); \
+        $(RM) $$name/*.$(TARGET_NAME).o $$name/*.$(TARGET_NAME).d $(PROGRAM); \
     done
 
 #############################################################################

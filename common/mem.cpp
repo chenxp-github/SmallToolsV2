@@ -74,6 +74,10 @@ status_t CMem::Free()
         this->mBuf = NULL;
         this->mSelfAlloc = false;
     }
+    this->mSize = 0;
+    this->mMaxSize = 0;
+    this->mOffset = 0;
+    this->mIsConst = true;
     return OK;
 }
 
@@ -95,12 +99,15 @@ status_t CMem::Realloc(int_ptr_t newSize)
     new_mem.Malloc(newSize);
     new_mem.WriteFile(this); //may change this offset
     
+    fsize_t size = mSize; //save old size
     this->Free();
 
     this->mBuf = new_mem.mBuf;
     this->mMaxSize = (int_ptr_t)new_mem.GetMaxSize();
-    if(this->mSize > newSize)
+    if(size > newSize)
         this->mSize = newSize;
+    else
+        this->mSize = size;
     this->mIsConst = false;
     this->mSelfAlloc = true;
     new_mem.mBuf = NULL;
@@ -128,7 +135,7 @@ int_ptr_t CMem::Read(void *buf,int_ptr_t n)
 int_ptr_t CMem::Write(const void *buf,int_ptr_t n)
 {
     int_ptr_t  copy_length;
-    
+
     ASSERT(!this->mIsConst);
     ASSERT(this->mBuf && buf);
 
