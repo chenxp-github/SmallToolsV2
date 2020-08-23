@@ -135,7 +135,7 @@ status_t CTaskPeerServer::OnInitNameMessage(CPeerMessage *msg)
 		return ERROR;
 	}
 	
-    ASSERT(body->GetSize() >= sizeof(init_param));
+    ASSERT((size_t)body->GetSize() >= sizeof(init_param));
 
 	CMem all_peers;
 	all_peers.Init();

@@ -14,6 +14,8 @@
 #include "xmlreader.h"
 #include "file.h"
 
+#define XML_STR(s) ((s)==NULL?"":(s))
+
 class CXmlNode{
 public:
     WEAK_REF_DEFINE();
@@ -25,6 +27,7 @@ public:
     CXmlNode *parent;
     CXmlNode *child;
     CXmlNode *next;
+    CXmlNode *tail;
 public:
     CXmlNode();
     ~CXmlNode();
@@ -74,6 +77,7 @@ public:
     WEAK_REF_DEFINE();
 public:
     CXmlNode *root;
+    bool interrupt_parsing;
 public:
     status_t LoadXml(const char *fn);
     CXmlNode *GetNodeByPath(const char *path);
@@ -82,10 +86,13 @@ public:
     status_t LoadXml(CFileBase *file);
     CXml();
     ~CXml();
+    status_t InitBasic();
     status_t Init();
     status_t Destroy();
     CXmlNode *GetRoot();
     status_t AddRoot(CXmlNode *node);
+    status_t InterruptParsing();
+    bool IsInterrupted();
 };
 
 #endif // !defined(AFX_XML_H__FA31F9F4_F031_4B0A_8B37_3ABD6AB598ED__INCLUDED_)

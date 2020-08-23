@@ -389,6 +389,27 @@ status_t CMem::SetIsReadOnly(bool read_only)
     mIsConst = read_only;
     return OK;
 }
+
+status_t CMem::Slice(int_ptr_t start, int_ptr_t size,CMem *out)
+{
+    ASSERT(out);
+    ASSERT(start >= 0);
+    out->Free();
+
+    if(size < 0)
+        size = mSize;
+
+    int_ptr_t real_size = size;
+    if(real_size > mSize - start)
+        real_size = mSize - start;
+    if(real_size < 0)
+        return ERROR;
+    if(real_size == 0)
+        return OK;
+
+    out->SetRawBuf(GetRawBuf()+start,real_size,true);
+    return OK;    
+}
 ////////////////////////////////////////////////////////////////////////////
 #if _UNICODE_
 ////////////////////////////////////////////////////////////////////////////

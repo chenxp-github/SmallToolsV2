@@ -31,6 +31,7 @@ status_t CXmlNode::Init()
     this->next=NULL;
     this->child = NULL;
     this->parent = NULL;
+    this->tail = NULL;
     this->value_type = VALUE_TYPE_NORMAL;
     return OK;
 }
@@ -98,25 +99,30 @@ status_t CXmlNode::Free(CXmlNode *node)
     DEL( node );
     return OK;
 }
+
 status_t CXmlNode::AddChild(CXmlNode *node)
 {
     if(node == NULL)
         return ERROR;
-    if(this->child == NULL)
+
+    if(tail == NULL)
     {
+        ASSERT(child == NULL);
         this->child = node;
         node->next = NULL;
+        tail = node;
     }
     else
     {
-        node->next = this->child;
-        this->child = node;
+        tail->next = node;
+        node->parent = tail->parent;
+        node->next = NULL;
+        tail = node;
     }
-    node->parent = this;
     return OK;
 }
 
-CXmlNode * CXmlNode:: GetChild(int i)
+CXmlNode * CXmlNode::GetChild(int i)
 {
     int c = 0;
     CXmlNode *p;
@@ -523,21 +529,26 @@ float CXmlNode::GetFloatValue()
 }
 /*=======================================================*/
 CXml::CXml()
-{
-    WEAK_REF_CLEAR();
-    this->root = NULL;
+{   
+    this->InitBasic();
 }
 
 CXml::~CXml()
 {
-    Destroy();
+    this->Destroy();
+}
+
+status_t CXml::InitBasic()
+{
+    WEAK_REF_CLEAR();
+    this->root = NULL;
+    this->interrupt_parsing = false;
+    return OK;
 }
 
 status_t CXml::Init()
 {        
-    WEAK_REF_CLEAR();
-    this->root = NULL;
-    return OK;
+    return this->InitBasic();
 }
 
 status_t  CXml::Destroy()
@@ -547,7 +558,6 @@ status_t  CXml::Destroy()
         return OK;
     CXmlNode::Free(this->root);
     this->root = NULL;
-
     return OK;
 }
 
@@ -573,11 +583,13 @@ status_t CXml::LoadXml(CFileBase *file)
     ASSERT(this->root==NULL);
     ASSERT(file);
 
+    interrupt_parsing = false;
     file->Seek(0);
     xml_reader.Init();
     xml_reader.SetXmlFile(file);
     while((ret = xml_reader.EnterNextItem()))
     {
+        if(interrupt_parsing)break;
         pstr = xml_reader.mem_stk->GetTopPtr();
         if(pstr == NULL)
             break;
@@ -659,4 +671,15 @@ status_t CXml::LoadXml(const char *fn)
     if(!mf.LoadFile(fn))
         return ERROR;
     return this->LoadXml(&mf);
+}
+
+status_t CXml::InterruptParsing()
+{
+    interrupt_parsing = true;
+    return OK;
+}
+
+bool CXml::IsInterrupted()
+{
+    return interrupt_parsing;
 }

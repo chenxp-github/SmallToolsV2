@@ -151,6 +151,7 @@ public:
     status_t SetParamInt64(int index, int64_t i);
     status_t SetParamPointer(int index, void *p);
     status_t SetParamObject(int index, void *obj,void **obj_op,int obj_op_num);
+    status_t SetParamObjectCopy(int index, void *obj, void** obj_op, int obj_op_num);
     status_t SetParamWeakPointer(int index,CRawWeakPointer *weak_ptr);
     status_t FreeParam(int index);
     CLOSURE_FUNC GetFunc();

@@ -436,8 +436,14 @@ status_t CDirMgr::IsPathSplitor(char ch)
 fsize_t CDirMgr::GetFileSize(CMem *filename)
 {
     ASSERT(filename);
+    return GetFileSize(filename->CStr());
+}
 
-    FILE_HANDLE fp = crt_fopen(filename->CStr(),"rb");
+fsize_t CDirMgr::GetFileSize(const char *filename)
+{
+    ASSERT(filename);
+
+    FILE_HANDLE fp = crt_fopen(filename,"rb");
     if(!crt_is_file_handle(fp))
         return 0;
     crt_fseek(fp,0,SEEK_END);

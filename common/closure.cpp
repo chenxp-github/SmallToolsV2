@@ -287,6 +287,14 @@ status_t CClosure::SetParamObject(int index, void *obj, void** obj_op, int obj_o
     return OK;
 }
 
+status_t CClosure::SetParamObjectCopy(int index, void *obj, void** obj_op, int obj_op_num)
+{
+    ASSERT(obj_op_num >= OP_INDEX_MAX);
+    CLONE_OBJ_FUNC clone_func = (CLONE_OBJ_FUNC)obj_op[INDEX_HOW_TO_CLONE];
+    void *new_obj = clone_func(obj);
+    return SetParamObject(index,new_obj,obj_op,obj_op_num);
+}
+
 status_t CClosure::SetParamBson(int index, CMiniBson *bson)
 {
     ASSERT(bson);

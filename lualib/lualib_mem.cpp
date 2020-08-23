@@ -236,6 +236,21 @@ static status_t mem_memcpy(lua_State *L)
     return 0;
 }
 
+static status_t mem_slice(lua_State *L)
+{
+    CMem *pmem = get_mem(L,1);
+    ASSERT(pmem);
+    int start = (int)lua_tointeger(L,2);
+    int size = (int)lua_tointeger(L,3);
+
+    CMem *ret0;
+    NEW(ret0,CMem);
+    pmem->Slice(start,size,ret0);
+
+    mem_new_userdata(L,ret0,0);
+    return 1;
+}
+
 static const luaL_Reg mem_lib[] = {
     {"new",mem_new},
     {"__gc",mem_gc_},
@@ -256,6 +271,7 @@ static const luaL_Reg mem_lib[] = {
     {"SetRawBuf",mem_setrawbuf},
     {"SetIsReadOnly",mem_setisreadonly},
     {"MemCpy",mem_memcpy},    
+    {"Slice",mem_slice},
     {NULL, NULL}
 };
 

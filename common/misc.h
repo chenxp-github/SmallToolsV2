@@ -29,6 +29,8 @@ status_t reshuffle(int *array, int size, int min);
 uint32_t ac_x31_hash_string(const char *s);
 uint32_t bob_32bit_integer_hash(uint32_t a);
 int64_t str2int_64(const char *str);
+int is_hex_char(char ch);
+int hex_str_to_bin(const char *shex, int len, uint8_t *out, int max);
 
 #ifdef __cplusplus
 }

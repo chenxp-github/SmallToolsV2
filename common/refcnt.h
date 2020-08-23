@@ -22,7 +22,7 @@ void Release()\
     }\
     if(this->_ref_count == 0)\
     {\
-        LEAK_DETECT_PRINT("free: addr=0x%x file=%s line=%d",this,__FILE__,__LINE__);\
+        LEAK_DETECT_PRINT("free: addr=%p file=%s line=%d",this,__FILE__,__LINE__);\
         delete this;\
     }\
 }\

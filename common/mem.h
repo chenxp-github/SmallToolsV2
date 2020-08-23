@@ -29,6 +29,7 @@ public:
     int_ptr_t mMaxSize; 
     bool mIsConst;
 public: 
+    status_t Slice(int_ptr_t start, int_ptr_t size,CMem *out);
     status_t SetIsReadOnly(bool read_only);
 	bool IsReadOnly();
     bool IsMalloc();
