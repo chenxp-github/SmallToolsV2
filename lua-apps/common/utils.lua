@@ -95,4 +95,11 @@ function self_call(...)
 	return os.execute(args[1].." "..args[2].." "..user_cmd);
 end
 
-    
+function ping_net_addr(name)
+    if App.OS() == "linux" then
+        return execf("ping %s -W 1 -c 1",name);
+    else
+        return execf("ping %s -w 1000 -n 1",name);
+    end
+end
+
