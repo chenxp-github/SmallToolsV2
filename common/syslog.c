@@ -3,14 +3,14 @@
 #define CHECK_MODULE_RANGE(module)\
 if(module < 0 || module > MAX_LOG_ITEMS)\
 {\
-    syslog_printf("%s:%d::error module range %d",__FILE__,__LINE__,module);\
+    syslog_printf("%s:%d::error module range %d\n",__FILE__,__LINE__,module);\
     return ERROR;\
 }\
 
 #define CHECK_LOG_CONFIG() \
 if(g_log_config == NULL)\
 {\
-    syslog_printf("%s:%d::g_log_config is NULL",__FILE__,__LINE__);\
+    syslog_printf("%s:%d::g_log_config is NULL\n",__FILE__,__LINE__);\
     return ERROR;\
 }\
 
@@ -80,7 +80,7 @@ static int syslog_get_log_level(int module)
 
     if(nest>=32)
     {
-        syslog_printf("two many log module nest:%d",nest);
+        syslog_printf("two many log module nest:%d\n",nest);
         return LOG_LEVEL_QUIET;
     }
 
@@ -136,21 +136,6 @@ status_t syslog_printf(const char* format, ...)
     return OK;
 }
 
-status_t syslog_tab_printf(int tab,const char* format, ...)
-{
-    char buffer[LBUF_SIZE];
-    int i;
-
-    crt_va_list ap;
-    crt_va_start(ap, format);
-    for(i = 0; i < tab; i++)
-        buffer[i] = '\t';
-    crt_vsnprintf (buffer+tab,sizeof(buffer)-tab,format, ap);
-    syslog_puts(0,LOG_LEVEL_ERROR,buffer);
-    crt_va_end(ap);
-    return OK;
-}
-
 status_t syslog_log(int module,int log_level,const char* format, ...)
 {
     crt_va_list ap;
@@ -160,7 +145,7 @@ status_t syslog_log(int module,int log_level,const char* format, ...)
         return ERROR;
     crt_va_start(ap, format);
     syslog_va_printf(module, log_level, format, ap);
-    syslog_puts(module,log_level,"\r\n");
+    syslog_puts(LOG_MODULE_EOL,log_level,"\r\n");
     crt_va_end(ap);
     return OK;
 }

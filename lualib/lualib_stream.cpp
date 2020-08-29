@@ -197,6 +197,83 @@ static int stream_getint64(lua_State *L)
     lua_pushinteger(L,_ret_0);
     return 1;
 }
+
+static status_t stream_putuint8(lua_State *L)
+{
+    CStream *pstream = get_stream(L,1);
+    ASSERT(pstream);
+    uint8_t i = (uint8_t)lua_tointeger(L,2);
+    status_t ret0 = pstream->PutUInt8(i);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t stream_getuint8(lua_State *L)
+{
+    CStream *pstream = get_stream(L,1);
+    ASSERT(pstream);
+    uint8_t ret0 = pstream->GetUInt8();
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t stream_putuint16(lua_State *L)
+{
+    CStream *pstream = get_stream(L,1);
+    ASSERT(pstream);
+    uint16_t i = (uint16_t)lua_tointeger(L,2);
+    status_t ret0 = pstream->PutUInt16(i);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t stream_getuint16(lua_State *L)
+{
+    CStream *pstream = get_stream(L,1);
+    ASSERT(pstream);
+    uint16_t ret0 = pstream->GetUInt16();
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t stream_putuint32(lua_State *L)
+{
+    CStream *pstream = get_stream(L,1);
+    ASSERT(pstream);
+    uint32_t i = (uint32_t)lua_tointeger(L,2);
+    status_t ret0 = pstream->PutUInt32(i);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t stream_getuint32(lua_State *L)
+{
+    CStream *pstream = get_stream(L,1);
+    ASSERT(pstream);
+    uint32_t ret0 = pstream->GetUInt32();
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t stream_putuint64(lua_State *L)
+{
+    CStream *pstream = get_stream(L,1);
+    ASSERT(pstream);
+    uint64_t i = (uint64_t)lua_tointeger(L,2);
+    status_t ret0 = pstream->PutUInt64(i);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t stream_getuint64(lua_State *L)
+{
+    CStream *pstream = get_stream(L,1);
+    ASSERT(pstream);
+    uint64_t ret0 = pstream->GetUInt64();
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
 static int stream_copy(lua_State *L)
 {
     CStream *pstream = get_stream(L,1);
@@ -239,6 +316,7 @@ static int stream_mem(lua_State *L)
     mem_new_userdata(L,pstream,1);
     return 1;
 }
+
 static const luaL_Reg stream_lib[] = {
     {"__gc",stream_gc_},
     {"__tostring",stream_tostring_},
@@ -262,6 +340,14 @@ static const luaL_Reg stream_lib[] = {
     {"GetInt32",stream_getint32},
     {"PutInt64",stream_putint64},
     {"GetInt64",stream_getint64},
+    {"PutUInt8",stream_putuint8},
+    {"GetUInt8",stream_getuint8},
+    {"PutUInt16",stream_putuint16},
+    {"GetUInt16",stream_getuint16},
+    {"PutUInt32",stream_putuint32},
+    {"GetUInt32",stream_getuint32},
+    {"PutUInt64",stream_putuint64},
+    {"GetUInt64",stream_getuint64},    
     {"Copy",stream_copy},
     {"GetAsString",stream_getasstring},
     {"FileBase",stream_filebase},

@@ -27,6 +27,7 @@ public:
 	double GetDouble();
 	status_t PutBool(bool b);
 	bool GetBool();
+	
 	status_t PutInt8(int8_t i);
 	int8_t GetInt8();
 	status_t PutInt16(int16_t i);
@@ -35,6 +36,15 @@ public:
 	int32_t GetInt32();
 	status_t PutInt64(int64_t i);
 	int64_t GetInt64();
+
+	status_t PutUInt8(uint8_t i);
+	uint8_t GetUInt8();
+	status_t PutUInt16(uint16_t i);
+	uint16_t GetUInt16();
+	status_t PutUInt32(uint32_t i);
+	uint32_t GetUInt32();
+	status_t PutUInt64(uint64_t i);
+	uint64_t GetUInt64();
 
     CStream();
     virtual ~CStream();

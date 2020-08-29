@@ -11,6 +11,7 @@
 
 #define MAX_LOG_ITEMS       512
 
+#define LOG_MODULE_EOL          -1
 #define LOG_MODULE_ROOT         0
 #define LOG_MODULE_COMMON       1
 #define LOG_MODULE_MESSAGEPEER  2
@@ -40,7 +41,6 @@ SYSLOG_PUTS_HANDLER syslog_get_puts_handler();
 status_t syslog_puts(int module,int log_level,const char *str);
 status_t syslog_set_parent_module(int module, int parent);
 status_t syslog_printf(const char* format, ...);
-status_t syslog_tab_printf(int tab,const char* format, ...);
 status_t syslog_log(int module,int log_level,const char* format, ...);
 status_t syslog_set_file_and_line(const char *file_name, int line);
 const char *syslog_get_cur_file_name();

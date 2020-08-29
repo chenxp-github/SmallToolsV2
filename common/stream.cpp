@@ -93,6 +93,55 @@ int64_t CStream::GetInt64()
     Read(&i,sizeof(i));
     return i;
 }
+
+status_t CStream::PutUInt8(uint8_t i)
+{
+    return Write(&i,sizeof(i));
+}
+
+uint8_t CStream::GetUInt8()
+{
+    uint8_t i = 0;
+    Read(&i,sizeof(i));
+    return i;
+}
+
+status_t CStream::PutUInt16(uint16_t i)
+{
+    return Write(&i,sizeof(i));
+}
+
+uint16_t CStream::GetUInt16()
+{
+    uint16_t i = 0;
+    Read(&i,sizeof(i));
+    return i;
+}
+
+status_t CStream::PutUInt32(uint32_t i)
+{
+    return Write(&i,sizeof(i));
+}
+
+uint32_t CStream::GetUInt32()
+{
+    uint32_t i = 0;
+    Read(&i,sizeof(i));
+    return i;
+}
+
+status_t CStream::PutUInt64(uint64_t i)
+{
+    return Write(&i,sizeof(i));
+}
+
+uint64_t CStream::GetUInt64()
+{
+    uint64_t i = 0;
+    Read(&i,sizeof(i));
+    return i;
+}
+
 status_t CStream::PutBool(bool b)
 {
     int8_t t = b;
