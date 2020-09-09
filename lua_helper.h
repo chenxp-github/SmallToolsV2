@@ -18,10 +18,10 @@ const char* lua_push_local_string(lua_State *L, const char *local_string);
 const char* lua_to_local_string(lua_State *L, int index,CMem *out);
 const wchar_t* lua_to_unicode_string(lua_State *L, int index,CMem *out);
 
-typedef CTaskMgr* (*HOW_TO_GET_GLOBAL_TASKMGR)(void);
-typedef CLuaVm* (*HOW_TO_GET_GLOBAL_LUAVM)(void);
-typedef int* (*HOW_TO_GET_LUA_RUNNING_FLAG)(void);
-typedef const void* (*HOW_TO_GET_PEER_GLOBALS)(void);
+typedef CTaskMgr* (*HOW_TO_GET_GLOBAL_TASKMGR)(lua_State *L);
+typedef CLuaVm* (*HOW_TO_GET_GLOBAL_LUAVM)(lua_State *L);
+typedef int* (*HOW_TO_GET_LUA_RUNNING_FLAG)(lua_State *L);
+typedef const void* (*HOW_TO_GET_PEER_GLOBALS)(lua_State *L);
 
 extern HOW_TO_GET_GLOBAL_TASKMGR how_to_get_global_taskmgr;
 extern HOW_TO_GET_GLOBAL_LUAVM how_to_get_global_luavm;

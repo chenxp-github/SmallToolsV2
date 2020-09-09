@@ -138,7 +138,7 @@ static int filemanager_searchdir(lua_State *L)
 	CMem mem_dir(dir);
     CDirMgr::SearchDir_Interruptable(
         &mem_dir,recursive!=0,&on_search_dir,
-        how_to_get_lua_running_flag()
+        how_to_get_lua_running_flag(L)
     );
 	luaL_unref(L,LUA_REGISTRYINDEX,callback);
 
@@ -222,7 +222,7 @@ static int filemanager_copysinglefile_v0(lua_State *L)
 
 	int _ret_0 = (int)CopySingleFile_Interruptable(
         &mem_from,&mem_to,start,size,to_start,mode,
-        how_to_get_lua_running_flag()
+        how_to_get_lua_running_flag(L)
     );
 
 	lua_pushinteger(L,_ret_0);
@@ -243,7 +243,7 @@ static int filemanager_copysinglefile_v1(lua_State *L)
 
     int _ret_0 = (int)CopySingleFile_Interruptable(
         &mem_from,&mem_to,start,size,mode,
-        how_to_get_lua_running_flag()
+        how_to_get_lua_running_flag(L)
     );
     lua_pushinteger(L,_ret_0);
     return 1;
@@ -255,7 +255,7 @@ static int filemanager_copysinglefile_v2(lua_State *L)
     int mode = (int)lua_tointeger(L,3);
 
     int _ret_0 = (int)CopySingleFile_Interruptable(
-        from,to,mode,how_to_get_lua_running_flag()
+        from,to,mode,how_to_get_lua_running_flag(L)
     );
 
     lua_pushinteger(L,_ret_0);
@@ -382,7 +382,7 @@ static status_t filemanager_md5sum_v1(lua_State *L)
 
 	LOCAL_MEM(mem);
     CEncoder::Md5Encode_Interruptable(file,&mem,
-        how_to_get_lua_running_flag());
+        how_to_get_lua_running_flag(L));
     lua_pushstring(L,mem.CStr());
     return 1;
 }
@@ -398,7 +398,7 @@ static status_t filemanager_md5sum_v2(lua_State *L)
 	{
 		LOCAL_MEM(mem);
 		CEncoder::Md5Encode_Interruptable(&file,&mem,
-            how_to_get_lua_running_flag());
+            how_to_get_lua_running_flag(L));
 		lua_pushstring(L,mem.CStr());
 		return 1;
 	}

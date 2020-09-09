@@ -98,6 +98,12 @@ int CRpcServiceBase::AddCallback(CClosure *closure)
     return callback_id;
 }
 
+status_t CRpcServiceBase::SetCallbackTimeout(int cbid,int timeout)
+{
+    GLOBAL_PEER_CALLBACK_MAP(map);    
+    return map->SetCallbackTimeout(cbid,timeout);
+}
+
 CMem* CRpcServiceBase::GetDestPeerName()
 {
     return &m_dest_peer_name;

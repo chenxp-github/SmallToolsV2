@@ -55,25 +55,25 @@
 CGlobals g_globals;
 CGlobals *g_globals_ptr = NULL;
 
-static CTaskMgr* get_global_taskmgr()
+static CTaskMgr* get_global_taskmgr(lua_State *L)
 {
 	GLOBAL_TASKMGR(mgr);
 	return mgr;
 }
 
-static CLuaVm* get_global_luavm()
+static CLuaVm* get_global_luavm(lua_State *L)
 {
     GLOBAL_LUAVM(vm);
 	return vm;
 }
 
-static int* get_lua_running_flag()
+static int* get_lua_running_flag(lua_State *L)
 {
     static int running = 1;
     return &running;
 }
 
-static const void *get_peer_globals()
+static const void *get_peer_globals(lua_State *L)
 {
     GLOBAL_PEER_GLOBALS(g);
     return g;

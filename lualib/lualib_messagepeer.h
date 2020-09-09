@@ -28,8 +28,9 @@ static int func_name(lua_State *L)\
     {\
         CLOSURE_PARAM_INT(event,0);\
 		CLOSURE_PARAM_INT(callback_on_message,CALLBACK_INDEX);\
+		CLOSURE_PARAM_PTR(lua_State*,LL,11);\
 \
-		CLuaVm *vm = how_to_get_global_luavm();\
+		CLuaVm *vm = how_to_get_global_luavm(LL);\
 		ASSERT(vm);\
 		lua_State *L = vm->GetLuaState();\
 \
@@ -46,7 +47,6 @@ static int func_name(lua_State *L)\
         {\
             CLOSURE_PARAM_PTR(CMessagePeer*,peer,10);\
             ASSERT(peer);\
-\
             CLOSURE_PARAM_PTR(CPeerMessage*,msg,1);\
             ASSERT(msg);\
             ASSERT(msg->GetFrom());\
@@ -109,6 +109,7 @@ static int func_name(lua_State *L)\
 \
     pmessagepeer->Callback()->SetFunc(on_message);\
     pmessagepeer->Callback()->SetParamPointer(10,pmessagepeer);\
+	pmessagepeer->Callback()->SetParamPointer(11,L);\
     pmessagepeer->Callback()->SetParamInt(CALLBACK_INDEX,OnMessage);\
     return 1;\
 }\

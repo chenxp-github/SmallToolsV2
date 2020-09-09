@@ -159,7 +159,7 @@ static status_t start_message_center(int port, int trust_mode)
 	acceptor->Start();
 
     GLOBAL_PEER_GLOBALS(peer_globals);
-    peer_globals->SetTrustMode(trust_mode);
+    peer_globals->SetTrustMode(trust_mode!=0);
 	return OK;
 }
 //////////////////////////////////////
@@ -238,7 +238,7 @@ static int app_makeordersimplediskfromdir(lua_State *L)
 static status_t app_quittask(lua_State *L)
 {
     int tid = (int)lua_tointeger(L,1);
-    CTaskMgr *taskmgr = how_to_get_global_taskmgr();
+    CTaskMgr *taskmgr = how_to_get_global_taskmgr(L);
     ASSERT(taskmgr);
     taskmgr->QuitTask(&tid);
     return 0;

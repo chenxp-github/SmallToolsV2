@@ -378,3 +378,9 @@ int CCallbackMap::AllocUniqueId()
     return m_UniqueId;
 }
 
+status_t CCallbackMap::SetCallbackTimeout(int cbid, int timeout)
+{
+	CCallback *cb = this->Get(cbid);
+	ASSERT(cb);
+	return cb->SetTimeout(timeout);
+}

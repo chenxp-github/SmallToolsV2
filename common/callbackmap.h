@@ -17,6 +17,7 @@ public:
 	int m_Size;
 	int m_UniqueId;
 public:	
+	status_t SetCallbackTimeout(int cbid, int timeout);
 	status_t AddClosure(CClosure *closure, int cbid);
 	CCallback * Get(int cbid);
 	status_t AutoRemoveTimeoutCallback();

@@ -231,7 +231,7 @@ static status_t messagepeer_new(lua_State *L)
 {
     CMessagePeer *pmessagepeer;
     NEW(pmessagepeer,CMessagePeer);
-    pmessagepeer->Init(how_to_get_global_taskmgr());
+    pmessagepeer->Init(how_to_get_global_taskmgr(L));
     messagepeer_new_userdata(L,pmessagepeer,0);
     return 1;
 }

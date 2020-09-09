@@ -32,7 +32,7 @@ static status_t websocketserver_new(lua_State *L)
 {
     CWebSocketServer *pwebsocketserver;
     NEW(pwebsocketserver,CWebSocketServer);
-    pwebsocketserver->Init(how_to_get_global_taskmgr());
+    pwebsocketserver->Init(how_to_get_global_taskmgr(L));
     websocketserver_new_userdata(L,pwebsocketserver,0);
     return 1;
 }
@@ -83,7 +83,7 @@ static status_t websocketserver_reset(lua_State *L)
     ASSERT(pwebsocketserver);
     SAVE_WEAK_REF_ID(*pwebsocketserver,w);
     pwebsocketserver->Destroy();
-    pwebsocketserver->Init(how_to_get_global_taskmgr());
+    pwebsocketserver->Init(how_to_get_global_taskmgr(L));
     RESTORE_WEAK_REF_ID(*pwebsocketserver,w);
     return 0;
 }

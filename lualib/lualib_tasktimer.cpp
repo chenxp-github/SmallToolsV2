@@ -4,6 +4,7 @@
 #include "lua_helper.h"
 
 #define CBID_PARAM_INDEX 10
+#define LUA_STATE_INDEX 11
 
 #define RELEASE_CALLBACK(ptasktimer) do{\
 if(ptasktimer->Callback()->GetParamType(CBID_PARAM_INDEX) == PARAM_TYPE_INT)\
@@ -39,7 +40,7 @@ static int tasktimer_new(lua_State *L)
     CTaskTimer *pt;
 
     NEW(pt,CTaskTimer);
-    pt->Init(how_to_get_global_taskmgr());
+    pt->Init(how_to_get_global_taskmgr(L));
     tasktimer_new_userdata(L,pt,0);
     return 1;
 }
@@ -142,7 +143,8 @@ static int tasktimer_setcallback(lua_State *L)
     {
         CLOSURE_PARAM_INT(interval,0);
         CLOSURE_PARAM_INT(cbid,CBID_PARAM_INDEX);
-        CLuaVm *vm = how_to_get_global_luavm();
+		CLOSURE_PARAM_PTR(lua_State*,LL,LUA_STATE_INDEX);
+        CLuaVm *vm = how_to_get_global_luavm(LL);
 		ASSERT(vm);
         tasktimer_callback_ontimercallback(vm->GetLuaState(),cbid,false,interval);
         return OK;
@@ -150,6 +152,7 @@ static int tasktimer_setcallback(lua_State *L)
     END_CLOSURE_FUNC(trigger);
 
     ptasktimer->Callback()->SetParamInt(CBID_PARAM_INDEX,onTimerCallback);
+	ptasktimer->Callback()->SetParamPointer(LUA_STATE_INDEX,L);
     ptasktimer->Callback()->SetFunc(trigger);
     return 0;
 }

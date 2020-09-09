@@ -813,6 +813,216 @@ static status_t filebase_nextline(lua_State *L)
     }
     return 0;
 }
+static status_t filebase_putint8(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    int8_t i = (int8_t)lua_tointeger(L,2);
+    pfilebase->Putc(i);
+    return 0;
+}
+
+static status_t filebase_getint8(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    int8_t ret0 = 0;
+	pfilebase->Read(&ret0,sizeof(ret0));
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t filebase_putint16(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    int16_t i = (int16_t)lua_tointeger(L,2);
+    status_t ret0 = pfilebase->Write(&i,sizeof(i));
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t filebase_getint16(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    int16_t ret0 = 0;
+	pfilebase->Read(&ret0,sizeof(ret0));
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t filebase_putint32(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    int32_t i = (int32_t)lua_tointeger(L,2);
+    status_t ret0 = pfilebase->Write(&i,sizeof(i));
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t filebase_getint32(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    int32_t ret0 = 0;
+	pfilebase->Read(&ret0,sizeof(ret0));
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t filebase_putint64(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    int64_t i = (int64_t)lua_tointeger(L,2);
+    status_t ret0 = pfilebase->Write(&i,sizeof(i));
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t filebase_getint64(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    int64_t ret0 = 0;
+	pfilebase->Read(&ret0,sizeof(ret0));
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t filebase_putuint8(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    uint8_t i = (uint8_t)lua_tointeger(L,2);
+    status_t ret0 = pfilebase->Write(&i,sizeof(i));
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t filebase_getuint8(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    uint8_t ret0 = 0;
+	pfilebase->Read(&ret0,sizeof(ret0));
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t filebase_putuint16(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    uint16_t i = (uint16_t)lua_tointeger(L,2);
+    status_t ret0 = pfilebase->Write(&i,sizeof(i));
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t filebase_getuint16(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    uint16_t ret0 = 0;
+	pfilebase->Read(&ret0,sizeof(ret0));
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t filebase_putuint32(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    uint32_t i = (uint32_t)lua_tointeger(L,2);
+    status_t ret0 = pfilebase->Write(&i,sizeof(i));
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t filebase_getuint32(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    uint32_t ret0 = 0;
+	pfilebase->Read(&ret0,sizeof(ret0));
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t filebase_putuint64(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    uint64_t i = (uint64_t)lua_tointeger(L,2);
+    status_t ret0 = pfilebase->Write(&i,sizeof(i));
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t filebase_getuint64(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    uint64_t ret0 = 0;
+	pfilebase->Read(&ret0,sizeof(ret0));
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t filebase_putzeroendstring(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+
+	if(lua_isstring(L,2))
+	{
+		size_t len = 0;
+		const char* str = (const char*)lua_tolstring(L,2,&len);
+		if(str)
+		{
+			size_t n = (size_t)pfilebase->Write(str,len);
+			uint8_t zero = 0;
+			n += pfilebase->Write(&zero,sizeof(zero));
+			lua_pushinteger(L,n);
+			return 1;
+		}
+	}
+	else
+	{
+		CFileBase *str = get_filebase(L,2);
+		if(str)
+		{
+			size_t n = 0;
+			n += (size_t)pfilebase->WriteFile(str);
+			uint8_t zero = 0;
+			n += pfilebase->Write(&zero,sizeof(zero));
+			lua_pushinteger(L,n);
+			return 1;
+		}
+	}
+
+    return 0;
+}
+
+static status_t filebase_getzeroendstring(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+	
+	CFileBase *out = get_filebase(L,2);
+	ASSERT(out);
+
+	while(!pfilebase->IsEnd())
+	{
+		char ch = pfilebase->Getc();
+		if(ch == 0)break;
+		out->Putc(ch);
+	}
+    return 0;
+}
 
 static const luaL_Reg filebase_lib[] = {
     {"__gc",filebase_gc_},
@@ -880,6 +1090,24 @@ static const luaL_Reg filebase_lib[] = {
     {"NextWord",filebase_nextword},
     {"NextString",filebase_nextstring},
     {"NextLine",filebase_nextline},
+    {"PutInt8",filebase_putint8},
+    {"GetInt8",filebase_getint8},
+    {"PutInt16",filebase_putint16},
+    {"GetInt16",filebase_getint16},
+    {"PutInt32",filebase_putint32},
+    {"GetInt32",filebase_getint32},
+    {"PutInt64",filebase_putint64},
+    {"GetInt64",filebase_getint64},
+    {"PutUInt8",filebase_putuint8},
+    {"GetUInt8",filebase_getuint8},
+    {"PutUInt16",filebase_putuint16},
+    {"GetUInt16",filebase_getuint16},
+    {"PutUInt32",filebase_putuint32},
+    {"GetUInt32",filebase_getuint32},
+    {"PutUInt64",filebase_putuint64},
+    {"GetUInt64",filebase_getuint64},
+    {"PutZeroEndString",filebase_putzeroendstring},
+    {"GetZeroEndString",filebase_getzeroendstring},
     {NULL, NULL}
 };
 

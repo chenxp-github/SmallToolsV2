@@ -34,8 +34,8 @@ static int serversidepeer_new(lua_State *L)
     NEW(pt,CServerSidePeer);
     
 	pt->Init(
-		how_to_get_global_taskmgr(),
-		how_to_get_peer_globals()
+		how_to_get_global_taskmgr(L),
+		how_to_get_peer_globals(L)
 	);
 
     serversidepeer_new_userdata(L,pt,0);

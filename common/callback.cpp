@@ -80,6 +80,7 @@ status_t CCallback::IncTime(int ms)
 }
 bool CCallback::IsTimeout()
 {
+    if(m_Timeout < 0)return false;
     return m_Time > m_Timeout;
 }
 status_t CCallback::DelClosure()

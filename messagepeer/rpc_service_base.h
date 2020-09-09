@@ -29,6 +29,7 @@ public:
     CMem m_dest_peer_name;
 
 public:
+    status_t SetCallbackTimeout(int cbid,int timeout);
 	int AddCallback(CClosure *closure);
 	status_t SendReturnValue(CRpcCallContext *context, CRpcParamBase *ret);
 	status_t SendPartReturnValue(CRpcCallContext *context, CRpcParamBase *ret);

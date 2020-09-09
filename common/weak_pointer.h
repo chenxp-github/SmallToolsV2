@@ -30,7 +30,11 @@ public:
 
     status_t WeakRef(T *t)
     {
-        if(!t)return ERROR;
+        if(!t)
+        {
+            this->Clear();
+            return OK;
+        }
         WEAK_REF_CONTEXT_CREATE(t->__weak_ref_context);
         return CRawWeakPointer::WeakRef(t,t->__weak_ref_context);
     }

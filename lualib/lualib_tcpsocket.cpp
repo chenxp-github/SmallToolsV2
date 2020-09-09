@@ -193,7 +193,7 @@ static status_t tcpsocket_newtcpacceptor(lua_State *L)
 	
 	CTaskTcpAcceptor *ptask;
 	NEW(ptask,CTaskTcpAcceptor);
-	ptask->Init(how_to_get_global_taskmgr());
+	ptask->Init(how_to_get_global_taskmgr(L));
 	ptask->SetListenPort(listen_port);
 	ptask->Start();
 	ptask->Callback()->SetFunc(on_accept);
@@ -265,7 +265,7 @@ static status_t tcpsocket_newtcpconnector(lua_State *L)
 	
 	CTaskTcpConnector *ptask;
 	NEW(ptask,CTaskTcpConnector);
-	ptask->Init(how_to_get_global_taskmgr());
+	ptask->Init(how_to_get_global_taskmgr(L));
 	ptask->SetServerName(server);
 	ptask->SetPort(port);
 	ptask->Start();

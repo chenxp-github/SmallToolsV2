@@ -181,7 +181,7 @@ static status_t ximagegif_encode_v1(lua_State *L)
     BOOL ret0 = pximagegif->Encode(
         fp,pimages,size,
         blocalcolormap,blocaldispmeth,
-        how_to_get_lua_running_flag()
+        how_to_get_lua_running_flag(L)
     );
 
     lua_pushboolean(L,ret0);
