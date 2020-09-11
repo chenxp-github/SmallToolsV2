@@ -547,6 +547,77 @@ static int minibson_getbinary(lua_State *L)
 	lua_pushboolean(L,_ret_0);
 	return 1;
 }
+static status_t minibson_putuint32(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    ASSERT(name);
+    uint32_t i = (uint32_t)lua_tointeger(L,3);
+    status_t ret0 = pminibson->PutUInt32(name,i);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t minibson_putuint16(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    ASSERT(name);
+    uint16_t i = (uint16_t)lua_tointeger(L,3);
+    status_t ret0 = pminibson->PutUInt16(name,i);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t minibson_putuint8(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    ASSERT(name);
+    uint8_t i = (uint8_t)lua_tointeger(L,3);
+    status_t ret0 = pminibson->PutUInt8(name,i);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t minibson_getuint8(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    ASSERT(name);
+    uint8_t ret0 = 0;
+    pminibson->GetUInt8(name,&ret0);
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t minibson_getuint16(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    ASSERT(name);
+    uint16_t ret0 = 0;
+    pminibson->GetUInt16(name,&ret0);
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t minibson_getuint32(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    const char* name = (const char*)lua_tostring(L,2);
+    ASSERT(name);
+    uint32_t ret0 = 0;
+    pminibson->GetUInt32(name,&ret0);
+    lua_pushinteger(L,ret0);
+    return 1;
+}
 
 static const luaL_Reg minibson_lib[] = {
 
@@ -587,6 +658,12 @@ static const luaL_Reg minibson_lib[] = {
 	{"Traverse",minibson_traverse},
 	{"GetRawData",minibson_getrawdata},
 	{"LoadBson",minibson_loadbson},
+    {"PutUInt32",minibson_putuint32},
+    {"PutUInt16",minibson_putuint16},
+    {"PutUInt8",minibson_putuint8},
+    {"GetUInt8",minibson_getuint8},
+    {"GetUInt16",minibson_getuint16},
+    {"GetUInt32",minibson_getuint32},    
     {NULL, NULL}
 };
 static int luaL_register_minibson(lua_State *L)
