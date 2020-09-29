@@ -5,6 +5,8 @@
 #include "syslog.h"
 #include "mem_tool.h"
 
+CLOSURE_COMMON_OBJECT_OPS_DEFINE_CPP(CMiniBson,bson)
+
 #define CHECK_TYPE_AND_NAME(_t,_name) do{\
 fsize_t _old_off = mData->GetOffset();\
 int _type = this->ReadByte();\

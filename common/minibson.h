@@ -4,6 +4,8 @@
 #include "mem.h"
 #include "closure.h"
 
+CLOSURE_COMMON_OBJECT_OPS_DEFINE_H(CMiniBson,bson)
+
 #define LOCAL_BSON(bson,size) char __##bson[size];\
 CMiniBson bson;\
 bson.Init();\

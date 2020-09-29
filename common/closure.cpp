@@ -29,32 +29,6 @@ typedef status_t (*DELETE_OBJ_FUNC)(void *p);
 typedef status_t (*PRINT_OBJ_FUNC)(void *p,CFileBase *_buf);
 typedef void*    (*CLONE_OBJ_FUNC)(void *p);
 
-static status_t how_to_delete_bson(void *_p)
-{
-    CMiniBson *bson = (CMiniBson*)_p;
-    DEL(bson);
-    return OK;
-}
-
-static status_t how_to_print_bson(void *_p,CFileBase *buf)
-{
-    CMiniBson *bson = (CMiniBson*)_p;
-    ASSERT(bson);
-    return bson->Print(buf);
-}
-
-static void* how_to_clone_bson(void *_p)
-{
-    CMiniBson *bson = (CMiniBson*)_p;
-    ASSERT(bson);
-
-    CMiniBson *tmp;
-    NEW(tmp,CMiniBson);
-    tmp->Init();
-    tmp->Copy(bson);
-
-    return tmp;
-}
 //////////////////////////////////////////
 CClosure::CClosure()
 {
@@ -298,12 +272,7 @@ status_t CClosure::SetParamObjectCopy(int index, void *obj, void** obj_op, int o
 status_t CClosure::SetParamBson(int index, CMiniBson *bson)
 {
     ASSERT(bson);
-    void *bson_op[]={
-        (void*)how_to_delete_bson,
-        (void*)how_to_clone_bson,
-        (void*)how_to_print_bson
-    };
-    return this->SetParamObject(index,bson,bson_op,3);
+    return this->SetParamObject(index,bson,closure_ops_bson,closure_ops_bson_size);
 }
 
 status_t CClosure::SetParamInt(int index, int i)
@@ -431,9 +400,6 @@ void* CClosure::GetParamObject(int index)
 CMiniBson* CClosure::GetParamBson(int index)
 {
     CMiniBson *_bson = (CMiniBson*)this->GetParamObject(index);
-    ASSERT(_bson);
-    void *del_func = this->GetDeleteObjectFunc(index);
-    ASSERT(del_func == how_to_delete_bson);
     return _bson;
 }
 

@@ -102,6 +102,40 @@ ASSERT(var)\
 #define CLOSURE_PARAM_STRING(var,n)                  __CLOSURE_PARAM_STRING(closure,var,n)
 #define CLOSURE_PARAM_WEAKPTR(type,var,n)            __CLOSURE_PARAM_WEAKPTR(closure,type,var,n)
 
+#define CLOSURE_COMMON_OBJECT_OPS_DEFINE_CPP(type,name)\
+static status_t closure_how_to_delete_##name(void *_p)\
+{\
+    type *obj = (type*)_p;\
+    DEL(obj);\
+    return OK;\
+}\
+static status_t closure_how_to_print_##name(void *_p,CFileBase *buf)\
+{\
+    type *obj = (type*)_p;\
+    ASSERT(obj);\
+    return obj->Print(buf);\
+}\
+static void* closure_how_to_clone_##name(void *_p)\
+{\
+    type *obj = (type*)_p;\
+    ASSERT(obj);\
+    type *tmp;\
+    NEW(tmp,type);\
+    tmp->Init();\
+    tmp->Copy(obj);\
+    return tmp;\
+}\
+void *closure_ops_##name[]={\
+    (void*)closure_how_to_delete_##name,\
+    (void*)closure_how_to_clone_##name,\
+    (void*)closure_how_to_print_##name\
+};\
+int closure_ops_##name##_size = 3;\
+
+#define CLOSURE_COMMON_OBJECT_OPS_DEFINE_H(type,name)\
+extern void *closure_ops_##name[];\
+extern int closure_ops_##name##_size;\
+
 #define CLOSURE_FLAG_FUNC(func,bit) FLAG_FUNC(m_Flags,func,bit)
 
 class CMiniBson;
