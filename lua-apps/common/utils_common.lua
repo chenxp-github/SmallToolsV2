@@ -297,3 +297,21 @@ function object_to_lua(obj,pbuf)
         end
     end
 end
+
+function tcp_connect_to_server(thread,server, port)
+    local is_end = false;
+    local remote_socket = nil;
+    TcpSocket.NewTcpConnector(server,port,
+        function(event,new_socket)
+            if event == EVENT_CONNECTED then
+                remote_socket = new_socket;
+            end
+            is_end = true;
+        end
+    );
+    while not is_end do
+        thread:Sleep(10);
+    end
+    return remote_socket;
+end
+

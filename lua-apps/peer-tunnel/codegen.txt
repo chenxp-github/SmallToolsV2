@@ -1,0 +1,6 @@
+[Peer pt][StartId 800000]
+[Client PeerTunnelClient 900000]
+class PeerTunnelServer{    
+}
+
+
