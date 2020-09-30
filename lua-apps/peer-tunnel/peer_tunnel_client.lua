@@ -18,6 +18,9 @@ end
 function PeerTunnelClient:OnRequest(_context,_param)
 --##Begin OnRequest ##--
     local method = _context.method;
+    if method == METHOD_PT_WRITEDATA then
+        self:OnWriteData(_context,_param);
+    end
 --##End OnRequest ##--
 end
 
@@ -52,6 +55,58 @@ function PeerTunnelClient:ConnectRemote_Async(thread, _server, _port)
     return ret;
 end
 --@@End Method ConnectRemote_Async @@--
+
+
+
+--@@Begin Method WriteData @@--
+function PeerTunnelClient:WriteData(_handle, _data, _callback)
+    local _cbid = self:AddCallback(_callback,-1);
+    local _param={
+        handle = _handle,
+        data = {_binary_=_data},
+    };
+    return self:SendRequest(_param,METHOD_PT_WRITEDATA,_cbid);
+end
+--@@End Method WriteData @@--
+
+
+--@@Begin Method WriteData_Async @@--
+function PeerTunnelClient:WriteData_Async(thread, _handle, _data)
+    local ret = {};
+    local done = false;
+    
+    self:WriteData(_handle,_data,function(res,val)
+        ret.result = res;
+        ret.value = val;
+        done = true;
+    end);
+    
+    while not done and not thread:IsDead() do
+        thread:Sleep(1);
+    end
+    
+    return ret;
+end
+--@@End Method WriteData_Async @@--
+
+
+--@@Begin Method OnWriteData @@--
+function PeerTunnelClient:OnWriteData(_context,_param)
+    local handle = _param.handle;
+    local data = _param.data._binary_;
+
+    local ws = -1;
+    local local_connection = self:GetLocalConnection(handle);
+    if local_connection then
+        ws = local_connection:Write(data,data:GetSize());
+    end
+
+    local _ret={
+        ws = ws
+    };
+    self:SendReturnValue(_context,_ret);
+end
+--@@End Method OnWriteData @@--
 
 --@@ Insert Method Here @@--
 
@@ -93,9 +148,13 @@ function PeerTunnelClient:OnNewLocalClient(new_socket)
         printfnl("connect remote %s:%d success.", self.remote_server,self.remote_port);
         local connection = LocalConnection.new(self,new_socket,ret.value.handle);
         self.local_connections[ret.value.handle] = connection;
+        connection:StartForwarding();
     end
 
     local co = CoThread.new();
     co:Start(connect_thread);
 end
 
+function PeerTunnelClient:GetLocalConnection(handle)
+    return self.local_connections[handle];
+end
