@@ -43,17 +43,18 @@ function create_folder(folder,use_log)
     return os.execute(cmd);
 end
 
-function exit(code)        
+function exit(...)
+    local args = table.pack(...);
+    local code = args[1];
+
     if type(code) == "string" then
-        print(code);        
+        print(string.format(...));
     end
-    
     print(debug.traceback());
 
     if type(code) ~= "number" then
         code = -1;
     end
-    
     os.exit(code);
 end
 

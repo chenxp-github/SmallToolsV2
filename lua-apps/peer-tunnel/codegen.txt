@@ -1,6 +1,5 @@
 [Peer pt][StartId 800000]
 [Client PeerTunnelClient 900000]
 class PeerTunnelServer{    
+    [service] (int handle, string errStr) ConnectRemote(string server, int port);
 }
-
-

@@ -176,6 +176,7 @@ CMem *CCommandLine::GetValueByKey(CMem *key)
 
 CMem * CCommandLine::GetValueByKey(const char *key)
 {
+    ASSERT(key);
     CMem mem_key(key);
     return this->GetValueByKey(&mem_key);
 }

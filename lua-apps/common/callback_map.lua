@@ -23,7 +23,7 @@ function CallbackMap:Put(func_,timeout_)
     end
     
     if timeout_ == nil then
-        timeout_ = 10*1000;
+        timeout_ = 15*1000;
     end
     
     local id_ = self:alloc_id();
