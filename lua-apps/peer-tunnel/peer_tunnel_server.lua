@@ -7,6 +7,7 @@ PeerTunnelServer = class(PeerServiceBase);
 
 function PeerTunnelServer:ctor()    
     self.local_connections = {};
+    self.auto_clear_thread = nil;
 end
 
 function PeerTunnelServer:OnRequest(_context,_param)
@@ -67,7 +68,6 @@ function PeerTunnelServer:OnWriteData(_context,_param)
 end
 --@@End Method OnWriteData @@--
 
-
 --@@Begin Method WriteData @@--
 function PeerTunnelServer:WriteData(_handle, _data, _callback)
     local _cbid = self:AddCallback(_callback,-1);
@@ -104,3 +104,23 @@ function PeerTunnelServer:GetLocalConnection(handle)
     return self.local_connections[handle];
 end
 
+function PeerTunnelServer:StartAutoClearThread()
+    if self.auto_clear_thread then
+        return
+    end
+
+    function auto_clear(thread)        
+        while true do
+            thread:Sleep(5000);
+            for _,con in pairs(self.local_connections) do
+                if not con:IsConnected() then
+                    printfnl("auto delete local connection %d",con.handle);
+                    self.local_connections[con.handle] = nil;
+                end
+            end            
+        end
+    end
+    
+    self.auto_clear_thread = CoThread.new();
+    self.auto_clear_thread:Start(auto_clear);
+end

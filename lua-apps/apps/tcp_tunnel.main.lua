@@ -71,12 +71,14 @@ function app_main(args)
         client:SetRemote(remote_server,remote_port);
         client:Start();        
         client:StartListeningLocalPort(local_listening_port);
+        client:StartAutoClearThread();
         printfnl("listening on local port %d",local_listening_port);
     elseif is_server then
         local server = PeerTunnelServer.new();
         server:InitClientSidePeer(peer_server,peer_port);
         server:SetName(peer_name);
         server:Start();
+        server:StartAutoClearThread();
     end
 
     App.MainLoop();

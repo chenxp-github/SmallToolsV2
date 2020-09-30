@@ -13,6 +13,7 @@ function PeerTunnelClient:ctor()
     self.local_connections = {};
     self.remote_server = "";
     self.remote_port = 0;
+    self.auto_clear_thread = nil;
 end
 
 function PeerTunnelClient:OnRequest(_context,_param)
@@ -157,4 +158,24 @@ end
 
 function PeerTunnelClient:GetLocalConnection(handle)
     return self.local_connections[handle];
+end
+
+function PeerTunnelClient:StartAutoClearThread()
+    if self.auto_clear_thread then
+        return
+    end
+
+    function auto_clear(thread)        
+        while true do
+            thread:Sleep(5000);
+            for _,con in pairs(self.local_connections) do
+                if not con:IsConnected() then
+                    printfnl("auto delete local connection %d",con.handle);
+                    self.local_connections[con.handle] = nil;
+                end
+            end            
+        end
+    end
+    self.auto_clear_thread = CoThread.new();
+    self.auto_clear_thread:Start(auto_clear);
 end
