@@ -416,6 +416,7 @@ status_t CXmlNode::GetNextAttrib(CFileBase *name, CFileBase *val)
     if(mem.C(0) == 0)
         return ERROR;
 
+	mem.SetSplitChars(" =!?\t\r\n\"\'?/<>");
     mem.Trim();
     mem.Seek(0);
     mem.ReadWord(name);
@@ -458,7 +459,7 @@ status_t CXmlNode::GetStringValue(CMem *val)
         val->Puts(this->GetValue());
         return OK;
     }    
-    return OK;
+    return ERROR;
 }
 
 int32_t CXmlNode::GetInt32Value()

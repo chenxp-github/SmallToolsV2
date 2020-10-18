@@ -15,6 +15,9 @@
 #include "file.h"
 
 #define XML_STR(s) ((s)==NULL?"":(s))
+#define XML_STRING_TO_DOUBLE(s) atof(s)
+#define XML_STRING_TO_INT32(s) atoi(s)
+#define XML_STRING_TO_BOOLEAN(s) (strcmp(s,"true")?false:true)
 
 class CXmlNode{
 public:
