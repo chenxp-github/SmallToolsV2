@@ -81,8 +81,8 @@ function app_main(args)
         server:Start();
         server:StartAutoClearThread();
 
-        local timeout = cmd:GetValueByKey(kTimeout);
-        if timeout then
+        if cmd:HasKey(kTimeout) then
+            local timeout = cmd:GetValueByKey(kTimeout);
             server:SetTimeout(tonumber(timeout));
         end
     end
