@@ -295,9 +295,10 @@ static int filebase_writetofile_v1(lua_State *L)
 {
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
-	LOCAL_MEM(fn);
-	lua_to_local_string(L,2,&fn);
-    int _ret_0 = (int)pfilebase->WriteToFile(fn.CStr());
+	LOCAL_MEM(mem);
+	const char *fn = lua_to_local_string(L,2,&mem);
+    ASSERT(fn);
+    int _ret_0 = (int)pfilebase->WriteToFile(fn);
     lua_pushinteger(L,_ret_0);
     return 1;
 }
@@ -306,8 +307,9 @@ static int filebase_writetofile_v2(lua_State *L)
 {
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
-    const char* fn = (const char*)lua_tostring(L,2);
-	ASSERT(fn);
+    LOCAL_MEM(mem);
+	const char *fn = lua_to_local_string(L,2,&mem);
+    ASSERT(fn);
     int start = (int)lua_tointeger(L,3);
     int wsize = (int)lua_tointeger(L,4);
     int _ret_0 = (int)pfilebase->WriteToFile(fn,start,wsize);
