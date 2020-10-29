@@ -4,5 +4,11 @@ class PeerTunnelServer{
     [service] (int handle, string errStr) ConnectRemote(string server, int port);
     [service] (int ws) WriteData(int handle,Mem data);
     (int ws) WriteData(int handle,Mem data);
+    [service] (int ret) CloseConnection(int handle);
+    (int ret) CloseConnection(int handle);
 }
+
+
+
+
 

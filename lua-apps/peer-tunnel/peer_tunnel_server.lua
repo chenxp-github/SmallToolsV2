@@ -19,6 +19,9 @@ function PeerTunnelServer:OnRequest(_context,_param)
     if method == METHOD_PT_WRITEDATA then
         self:OnWriteData(_context,_param);
     end
+    if method == METHOD_PT_CLOSECONNECTION then
+        self:OnCloseConnection(_context,_param);
+    end
 --##End OnRequest ##--
 end
 
@@ -98,6 +101,50 @@ function PeerTunnelServer:WriteData_Async(thread, _handle, _data)
 end
 --@@End Method WriteData_Async @@--
 
+
+--@@Begin Method OnCloseConnection @@--
+function PeerTunnelServer:OnCloseConnection(_context,_param)
+    local con = self:GetLocalConnection(_param.handle);
+    if con then 
+        printf("close server side connetion %d.",_param.handle);
+        con:Close(); 
+    end
+    local _ret={ret = 1};
+    self:SendReturnValue(_context,_ret);
+end
+--@@End Method OnCloseConnection @@--
+
+
+--@@Begin Method CloseConnection @@--
+function PeerTunnelServer:CloseConnection(_handle, _callback)
+    local _cbid = self:AddCallback(_callback);
+    local _param={
+        handle = _handle,
+    };
+    return self:SendRequest(_param,METHOD_PT_CLOSECONNECTION,_cbid);
+end
+--@@End Method CloseConnection @@--
+
+
+--@@Begin Method CloseConnection_Async @@--
+function PeerTunnelServer:CloseConnection_Async(thread, _handle)
+    local ret = {};
+    local done = false;
+    
+    self:CloseConnection(_handle,function(res,val)
+        ret.result = res;
+        ret.value = val;
+        done = true;
+    end);
+    
+    while not done and not thread:IsDead() do
+        thread:Sleep(1);
+    end
+    
+    return ret;
+end
+--@@End Method CloseConnection_Async @@--
+
 --@@ Insert Method Here @@--
 
 function PeerTunnelServer:GetLocalConnection(handle)
@@ -114,6 +161,7 @@ function PeerTunnelServer:StartAutoClearThread()
             thread:Sleep(5000);
             for _,con in pairs(self.local_connections) do
                 if not con:IsConnected() then
+                    self:CloseConnection(con.handle); --notity client
                     printfnl("auto delete local connection %d",con.handle);
                     self.local_connections[con.handle] = nil;
                 end

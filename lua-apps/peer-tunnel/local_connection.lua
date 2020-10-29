@@ -44,7 +44,7 @@ function LocalConnection:WriteThread(thread)
             local ws = ret.value.ws;
          
             if ws < 0 then
-                printfnl("remote write fail.");
+                printfnl("remote write fail: %s.",ws);
                 break;
             end
 
@@ -72,3 +72,10 @@ end
 function LocalConnection:IsConnected()
     return self.socket:IsConnected();
 end
+
+function LocalConnection:Close()
+    if self.socket then
+        self.socket:Destroy();
+    end
+end
+

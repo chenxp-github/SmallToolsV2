@@ -105,6 +105,7 @@ static status_t tcpsocket_getallip(lua_State *L)
 
 static status_t tcpsocket_isconnected(lua_State *L)
 {
+    if(!is_tcpsocket(L,1))return 0;
     CTcpSocket *ptcpsocket = get_tcpsocket(L,1);
     ASSERT(ptcpsocket);
     bool ret0 = ptcpsocket->IsConnected();
@@ -123,6 +124,7 @@ static status_t tcpsocket_init(lua_State *L)
 
 static status_t tcpsocket_destroy(lua_State *L)
 {
+    if(!is_tcpsocket(L,1))return 0;
     CTcpSocket *ptcpsocket = get_tcpsocket(L,1);
     ASSERT(ptcpsocket);
     status_t ret0 = ptcpsocket->Destroy();
