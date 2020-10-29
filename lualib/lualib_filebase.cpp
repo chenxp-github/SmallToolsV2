@@ -295,9 +295,9 @@ static int filebase_writetofile_v1(lua_State *L)
 {
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
-    const char* fn = (const char*)lua_tostring(L,2);
-	ASSERT(fn);
-    int _ret_0 = (int)pfilebase->WriteToFile(fn);
+	LOCAL_MEM(fn);
+	lua_to_local_string(L,2,&fn);
+    int _ret_0 = (int)pfilebase->WriteToFile(fn.CStr());
     lua_pushinteger(L,_ret_0);
     return 1;
 }

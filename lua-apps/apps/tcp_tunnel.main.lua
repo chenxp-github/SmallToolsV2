@@ -20,6 +20,7 @@ local kRemotePeerName="--remote-peer-name";
 local kRemoteServer="--remote-server";
 local kRemotePort="--remote-port";
 local kLocalListeningPort="--local-listening-port";
+local kTimeout="--timeout";
 
 function app_main(args)
     local argc = #args;
@@ -30,8 +31,8 @@ function app_main(args)
     cmd:AddKeyType(kPeerServer,TYPE_KEY_EQUAL_VALUE,MUST,"message peer server address");
     cmd:AddKeyType(kPeerPort,TYPE_KEY_EQUAL_VALUE,MUST,"message center service port");    
     cmd:AddKeyType(kPeerName,TYPE_KEY_EQUAL_VALUE,MUST,"self message peer name");        
-    cmd:LoadFromArgv(args);
-  
+    cmd:AddKeyType(kTimeout,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"socket inactive timeout (ms).");
+    cmd:LoadFromArgv(args);  
     if cmd:CheckForErrors() then
         return 1;
     end
@@ -79,6 +80,11 @@ function app_main(args)
         server:SetName(peer_name);
         server:Start();
         server:StartAutoClearThread();
+
+        local timeout = cmd:GetValueByKey(kTimeout);
+        if timeout then
+            server:SetTimeout(tonumber(timeout));
+        end
     end
 
     App.MainLoop();

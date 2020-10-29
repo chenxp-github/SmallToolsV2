@@ -197,12 +197,14 @@ static status_t xmlnode_getstringvalue(lua_State *L)
     ASSERT(pxmlnode);
     
     CMem mem;
-    mem.Init();
-    
-    pxmlnode->GetStringValue(&mem);
-
-    lua_pushlstring(L,mem.CStr(),mem.StrLen());
-    return 1;
+    mem.Init();    
+	
+    if(pxmlnode->GetStringValue(&mem))
+	{
+		lua_pushlstring(L,mem.CStr(),mem.StrLen());
+		return 1;
+	}
+	return 0;
 }
 
 static status_t xmlnode_getchild_v1(lua_State *L)

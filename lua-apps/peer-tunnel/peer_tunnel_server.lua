@@ -8,6 +8,7 @@ PeerTunnelServer = class(PeerServiceBase);
 function PeerTunnelServer:ctor()    
     self.local_connections = {};
     self.auto_clear_thread = nil;
+    self.timeout = -1;
 end
 
 function PeerTunnelServer:OnRequest(_context,_param)
@@ -41,6 +42,7 @@ function PeerTunnelServer:OnConnectRemote(_context,_param)
                 local connection = LocalConnection.new(self,new_socket,_ret.handle);
                 self.local_connections[_ret.handle] = connection;
                 connection:StartForwarding();
+                connection:SetTimeout(self.timeout);
             else
                 _ret={
                     handle = -1,
@@ -171,4 +173,8 @@ function PeerTunnelServer:StartAutoClearThread()
     
     self.auto_clear_thread = CoThread.new();
     self.auto_clear_thread:Start(auto_clear);
+end
+
+function PeerTunnelServer:SetTimeout(to)
+    self.timeout = to;
 end
