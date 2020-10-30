@@ -11,7 +11,7 @@ function CoThread:ctor(interval)
     self.m_flags = 0;
     self.m_schedule_timer = nil;
     if not interval then
-        interval = 50;
+        interval = 5;
     end
     self.m_schedule_interval = interval;
     self.m_sleep_time = 0;

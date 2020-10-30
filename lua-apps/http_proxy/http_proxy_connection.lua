@@ -8,14 +8,14 @@ function HttpProxyConnection:ctor(local_socket)
     self.remote_socket = nil;
     self.forward_thread = nil;
     self.backward_thread = nil;
-    self.step = 0;
+    self.socket_fd = local_socket:GetSocketFd();
 end
 
 function HttpProxyConnection:Start()
     function _forward_thread(thread);
         self:ForwardThread(thread)
     end
-    self.forward_thread = CoThread.new();
+    self.forward_thread = CoThread.new(1);
     self.forward_thread:Start(_forward_thread);
 end
 
@@ -33,6 +33,8 @@ function HttpProxyConnection:ParseHttpHeader(qbuf)
         if line:NextString() == "CONNECT" then
             ret.host = line:NextString();
             ret.port = tonumber(line:NextString());
+        else
+            print(line:CStr());
         end       
     end
 
@@ -80,10 +82,10 @@ function HttpProxyConnection:ForwardThread(thread)
 
         if self.remote_socket then
             printfnl("remote connection established %s:%d",remote.host,remote.port);
-            self:WriteBlock(thread,self.local_socket," HTTP/1.1 200 Connection Established\r\n\r\n");
+            self:WriteBlock(thread,self.local_socket,"HTTP/1.1 200 Connection Established\r\n\r\n");
         else
             printfnl("connect to %s:%d fail.",remote.host,remote.port);
-            self:WriteBlock(thread,self.local_socket," HTTP/1.1 500 Connect Fail.\r\n\r\n");
+            self:WriteBlock(thread,self.local_socket,"HTTP/1.1 500 Connect Fail.\r\n\r\n");
         end        
     end
     
@@ -98,11 +100,7 @@ function HttpProxyConnection:ForwardThread(thread)
         );
     end
 
-    self.local_socket:Destroy();
-    if self.remote_socket then
-        self.remote_socket:Destroy();
-    end
-
+    self:Close();
     qbuf:Destroy();
     tmp:Destroy();
 end
@@ -111,7 +109,7 @@ function HttpProxyConnection:StartBackwordThread()
     function _backward_thread(thread);
         self:BackwardThread(thread)
     end
-    self.backward_thread = CoThread.new();
+    self.backward_thread = CoThread.new(1);
     self.backward_thread:Start(_backward_thread);
 end
 
@@ -127,9 +125,7 @@ function HttpProxyConnection:BackwardThread(thread)
         tmp
     );
 
-    self.local_socket:Destroy();
-    self.remote_socket:Destroy();
-
+    self:Close();
     qbuf:Destroy();
     tmp:Destroy();    
 end
@@ -154,15 +150,38 @@ function HttpProxyConnection:CommonSocketForwarding(thread,from_socket,to_socket
 end
 
 function HttpProxyConnection:WriteBlock(thread,socket,data)
-    --TODO, become blocking
-    socket:Puts(data);
-    -- local qbuf = QueueFile.new(8*1024);
+    if type(data) == "string" then
+        local mem = Mem.new();
+        mem:SetRawBuf(data);
+        data = mem;
+    end
     
-    -- if type(data) == "string" then
-    --     local mem = Mem.new();
-    --     mem:SetRawBuf(data);
-    --     data = mem;
-    -- end
-    -- while socket:IsConnected() do
-    -- end   
+    local offset = 0;
+    while socket:IsConnected() and offset < data:GetSize() do
+        local ws = socket:WriteFile(data,offset,data:GetSize());
+        if ws > 0 then
+            offset = offset + ws;
+        end
+        thread:Sleep(1);
+    end
+end
+
+function HttpProxyConnection:IsConnected() 
+    if not self.local_socket:IsConnected() then
+        return false;
+    end
+
+    if self.remote_socket then
+        if not self.remote_socket:IsConnected() then
+            return false;
+        end
+    end
+    return true;
+end
+
+function HttpProxyConnection:Close()
+    self.local_socket:Destroy();
+    if self.remote_socket then
+        self.remote_socket:Destroy();
+    end
 end

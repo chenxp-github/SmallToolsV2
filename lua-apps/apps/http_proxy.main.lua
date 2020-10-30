@@ -26,5 +26,6 @@ function app_main(args)
     local port = tonumber(cmd:GetValueByKey(kPort));
     local server = HttpProxyServer.new();
     server:StartListening(port);
+    server:StartAutoClear();
     App.MainLoop();
 end
