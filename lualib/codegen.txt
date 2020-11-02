@@ -568,6 +568,8 @@ class QueueFile:FileBase{
     fsize_t GetFreeSize();
     bool HasEmptyLine();
     bool HasWholeLine();
+    status_t SaveContext(Mem context);
+    status_t RestoreContext(Mem context);
 }
 
 

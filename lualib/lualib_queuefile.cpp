@@ -117,6 +117,27 @@ static status_t queuefile_skip(lua_State *L)
     lua_pushinteger(L,rs);
     return 1;
 }
+static status_t queuefile_savecontext(lua_State *L)
+{
+    CQueueFile *pqueuefile = get_queuefile(L,1);
+    ASSERT(pqueuefile);
+    CMem *context = get_mem(L,2);
+    ASSERT(context);
+    status_t ret0 = pqueuefile->SaveContext(context->GetRawBuf());
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t queuefile_restorecontext(lua_State *L)
+{
+    CQueueFile *pqueuefile = get_queuefile(L,1);
+    ASSERT(pqueuefile);
+    CMem *context = get_mem(L,2);
+    ASSERT(context);
+    status_t ret0 = pqueuefile->RestoreContext(context->GetRawBuf());
+    lua_pushboolean(L,ret0);
+    return 1;
+}
 /****************************************************/
 static const luaL_Reg queuefile_funcs_[] = {
     {"__gc",queuefile_gc_},
@@ -131,6 +152,8 @@ static const luaL_Reg queuefile_funcs_[] = {
     {"HasEmptyLine",queuefile_hasemptyline},
     {"HasWholeLine",queuefile_haswholeline},
     {"Skip",queuefile_skip},
+    {"SaveContext",queuefile_savecontext},
+    {"RestoreContext",queuefile_restorecontext},    
     {NULL,NULL},
 };
 

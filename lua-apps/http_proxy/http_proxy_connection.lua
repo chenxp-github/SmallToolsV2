@@ -22,22 +22,38 @@ end
 function HttpProxyConnection:ParseHttpHeader(qbuf)
     local line = new_mem();
     local ret = {};
-
     line:SetSplitChars(" \t:");
+
+    local context = new_mem();
+    qbuf:SaveContext(context);
 
     while qbuf:ReadLine(line) do
         if line:C(0) == 0 then
             break
         end
         line:Seek(0);
-        if line:NextString() == "CONNECT" then
+
+        local method = line:NextString();
+
+        if method == "CONNECT" then
+            line:SetSplitChars(" \t:");
+            ret.method = "CONNECT";
             ret.host = line:NextString();
             ret.port = tonumber(line:NextString());
+        elseif method == "GET" then
+            line:SetSplitChars(" /:\t");
+            ret.method = "GET";
+            line:NextString(); --skip http://
+            ret.host = line:NextString();
+            ret.port = 80;
+            qbuf:RestoreContext(context);
+            break;
         else
             print(line:CStr());
         end       
     end
 
+    context:Destroy();
     if ret.host and ret.port then
         return ret;
     end
@@ -80,13 +96,15 @@ function HttpProxyConnection:ForwardThread(thread)
             thread:Sleep(100);
         end
 
-        if self.remote_socket then
-            printfnl("remote connection established %s:%d",remote.host,remote.port);
-            self:WriteBlock(thread,self.local_socket,"HTTP/1.1 200 Connection Established\r\n\r\n");
-        else
-            printfnl("connect to %s:%d fail.",remote.host,remote.port);
-            self:WriteBlock(thread,self.local_socket,"HTTP/1.1 500 Connect Fail.\r\n\r\n");
-        end        
+        if remote.method == "CONNECT" then
+            if self.remote_socket then
+                printfnl("remote connection established %s:%d",remote.host,remote.port);
+                self:WriteBlock(thread,self.local_socket,"HTTP/1.1 200 Connection Established\r\n\r\n");
+            else
+                printfnl("connect to %s:%d fail.",remote.host,remote.port);
+                self:WriteBlock(thread,self.local_socket,"HTTP/1.1 500 Connect Fail.\r\n\r\n");
+            end        
+        end
     end
     
     if self.remote_socket then
