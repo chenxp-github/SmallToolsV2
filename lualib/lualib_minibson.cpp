@@ -4,6 +4,7 @@
 #include "mem_tool.h"
 #include "syslog.h"
 #include "memstk.h"
+#include "memfile.h"
 
 LUA_IS_VALID_USER_DATA_FUNC(CMiniBson,minibson)
 LUA_GET_OBJ_FROM_USER_DATA_FUNC(CMiniBson,minibson)
@@ -276,13 +277,16 @@ static int minibson_tojson(lua_State *L)
 {
     CMiniBson *pminibson = get_minibson(L,1);
     ASSERT(pminibson);
-    CMem mem;
-    mem.Init();
-    mem.Malloc(64*1024);
 
-    pminibson->ToJson(&mem,true);
-    lua_pushstring(L,mem.CStr());
+    CMemFile mf;
+    mf.Init();
+    pminibson->ToJson(&mf,true);
+	
+	CMem mem;
+	mem.Init();
+	mem.Copy(&mf);
 
+    lua_pushlstring(L,mem.CStr(),mem.StrLen());
     return 1;
 }
 

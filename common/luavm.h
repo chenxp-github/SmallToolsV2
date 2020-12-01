@@ -9,9 +9,14 @@
 
 #define MAX_LUA_FUNCS 4096
 
-typedef struct {
+struct _lua_userdata_;
+typedef status_t (*HOW_TO_DESTROY_LUA_USERDATA)(lua_State *L,struct _lua_userdata_ *ud);
+
+typedef struct _lua_userdata_{
     int is_attached;
     CRawWeakPointer weak_ptr;
+    void *userdata;
+    HOW_TO_DESTROY_LUA_USERDATA how_to_destroy_userdata;
 }lua_userdata;
 
 #define LUA_IS_VALID_USER_DATA_FUNC(ctype,type_lwr) \
@@ -40,6 +45,8 @@ lua_userdata *type_lwr##_new_userdata(lua_State *L,ctype *pobj,int is_weak)\
     lua_userdata *ud = (lua_userdata*)lua_newuserdata(L,sizeof(lua_userdata));\
     ASSERT(ud && pobj);\
     ud->weak_ptr.Init();\
+    ud->userdata=NULL;\
+    ud->how_to_destroy_userdata = NULL;\
     WEAK_REF_CONTEXT_CREATE(pobj->__weak_ref_context);\
     ud->weak_ptr.WeakRef(pobj,pobj->__weak_ref_context);\
     ud->is_attached = is_weak;\
@@ -53,6 +60,12 @@ static int type_lwr##_gc_(lua_State *L)\
 {\
     lua_userdata *ud = (lua_userdata*)lua_touserdata(L,1);\
     ASSERT(ud);\
+    if(ud->how_to_destroy_userdata && ud->userdata)\
+    {\
+        ud->how_to_destroy_userdata(L,ud);\
+    }\
+    ud->userdata = NULL;\
+    ud->how_to_destroy_userdata = NULL;\
     if(!is_##type_lwr(L,1))\
     {\
         ud->weak_ptr.Destroy();\
@@ -88,8 +101,6 @@ static int type_lwr##_tostring_(lua_State *L)\
     lua_pushstring(L,buf);\
     return 1;\
 }\
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////
 class CLuaVm{

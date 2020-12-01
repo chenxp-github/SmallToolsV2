@@ -313,7 +313,7 @@ status_t CPeerMessageStk::Copy(CPeerMessageStk *stk)
 {
     ASSERT(stk);
     this->Destroy();
-    this->Init(stk->GetLen());
+    this->Init(stk->mSize);
     for(int i = 0; i < stk->GetLen(); i++)
     {
         CPeerMessage *p = stk->GetElem(i);

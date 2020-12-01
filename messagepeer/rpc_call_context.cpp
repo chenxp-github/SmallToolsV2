@@ -164,3 +164,55 @@ status_t CRpcCallContext::Desearialize(CClosure *closure, int index)
     return this->Desearialize(data,size);
 }
 
+
+status_t CRpcCallContext::SaveBson(CMiniBson *_bson)
+{
+    ASSERT(_bson);
+    _bson->PutInt32("callback_id",m_callback_id);
+    _bson->PutString("from",&m_from);
+    _bson->PutInt32("method",m_method);
+    return OK;
+}
+
+status_t CRpcCallContext::SaveBson(CMem *_mem)
+{
+    ASSERT(_mem);
+    CMiniBson _bson;
+    _bson.Init();
+    _bson.SetRawBuf(_mem);
+    _bson.StartDocument();
+    this->SaveBson(&_bson);
+    _bson.EndDocument();
+    _mem->SetSize(_bson.GetDocumentSize());
+    return OK;
+}
+
+status_t CRpcCallContext::LoadBson(CMiniBson *_bson)
+{
+    ASSERT(_bson);
+    BSON_CHECK(_bson->GetInt32("callback_id",&m_callback_id));
+    /******from begin*******/{
+    CMem _tmp_str;
+    BSON_CHECK(_bson->GetString("from",&_tmp_str));
+    this->SetFrom(&_tmp_str);
+    /******from end*******/}
+    BSON_CHECK(_bson->GetInt32("method",&m_method));
+    return OK;
+}
+
+status_t CRpcCallContext::LoadBson(CFileBase *_file)
+{
+    ASSERT(_file);
+    CMiniBson _bson;
+    _bson.Init();
+    _bson.LoadBson(_file);
+    _bson.ResetPointer();
+    return this->LoadBson(&_bson);
+}
+
+status_t CRpcCallContext::Clear()
+{
+    this->Destroy();
+    this->Init();
+    return OK;
+}

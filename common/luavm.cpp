@@ -167,21 +167,25 @@ status_t CLuaVm::DumpStack(lua_State *L)
     {
         int t = lua_type(L, i);
         switch (t) 
-        {
+        {        
             case LUA_TSTRING: 
-                syslog_printf("string: '%s'", lua_tostring(L, i)); 
+                XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,
+                    "string: '%s'", lua_tostring(L, i)); 
             break;
 
             case LUA_TBOOLEAN: 
-                syslog_printf(lua_toboolean(L, i) ? "bool: true" : "bool: false"); 
+                XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,
+                    lua_toboolean(L, i) ? "bool: true" : "bool: false"); 
             break;
             
             case LUA_TNUMBER:
-                syslog_printf("number: %g", lua_tonumber(L, i)); 
+                XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,
+                    "number: %g", lua_tonumber(L, i)); 
             break;
             
             default:
-                syslog_printf("%s:", lua_typename(L, t)); 
+                XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,
+                    "%s:", lua_typename(L, t)); 
             break;
         }
     }

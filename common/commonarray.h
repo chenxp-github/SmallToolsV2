@@ -8,6 +8,7 @@
 template <class T>
 class CCommonArray{
     typedef status_t (*HOW_TO_COMP)(T* t1,T* t2);
+    typedef status_t (*HOW_TO_PRINT)(T* t, CFileBase *_buf);
 public:
     WEAK_REF_DEFINE();
 private:
@@ -16,6 +17,7 @@ private:
     int m_Size;
     bool m_IsWeakTable;
     HOW_TO_COMP how_to_comp;
+    HOW_TO_PRINT how_to_print;
 public:     
 CCommonArray()
 {
@@ -32,6 +34,7 @@ status_t InitBasic()
     this->m_Top = 0;
     this->m_Size = 0;   
     this->how_to_comp = NULL;
+    this->how_to_print = NULL;
     this->m_IsWeakTable = false;
     return OK;
 }
@@ -309,8 +312,11 @@ status_t DelNode(T *t)
 
 status_t PrintNode(T *t,CFileBase *_buf)
 {
-    t->Print(_buf);
-    return OK;
+    if(how_to_print)
+    {
+        return how_to_print(t,_buf);
+    }
+    return t->Print(_buf);
 }
 
 int CompNode(T *t1, T *t2)
@@ -329,9 +335,9 @@ void SetCompFunc(HOW_TO_COMP func)
     how_to_comp = func;
 }
 
-HOW_TO_COMP GetCompFunc()
+void SetPrintFunc(HOW_TO_PRINT func)
 {
-    return how_to_comp;
+    how_to_print = func;
 }
 
 };

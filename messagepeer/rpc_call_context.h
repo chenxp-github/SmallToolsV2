@@ -39,6 +39,13 @@ public:
     status_t Desearialize(CStream *stream);
     status_t Desearialize(const void *buf, size_t size);
     status_t Desearialize(CClosure *closure, int index);
+
+    status_t SaveBson(CMiniBson *_bson);
+    status_t SaveBson(CMem *_mem);
+    status_t LoadBson(CMiniBson *_bson);
+    status_t LoadBson(CFileBase *_file);
+
+    status_t Clear();
 };
 
 #endif

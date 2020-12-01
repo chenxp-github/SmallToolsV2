@@ -4,6 +4,8 @@
 #include "raw_weak_pointer.h"
 #include "mem_tool.h"
 
+class CFileBase;
+
 template <class T>
 class CWeakPointer:public CRawWeakPointer{
 public:
@@ -26,6 +28,16 @@ public:
     status_t Copy(CWeakPointer<T> *that)
     {       
         return this->WeakRef(that->get());
+    }
+    
+    status_t Print(CFileBase *_buf)
+    {
+        return OK;
+    }
+
+    int Comp(CWeakPointer<T> *that)
+    {
+        return 0;
     }
 
     status_t WeakRef(T *t)

@@ -9,6 +9,7 @@ local g_out_file = nil;
 local g_full_name = false;
 local g_pattern = nil;
 local g_only_files = false;
+local g_no_links = false;
 
 function app_short_help()
     return "get file list of a folder";
@@ -72,6 +73,12 @@ function inner_need_this_file(info)
 end
 
 function get_file_list(dir)
+    if g_no_links then
+        if FileManager.ReadLink(dir) then
+            return
+        end
+    end
+
     FileManager.SearchDir(dir,false,function(info)
         if info.event == EVENT_BEGIN_DIR then
             if need_this_file(info) then
@@ -105,6 +112,7 @@ local kFullName = "--full-name";
 local kPattern = "--pattern";
 local kOut = "--out";
 local kOnlyFiles = "--only-files"
+local kNoLinks = "--no-links";
 
 function app_main(args)
     local argc = #args;
@@ -118,6 +126,7 @@ function app_main(args)
     cmd:AddKeyType(kNoExts,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"only files WITHOUT special exts will be listed");    
     cmd:AddKeyType(kPattern,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"only filename with special pattern will be listed.");
     cmd:AddKeyType(kOnlyFiles,TYPE_KEY,OPTIONAL,"only files will be listed.");
+    cmd:AddKeyType(kNoLinks,TYPE_KEY,OPTIONAL,"do not read link folder.");
     cmd:AddKeyType(kLuaConfig,TYPE_KEY_EQUAL_VALUE,OPTIONAL,
         "use a lua as config file."..EOL..
         "        lua function need_this_file(info) must be exist."
@@ -159,6 +168,10 @@ function app_main(args)
 
     if cmd:HasKey(kOnlyFiles) then
         g_only_files = true;
+    end
+
+    if cmd:HasKey(kNoLinks) then
+        g_no_links = true;
     end
     
     local out =  FileManager.ToAbsPath(cmd:GetValueByKey(kOut));
