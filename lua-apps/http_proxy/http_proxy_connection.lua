@@ -40,9 +40,9 @@ function HttpProxyConnection:ParseHttpHeader(qbuf)
             ret.method = "CONNECT";
             ret.host = line:NextString();
             ret.port = tonumber(line:NextString());
-        elseif method == "GET" then
+        elseif method == "GET" or method == "POST" then
             line:SetSplitChars(" /:\t");
-            ret.method = "GET";
+            ret.method = method;
             line:NextString(); --skip http://
             ret.host = line:NextString();
             ret.port = 80;
