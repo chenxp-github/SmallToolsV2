@@ -1,5 +1,5 @@
 #include <fcntl.h> 
-#include "crt_linux.h"
+#include "crt_android.h"
 #include "syslog.h"
 
 void *crt_memset(void *buf, int_ptr_t n, int_ptr_t size)
@@ -79,7 +79,12 @@ static uint32_t string_to_mode(const char *mode)
 
 FILE_HANDLE crt_fopen(const char *fn, const char *mode)
 {
+#if USE_FILE_32
     return open(fn,string_to_mode(mode),0666);
+#else
+    int open64(const char *pathname, int flags,...);
+    return open64(fn,string_to_mode(mode),0666);
+#endif
 }
 
 void crt_fclose(FILE_HANDLE fd)
@@ -279,9 +284,11 @@ status_t crt_read_dir(void **p)
     int is_dir;
 
     if(entry == NULL)
+    {
         return ERROR;
+    }
 
-	memset(&statbuf,0,sizeof(statbuf));
+    memset(&statbuf,0,sizeof(statbuf));
     lstat(entry->d_name,&statbuf);
 	
     crt_strcpy(p[1],entry->d_name);
@@ -298,8 +305,9 @@ status_t crt_read_dir(void **p)
     }
 
     p[2] = (void*)((int_ptr_t)is_dir);
-    p[3] = (void*)((int_ptr_t)statbuf.st_size);
-
+    p[4] = 0;
+    memcpy(&p[3],&statbuf.st_size,sizeof(statbuf.st_size));
+ 
     int64_t tm = statbuf.st_mtime*1000LL+statbuf.st_mtime_nsec/1000000LL;
     memcpy(&p[5],&tm,sizeof(tm));
 
@@ -445,6 +453,7 @@ int32_t crt_socket( int32_t af, int32_t type, int32_t protocol )
 
 int32_t crt_closesocket(int32_t s) 
 {
+    shutdown(s,SHUT_RDWR);
     return close(s);
 }
 

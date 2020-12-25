@@ -265,13 +265,21 @@ status_t CMem::SetStr(const char *p)
 
 const char *CMem::CStr()
 {
-    ASSERT(this->mBuf);
+    if(this->mBuf == NULL)
+        return NULL;
+
     if(!this->mIsConst)
     {
         if(this->mSize >= 0 && this->mSize < this->mMaxSize)
-            this->mBuf[this->mSize] = 0;
+        {
+            if(this->mBuf[this->mSize])
+                this->mBuf[this->mSize] = 0;
+        }    
         else if(this->mSize >= this->mMaxSize && this->mMaxSize > 0)
-            this->mBuf[this->mMaxSize-1] = 0;
+        {
+            if(this->mBuf[this->mMaxSize-1])
+                this->mBuf[this->mMaxSize-1] = 0;
+        }
     }
     return this->mBuf;
 }

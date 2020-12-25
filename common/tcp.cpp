@@ -288,6 +288,18 @@ status_t CTcpServer::GetClientIpAndPort(CFileBase *ip, int32_t *port)
     *port = cad.sin_port;
     return OK;
 }
+bool CTcpServer::CanBind(int port)
+{
+    CTcpServer server;
+    server.Init();
+    server.InitServer();
+    server.sad.sin_port = crt_htons((u_short)port);
+    if (crt_bind(server.socket_num, (struct sockaddr *)&server.sad, sizeof(server.sad)) < 0)
+    {
+        return false;
+    }
+    return true;
+}
 /////////////////////////////////////////////
 CTcpClient::CTcpClient()
 {

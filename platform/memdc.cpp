@@ -49,12 +49,13 @@ int CMemDC::Init()
 {
     this->InitBasic();
     //add your code
-
+	
     return OK;
 }
 int  CMemDC::Destroy()
 {
     WEAK_REF_DESTROY();
+
     if(hbitmap)
     {
         SelectObject(hdc,old_hbitmap);

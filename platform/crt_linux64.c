@@ -452,6 +452,7 @@ int32_t crt_socket( int32_t af, int32_t type, int32_t protocol )
 
 int32_t crt_closesocket(int32_t s)
 {
+    shutdown(s,SHUT_RDWR);
     return close(s);
 }
 

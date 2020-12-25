@@ -282,7 +282,8 @@ const char * CPeerServiceBase::GetName()
 
 bool CPeerServiceBase::IsConnected()
 {
-    ASSERT(IsPeerInitiated());
+    if(!IsPeerInitiated())
+        return false;
     if(IsInServiceSide())
         return true;
     else

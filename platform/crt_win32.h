@@ -66,6 +66,7 @@ typedef int8_t              bool_t;
 typedef int64_t             fsize_t;
 typedef uint64_t            ufsize_t;
 typedef int                 FILE_HANDLE;
+
 typedef int                 socklen_t;
 
 #define crt_va_list     va_list

@@ -49,6 +49,7 @@ public:
     int32_t Accept();
     status_t SetPort(int32_t port);
     status_t InitServer(void);
+    static bool CanBind(int port);    
     CTcpServer();
     ~CTcpServer();   
     status_t Init();

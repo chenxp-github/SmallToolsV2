@@ -447,6 +447,7 @@ int32_t crt_socket( int32_t af, int32_t type, int32_t protocol )
 
 int32_t crt_closesocket(int32_t s) 
 {
+    shutdown(s,SD_BOTH);
     return closesocket(s);
 }
 
@@ -615,7 +616,6 @@ status_t crt_cancel_thread(THREAD_HANDLE handle)
 {
     return ERROR;
 }
-
 #if USE_SOCKET_MODULE
 static void _thread_gethostbyname(void *context)
 {
