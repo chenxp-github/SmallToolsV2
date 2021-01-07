@@ -61,7 +61,6 @@ status_t CRawWeakPointer::WeakRef(const void *ptr,WeakRefContext_t *context)
 {
     if(!ptr)return ERROR;
     if(!context)return ERROR;
-    if(m_RawPtr == ptr) return OK;
     
     this->Release();
     m_context = context;    
