@@ -13,7 +13,14 @@ int32_t hex2dec_32(const char *shex)
 {
     int32_t idec,i,mid;   
     int32_t len;    
-    
+    int is_minus = 0;
+
+    if(shex[0] == '-' || shex[0] == '+')
+    {
+        if(shex[0] == '-')is_minus = 1;
+        shex++;
+    }
+
     if(shex[0] == '0' && (shex[1] == 'x' || shex[1] == 'X'))
         shex += 2;
 
@@ -21,24 +28,24 @@ int32_t hex2dec_32(const char *shex)
         shex ++;
 
     len = crt_strlen(shex);
-    mid = 0;   idec = 0;   
+    mid = 0; idec = 0;   
     
     for( i=0; i<len; i++ )   
     {   
         if( shex[i]>='0'&&shex[i]<='9' )   
             mid = shex[i]-'0';   
         else if( shex[i]>='a'&&shex[i]<='f' )   
-            mid   =   shex[i]   -'a'   +10;   
+            mid = shex[i]   -'a'   +10;   
         else if( shex[i]>='A'&&shex[i]<='F' )   
             mid = shex[i]   -'A'   +10;   
         else   
-            return   0;   
+            return 0;   
         
         mid = mid << ((len-i-1)<<2);   
         idec  = idec | mid;         
     }   
     
-    return idec;   
+    return is_minus?-idec:idec;
 }
 
 int wild_match(const char *wild,const char *string) 
@@ -90,6 +97,16 @@ uint64_t hex2dec_64(const char *shex)
     uint64_t  idec,mid;
     int32_t i,len;
     
+    int is_minus = 0;
+
+    if(shex[0] == '-' || shex[0] == '+')
+    {
+        if(shex[0] == '-')is_minus = 1;
+        shex++;
+    }
+
+    if(shex[0] == '0' && (shex[1] == 'x' || shex[1] == 'X'))
+        shex += 2;
     while(shex[0] == '0')
         shex ++;
 
@@ -115,7 +132,7 @@ uint64_t hex2dec_64(const char *shex)
         
     }
 
-    return   idec;   
+    return is_minus?-idec:idec;
 }   
 
 
@@ -123,6 +140,9 @@ bool_t is_dec(const char *str)
 {
     if(str[0] == 0)
         return FALSE;
+
+    if(str[0] == '-' || str[0] =='+')
+        str++;
 
     while(*str)
     {
@@ -138,6 +158,9 @@ bool_t is_hex(const char *str)
 {
     if(str[0] == 0)
         return FALSE;
+    
+    if(str[0] == '-' || str[0] =='+')
+        str++;
 
     if(str[0] == '0' && (str[1] == 'x' || str[1] == 'X'))
         str += 2;
