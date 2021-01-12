@@ -78,6 +78,7 @@ LDFLAGS := $(APPEND_LDFLAGS) -lstdc++ -lm -ldl
 
 ifneq ($(NO_X11), 1) 
 LDFLAGS += $(shell $(PKGCONFIG) --libs-only-l gtk+-3.0 x11 glib-2.0)
+LDFLAGS += -lXrandr
 endif
 
 ifneq ($(NO_PTHREAD), 1) 

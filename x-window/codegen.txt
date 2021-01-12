@@ -4,3 +4,7 @@ class xDisplay{
     int GetHeight(int screen_number);    
 }
 
+[CodeSwitch code_mark=true, weak_ref=true]
+class xRandr{
+    [static] array<XRRMonitorInfo> GetMonitors(int_ptr_t dpy, int_ptr_t window, bool get_active);
+}

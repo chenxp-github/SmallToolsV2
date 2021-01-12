@@ -50,6 +50,7 @@
 #include "lualib_xdisplay.h"
 #include "lualib_xwindow.h"
 #include "lualib_xevent.h"
+#include "lualib_xrandr.h"
 #endif
 
 CGlobals g_globals;
@@ -300,6 +301,7 @@ status_t CGlobals::InitLuaVm()
     luaopen_nativeprocess(L);
     luaopen_nativeprocessmanager(L);
 	luaopen_sharedmemory(L);
+    luaopen_xrandr(L);
 #endif
 
 #if _SUPPORT_X11_
