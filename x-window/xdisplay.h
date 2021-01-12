@@ -39,6 +39,9 @@ public:
     NativeXDisplay GetNativeXDisplay();
     status_t SetNativeXDisplay(NativeXDisplay _nativexdisplay);
     status_t Attach(NativeXDisplay _nativexdisplay);
+    int GetScreenCount();
+    int GetWidth(int sceen_number);
+    int GetHeight(int screen_number);
 
     DISPLAY_FLAG_FUNC(IsAttached,0x00000001);
 };

@@ -231,3 +231,22 @@ status_t CxDisplay::NextEvent(NativeXEvent *event)
     ASSERT(m_NativeXDisplay);
     return XNextEvent(m_NativeXDisplay,event);
 }
+
+int CxDisplay::GetScreenCount()
+{
+    ASSERT(m_NativeXDisplay);
+    return ScreenCount(m_NativeXDisplay);
+}
+
+int CxDisplay::GetWidth(int screen_number)
+{
+    ASSERT(m_NativeXDisplay);
+    return XDisplayWidth(m_NativeXDisplay,screen_number);
+}
+
+int CxDisplay::GetHeight(int screen_number)
+{
+    ASSERT(m_NativeXDisplay);
+    return XDisplayHeight(m_NativeXDisplay,screen_number);
+}
+

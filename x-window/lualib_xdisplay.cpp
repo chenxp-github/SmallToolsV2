@@ -183,6 +183,33 @@ static int xdisplay_pending(lua_State *L)
     lua_pushinteger(L,_ret_0);
     return 1;
 }
+static status_t xdisplay_getscreencount(lua_State *L)
+{
+    CxDisplay *pxdisplay = get_xdisplay(L,1);
+    ASSERT(pxdisplay);
+    int ret0 = pxdisplay->GetScreenCount();
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+static status_t xdisplay_getwidth(lua_State *L)
+{
+    CxDisplay *pxdisplay = get_xdisplay(L,1);
+    ASSERT(pxdisplay);
+    int sceen_number = (int)lua_tointeger(L,2);
+    int ret0 = pxdisplay->GetWidth(sceen_number);
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t xdisplay_getheight(lua_State *L)
+{
+    CxDisplay *pxdisplay = get_xdisplay(L,1);
+    ASSERT(pxdisplay);
+    int screen_number = (int)lua_tointeger(L,2);
+    int ret0 = pxdisplay->GetHeight(screen_number);
+    lua_pushinteger(L,ret0);
+    return 1;
+}
 
 static const luaL_Reg xdisplay_lib[] = {
     {"__gc",xdisplay_gc_},
@@ -204,6 +231,9 @@ static const luaL_Reg xdisplay_lib[] = {
     {"PeekEvent",xdisplay_peekevent},
     {"NextEvent",xdisplay_nextevent},
     {"Pending",xdisplay_pending},
+    {"GetScreenCount",xdisplay_getscreencount},    
+    {"GetWidth",xdisplay_getwidth},
+    {"GetHeight",xdisplay_getheight},    
     {NULL, NULL}
 };
 static int luaL_register_xdisplay(lua_State *L)

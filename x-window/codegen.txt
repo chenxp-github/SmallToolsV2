@@ -1,0 +1,6 @@
+class xDisplay{
+    int GetScreenCount();
+    int GetWidth(int sceen_number);
+    int GetHeight(int screen_number);    
+}
+
