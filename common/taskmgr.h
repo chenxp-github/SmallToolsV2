@@ -130,15 +130,12 @@ public:
     uint32_t mSleepTime;
     uint32_t mTotalSleepTime;
     uint32_t mLastRunTime;
-    uint32_t mTurboOnTime;
-    uint32_t mTurboOnMaxTime;
     uint32_t mFlags;
 public:
+    status_t TurboOn();
+    status_t CancelSleep();
     status_t SetFlags(uint32_t flags);
     bool IsInvalidInterval(uint32_t interval);
-    status_t TurboOn(uint32_t max_time=0xffffffff);
-    status_t TurboOff();
-    bool IsTurboOn(uint32_t interval);
     status_t SetParentTask(CTask *ptask);
     bool IsParentDead();
     status_t Sleep(uint32_t ms);

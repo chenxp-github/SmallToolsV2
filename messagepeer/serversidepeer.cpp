@@ -270,6 +270,10 @@ status_t CServerSidePeer::StartFetchMessageTask()
             self->SuspendFetchMessageTask();
             return OK;
         }
+        else
+        {
+            timer->TurboOn();
+        }        
 
         CPeerMessage *msg = queue->GetElem(0);
         ASSERT(msg);

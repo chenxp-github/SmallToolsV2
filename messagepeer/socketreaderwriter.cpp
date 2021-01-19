@@ -98,9 +98,6 @@ status_t CSocketReaderWriter::DoWrite(uint32_t interval)
         this->Error(ERROR_REACH_END_OF_FILE);
         return ERROR;
     }
-    
-    if(!iSocket->CanWrite())
-        return ERROR;
 
     int_ptr_t rs = this->iWriteSrcFile->Read(buf,need_write);
     int_ptr_t ws = this->iSocket->Write(buf,rs);

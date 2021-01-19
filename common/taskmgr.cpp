@@ -27,8 +27,6 @@ status_t CTask::InitBasic()
     this->mTotalSleepTime = 0;
     this->mParent = NULL;
     this->mParentId = 0;
-    this->mTurboOnMaxTime = 0;
-    this->mTurboOnTime = 0;
     return OK;
 }
 status_t CTask::Init(CTaskMgr *mgr)
@@ -137,6 +135,14 @@ status_t CTask::Sleep(uint32_t ms)
     return OK;
 }
 
+status_t CTask::CancelSleep()
+{
+    this->mTotalSleepTime = 0;
+    this->mSleepTime = 0;
+    this->mFlags &= (~TASK_IS_SLEEPING);
+    return OK;
+}
+
 status_t CTask::SetParentTask(CTask *ptask)
 {
     ASSERT(ptask);
@@ -164,34 +170,6 @@ status_t CTask::SendMessage(int event, CClosure *param)
 {
     return this->OnMessage(event,param);
 }
-
-status_t CTask::TurboOn(uint32_t max_time)
-{
-    mTurboOnTime = 0;
-    mTurboOnMaxTime = max_time;
-    return OK;
-}
-status_t CTask::TurboOff()
-{
-    mTurboOnTime = 0;
-    mTurboOnMaxTime = 0;
-    return OK;
-}
-bool CTask::IsTurboOn(uint32_t interval)
-{
-    if(mTurboOnMaxTime == 0)
-        return false;
-
-    mTurboOnTime += interval;
-
-    if(mTurboOnTime >= mTurboOnMaxTime)
-    {
-        this->TurboOff();
-        return false;
-    }
-    return true;
-}
-
 bool CTask::IsInvalidInterval(uint32_t interval)
 {
     //system time maybe adjusted.
@@ -201,6 +179,11 @@ status_t CTask::SetFlags(uint32_t flags)
 {
     mFlags = flags;
     return OK;
+}
+status_t CTask::TurboOn()
+{
+    ASSERT(GetTaskMgr());
+    return GetTaskMgr()->TurboOn();
 }
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -444,11 +427,6 @@ bool CTaskMgr::Schedule()
         if(pt->IsSleeping(interval))
             continue;
 
-        if(pt->IsTurboOn(interval))
-        {
-            is_turbo_on = true;
-        }
-
         interval = now - pt->mLastRunTime;
         pt->mLastRunTime = now;
         pt->Run(interval);
@@ -456,7 +434,7 @@ bool CTaskMgr::Schedule()
         if(this->turbo_on)
         {
             is_turbo_on = true;
-        }    
+        }
     }
     this->nested --;
     this->turbo_on = false;

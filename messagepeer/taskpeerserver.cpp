@@ -68,12 +68,6 @@ status_t CTaskPeerServer::OnGetSocket()
 bool CTaskPeerServer::CanReadNextPackage()
 {
     PEER_GLOBALS(g);
-	//if too many pending message to send, then
-	//just stop reading new messages
-	if(g->GetTotalSendingQueueLength() > MESSAGE_PEER_SENDING_QUEUE_LEN/2)
-	{
-		return false;
-	}
     return !quit_after_send;
 }
 
