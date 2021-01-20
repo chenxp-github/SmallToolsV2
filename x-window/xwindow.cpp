@@ -870,3 +870,27 @@ status_t CxWindow::SetWMName(CMem *name)
     m_Display->Flush();
     return OK;
 }
+
+status_t CxWindow::SetNetWMName(const char *name)
+{    
+    ASSERT(name);
+
+    COMMON_XWINDOW_CHECK();
+
+    NativeXDisplay display = m_Display->GetNativeXDisplay();
+    NativeXWindow win = this->GetNativeXWindow();
+
+    XChangeProperty(display , win ,
+        XInternAtom(display, "_NET_WM_NAME", False),
+        XInternAtom(display, "UTF8_STRING", False),
+        8, PropModeReplace, (unsigned char *) name,strlen(name)
+    );
+    return OK;
+}
+
+status_t CxWindow::GetNetWMName(CMem *name)
+{
+    ASSERT(name);
+    this->GetWindowProperty("_NET_WM_NAME",0,256,name);
+    return OK;
+}

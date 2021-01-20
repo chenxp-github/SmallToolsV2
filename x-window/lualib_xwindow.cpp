@@ -534,6 +534,28 @@ static status_t xwindow_move(lua_State *L)
     pxwindow->Move(x,y);
     return 0;
 }
+static status_t xwindow_getnetwmname(lua_State *L)
+{
+    CxWindow *pxwindow = get_xwindow(L,1);
+    ASSERT(pxwindow);
+
+    LOCAL_MEM(name);
+    pxwindow->GetNetWMName(&name);
+    
+    lua_pushstring(L,name.CStr());
+    return 1;
+}
+
+static status_t xwindow_setnetwmname(lua_State *L)
+{
+    CxWindow *pxwindow = get_xwindow(L,1);
+    ASSERT(pxwindow);
+    const char* name = (const char*)lua_tostring(L,2);
+    ASSERT(name);
+    status_t ret0 = pxwindow->SetNetWMName(name);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
 
 static const luaL_Reg xwindow_lib[] = {
     {"__gc",xwindow_gc_},
@@ -583,6 +605,8 @@ static const luaL_Reg xwindow_lib[] = {
 	{"GetMapState",xwindow_getmapstate},
     {"SetWMName",xwindow_setwmname},  
     {"Move",xwindow_move},  
+    {"GetNetWMName",xwindow_getnetwmname},
+    {"SetNetWMName",xwindow_setnetwmname},    
     {NULL, NULL}
 };
 static int luaL_register_xwindow(lua_State *L)
