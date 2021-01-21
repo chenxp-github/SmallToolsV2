@@ -885,6 +885,8 @@ status_t CxWindow::SetNetWMName(const char *name)
         XInternAtom(display, "UTF8_STRING", False),
         8, PropModeReplace, (unsigned char *) name,strlen(name)
     );
+
+    m_Display->Flush();
     return OK;
 }
 
