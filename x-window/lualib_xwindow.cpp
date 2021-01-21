@@ -1,6 +1,5 @@
 #include "lualib_xwindow.h"
 #include "lualib_xdisplay.h"
-#include "lualib_stream.h"
 #include "mem_tool.h"
 #include "syslog.h"
 
@@ -452,11 +451,11 @@ static int xwindow_getwindowproperty(lua_State *L)
     const char* atom_name = (const char*)lua_tostring(L,2);
     int offset = (int)lua_tointeger(L,3);
     int items = (int)lua_tointeger(L,4);
-    CStream *out = get_stream(L,5);
-    ASSERT(out);
-    int _ret_0 = (int)pxwindow->GetWindowProperty(atom_name,offset,items,out);
+    LOCAL_MEM_WITH_SIZE(mem,32*1024);
+    int _ret_0 = (int)pxwindow->GetWindowProperty(atom_name,offset,items,&mem);
     lua_pushboolean(L,_ret_0);
-    return 1;
+    lua_pushlstring(L,mem.GetRawBuf(),mem.GetSize());
+    return 2;
 }
 static int xwindow_setwindowtype(lua_State *L)
 {

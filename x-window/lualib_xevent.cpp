@@ -1,5 +1,4 @@
 #include "lualib_xevent.h"
-#include "lualib_stream.h"
 #include "mem_tool.h"
 #include "syslog.h"
 
@@ -83,24 +82,18 @@ static int xevent_getrootwindow(lua_State *L)
     lua_pushinteger(L,_ret_0);
     return 1;
 }
-static int xevent_tostream(lua_State *L)
+
+static int xevent_getraw(lua_State *L)
 {
     CxEvent *pxevent = get_xevent(L,1);
     ASSERT(pxevent);
-    CStream *stream = get_stream(L,2);
-    ASSERT(stream);
-
-    if(stream->GetSize() < pxevent->Size())
-    {
-        stream->Realloc(pxevent->Size());
-    }
-    
-    stream->Seek(0);
-    stream->Write(pxevent->GetNativeXEvent(),pxevent->Size());
-    stream->Seek(0);
-
-    return 0;
+    lua_pushlstring(L,
+        (const char*)pxevent->GetNativeXEvent(),
+        pxevent->Size()
+    );    
+    return 1;
 }
+
 static const luaL_Reg xevent_lib[] = {
     {"__gc",xevent_gc_},
     {"__tostring",xevent_tostring_},
@@ -112,7 +105,7 @@ static const luaL_Reg xevent_lib[] = {
     {"GetSendEvent",xevent_getsendevent},
     {"GetWindow",xevent_getwindow},
     {"GetRootWindow",xevent_getrootwindow},
-    {"ToStream",xevent_tostream},
+    {"GetRaw",xevent_getraw},
     {NULL, NULL}
 };
 static int luaL_register_xevent(lua_State *L)
