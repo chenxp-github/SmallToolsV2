@@ -300,14 +300,14 @@ status_t CGlobals::InitLuaVm()
 #if _IS_LINUX_
     luaopen_nativeprocess(L);
     luaopen_nativeprocessmanager(L);
-	luaopen_sharedmemory(L);
-    luaopen_xrandr(L);
+    luaopen_sharedmemory(L);
 #endif
 
 #if _SUPPORT_X11_
     luaopen_xwindow(L);
     luaopen_xdisplay(L);
     luaopen_xevent(L);
+    luaopen_xrandr(L);
 #endif
 
     this->StartLuaAutoGcTask();
