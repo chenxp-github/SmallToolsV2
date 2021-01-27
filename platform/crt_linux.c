@@ -446,14 +446,25 @@ int_ptr_t crt_get_unique_id()
 ///////////////////////////////////////////////////////////////////
 #if USE_SOCKET_MODULE
 ///////////////////////////////////////////////////////////////////
+static CALLBACK_BEFORE_CLOSE_SOCKET callback_before_close_socket = NULL;
 
 int32_t crt_socket( int32_t af, int32_t type, int32_t protocol )
 {
     return socket(af,type,protocol);
 }
 
-int32_t crt_closesocket(int32_t s) 
+status_t crt_set_before_close_socket_callback(CALLBACK_BEFORE_CLOSE_SOCKET callback)
 {
+    callback_before_close_socket = callback;
+    return OK;
+}
+
+int32_t crt_closesocket(int32_t s)
+{
+    if(callback_before_close_socket)
+    {
+        callback_before_close_socket(s);
+    }
     shutdown(s,SHUT_RDWR);
     return close(s);
 }

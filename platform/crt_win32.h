@@ -143,6 +143,10 @@ int_ptr_t crt_get_unique_id(void);
 ///////////////////////////////////////////////////////////////////
 #include <winsock.h>
 
+typedef status_t (*CALLBACK_BEFORE_CLOSE_SOCKET)(int32_t s);
+
+status_t crt_set_before_close_socket_callback(CALLBACK_BEFORE_CLOSE_SOCKET callback);
+
 int32_t crt_socket( int32_t af, int32_t type, int32_t protocol );
 int32_t crt_closesocket(int32_t s);
 int32_t crt_send(int32_t s, const char *buf, int32_t len, int32_t flag);

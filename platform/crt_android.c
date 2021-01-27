@@ -79,12 +79,7 @@ static uint32_t string_to_mode(const char *mode)
 
 FILE_HANDLE crt_fopen(const char *fn, const char *mode)
 {
-#if USE_FILE_32
     return open(fn,string_to_mode(mode),0666);
-#else
-    int open64(const char *pathname, int flags,...);
-    return open64(fn,string_to_mode(mode),0666);
-#endif
 }
 
 void crt_fclose(FILE_HANDLE fd)
@@ -453,7 +448,7 @@ int32_t crt_socket( int32_t af, int32_t type, int32_t protocol )
 
 int32_t crt_closesocket(int32_t s) 
 {
-    shutdown(s,SHUT_RDWR);
+    shutdown(s,2);
     return close(s);
 }
 

@@ -73,7 +73,7 @@ status_t CEpoll::DelFd(int fd)
 {
 #if HAVE_WINDOWS_H
 	FD_CLR(fd,&m_fd_set);
-	return ERROR;
+	return OK;
 #else
     int r = epoll_ctl(m_EpollHandle,EPOLL_CTL_DEL,fd,NULL);
 	return r == 0;
@@ -108,10 +108,17 @@ status_t CEpoll::AutoRemoveHungupFds(uint32_t opt)
                 if(opt & WAIT_OPT_OPEN_LOG)
                 {
                     XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,
-                        "socket %d is delete from epoll",
+                        "socket %d is auto removed from epoll",
                         m_Events[i].data.fd
                     );
                 }
+            }
+            else
+            {
+                XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
+                    "fail to auto remove socket %d from epoll",
+                    m_Events[i].data.fd
+                );
             }
         }
     }
@@ -141,7 +148,7 @@ int CEpoll::Wait(int ms, uint32_t opt)
 			if(opt & WAIT_OPT_OPEN_LOG)
             {
                 XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,
-                    "socket %d is delete from epoll",
+                    "socket %d is auto removed from epoll",
                     error_set.fd_array[i]
 				);
             }
@@ -179,4 +186,26 @@ int CEpoll::Wait(int ms, uint32_t opt)
 int CEpoll::Wait(int ms)
 {
     return this->Wait(ms,WAIT_OPT_AUTO_REMOVE|WAIT_OPT_OPEN_LOG);
+}
+
+status_t CEpoll::AutoRemoveFd(int fd)
+{
+#if HAVE_WINDOWS_H
+	if(FD_ISSET(fd,&m_fd_set) && this->DelFd(fd))
+	{
+		XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,
+            "socket %d is removed from epoll",fd
+        );
+	}
+#else
+    if(m_EpollHandle <= 0)
+        return OK;
+    if(this->DelFd(fd))
+    {
+        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,
+            "socket %d is removed from epoll",fd
+        );
+    }
+#endif
+    return OK;
 }

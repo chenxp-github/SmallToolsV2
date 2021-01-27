@@ -3,7 +3,6 @@
 
 #include "config.h"
 
-#define USE_FILE_32	 		1
 #define USE_SOCKET_MODULE   1
 #define USE_THREAD_MODULE   1
 #define LOCAL_ENCODING      ENCODING_UTF8
@@ -44,7 +43,7 @@ typedef unsigned long long  uint64_t;
 
 typedef int32_t             status_t;
 typedef int32_t             int_ptr_t;
-typedef int					 bool_t;
+typedef int	   			    bool_t;
 
 #define LBUF_SIZE           4096
 #define FILEBASE_LBUF_SIZE  (32*1024)

@@ -238,11 +238,11 @@ fsize_t CMem::GetMaxSize()
     return this->mMaxSize;
 }
 
+
 status_t CMem::Copy(CFileBase *file)
 {
     ASSERT(file);
     if(this == file) return OK;
-    this->Free();
 
     if(file->file_name)
         this->SetFileName(file->file_name);
@@ -251,9 +251,22 @@ status_t CMem::Copy(CFileBase *file)
     
     if(file->GetSize() > 0)
     {
-        this->Malloc((int_ptr_t)file->GetSize());
+        if((!mSelfAlloc) || (MALLOC_SIZE(file->GetSize()) != mMaxSize))
+        {
+            this->Free();
+            this->Malloc((int_ptr_t)file->GetSize());
+        }    
+        else
+        {
+            this->SetSize(0);
+        }        
         this->WriteFile(file);
     }
+    else
+    {
+        this->Free();
+    }
+    
     return OK;
 }
 

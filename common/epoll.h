@@ -39,6 +39,7 @@ public:
     status_t InitBasic();
     status_t Init(int max_=1024);
     status_t Destroy();
+    status_t AutoRemoveFd(int fd);
 };
 
 #endif
