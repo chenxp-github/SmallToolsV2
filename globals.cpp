@@ -79,6 +79,13 @@ static const void *get_peer_globals(lua_State *L)
     GLOBAL_PEER_GLOBALS(g);
     return g;
 }
+static status_t global_on_before_close_socket(int32_t s)
+{
+    #define REMOVE_FROM_EPOLL(obj) obj.m_Epoll.AutoRemoveFd(s)
+    REMOVE_FROM_EPOLL(g_globals);
+    return OK;
+}
+
 /////////////////////////////////////////////////////
 
 CGlobals::CGlobals()
@@ -141,6 +148,7 @@ status_t CGlobals::Init()
 	how_to_get_global_taskmgr = get_global_taskmgr;
     how_to_get_lua_running_flag = get_lua_running_flag;
     how_to_get_peer_globals = get_peer_globals;
+    crt_set_before_close_socket_callback(global_on_before_close_socket);
     return OK;
 }
 status_t CGlobals::Destroy()
