@@ -56,7 +56,6 @@ function BsonToObject(bson,is_array)
 end
 
 function value_to_bson(bson,key,value)
-    if not value then return end    
     if type(value) == "table" then            
         if value._is_array_ then
             local off_a = bson:StartArray(key);
