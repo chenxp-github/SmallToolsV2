@@ -14,7 +14,13 @@ function PeerTunnelClient:ctor()
     self.remote_server = "";
     self.remote_port = 0;
     self.auto_clear_thread = nil;
+    self.auto_id = 0;
 end
+
+function PeerTunnelClient:AllocId()
+    self.auto_id = self.auto_id + 1;
+    return self.auto_id; 
+ end
 
 function PeerTunnelClient:OnRequest(_context,_param)
 --##Begin OnRequest ##--

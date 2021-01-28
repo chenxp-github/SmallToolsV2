@@ -9,6 +9,12 @@ function PeerTunnelServer:ctor()
     self.local_connections = {};
     self.auto_clear_thread = nil;
     self.timeout = -1;
+    self.auto_id = 0;
+end
+
+function PeerTunnelServer:AllocId()
+   self.auto_id = self.auto_id + 1;
+   return self.auto_id; 
 end
 
 function PeerTunnelServer:OnRequest(_context,_param)
@@ -35,7 +41,7 @@ function PeerTunnelServer:OnConnectRemote(_context,_param)
             local _ret;
             if event == EVENT_CONNECTED then                
                 _ret={
-                    handle = new_socket:GetSocketFd(),
+                    handle = self:AllocId(),
                     errStr = "",
                 };
                 printf("new tunnel client arrive %d",_ret.handle);

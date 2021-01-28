@@ -79,10 +79,16 @@ static const void *get_peer_globals(lua_State *L)
     GLOBAL_PEER_GLOBALS(g);
     return g;
 }
+
+#define REMOVE_FROM_EPOLL(obj) (obj).m_Epoll.AutoRemoveFd(s)
+
 static status_t global_on_before_close_socket(int32_t s)
-{
-    #define REMOVE_FROM_EPOLL(obj) obj.m_Epoll.AutoRemoveFd(s)
+{  
     REMOVE_FROM_EPOLL(g_globals);
+    if(g_globals_ptr)
+    {
+        REMOVE_FROM_EPOLL(*g_globals_ptr);
+    }
     return OK;
 }
 
