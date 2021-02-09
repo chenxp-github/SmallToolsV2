@@ -119,7 +119,7 @@ function app_main(args)
                     printfnl("push file fail %s",local_path);
                     error_occur = true;
                 else
-                    printfnl("-->send %s ok",local_path);
+                    printfnl("==>send %s ok<==",local_path);
                 end    
             end);
         elseif not local_dir then
@@ -127,7 +127,7 @@ function app_main(args)
                 printfnl("push file fail %s",local_file);
                 error_occur = true;
             else
-                printfnl("-->send %s ok",local_file);
+                printfnl("==>send %s ok<==",local_file);
             end
         else
             local file_list = {};
