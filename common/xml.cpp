@@ -21,18 +21,19 @@ CXmlNode::~CXmlNode()
 
 status_t CXmlNode::Init()
 {            
-    this->mf_attrib = NULL;
-    this->mf_value = NULL;
+    this->attribs = NULL;
+    this->value = NULL;
     this->mem_name = NULL;
+  
     NEW(this->mem_name,CMem);
     this->mem_name->Init();
-    this->mem_name->Malloc(1024);
-
+  
     this->next=NULL;
     this->child = NULL;
     this->parent = NULL;
     this->tail = NULL;
     this->value_type = VALUE_TYPE_NORMAL;
+    this->cur_attrib = 0;
     return OK;
 }
 
@@ -40,8 +41,8 @@ status_t CXmlNode::Destroy()
 {
     WEAK_REF_DESTROY();
     DEL(this->mem_name);
-    DEL(this->mf_attrib);
-    DEL(this->mf_value);
+    DEL(this->attribs);
+    DEL(this->value);
     return OK;
 }
 
@@ -80,13 +81,43 @@ CXmlNode * CXmlNode::Alloc()
     return p;
 }
 
+status_t CXmlNode::DetachFromTree(CXmlNode *node)
+{
+    ASSERT(node);
+    if(!node->parent)
+        return OK;
+
+    CXmlNode *p,*tail;
+    p = node->parent->child;
+    tail = node->parent->tail;
+
+    while(p)
+    {
+        if(p->next == node)
+        {
+            if(tail == node)
+            {
+                tail = node->next;
+                if(tail == NULL)
+                    tail = p;
+                node->parent->tail = tail;
+            }
+            p->next = node->next;
+            node->parent = NULL;
+            break;
+        }
+        p = p->next;
+    }
+    return OK;
+}
+
 status_t CXmlNode::Free(CXmlNode *node)
 {
     CXmlNode *p , *q;
 
     if(node == NULL)
         return OK;
-
+   
     p = node->child;
     if( p ) q = p->next;
     while(p)
@@ -158,36 +189,39 @@ CXmlNode *CXmlNode::GetParent()
 status_t CXmlNode::AddAttrib(CFileBase *file)
 {
     ASSERT(file);
-    if(this->mf_attrib == NULL)
+    if(this->attribs == NULL)
     {
-        NEW(this->mf_attrib,CMemFile);
-        this->mf_attrib->Init(1024,16);
+        NEW(this->attribs,CMemStk);
+        this->attribs->Init(2);
     }
-    this->mf_attrib->WriteFile(file);
-    this->mf_attrib->Seek(0);
+
+    file->Seek(0);
+    LOCAL_MEM(mem);
+    while(file->ReadLine(&mem))
+    {
+        this->attribs->Push(&mem);
+    }
     return OK;
 }
 
 status_t CXmlNode::AddAttrib(const char *attrib, const char *val)
 {
-    if(this->mf_attrib == NULL)
-    {
-        NEW(this->mf_attrib,CMemFile);
-        this->mf_attrib->Init(1024,16);
-    }
-    this->mf_attrib->Puts(attrib);
-    this->mf_attrib->Puts("=\"");
-    this->mf_attrib->Puts(val);
-    this->mf_attrib->Puts("\"\r\n");
-    return OK;
+    ASSERT(attrib && val);
+    LOCAL_MEM(tmp);
+    tmp.Puts(attrib);
+    tmp.Puts("=\"");
+    tmp.Puts(val);
+    tmp.Puts("\"");
+    return this->AddAttrib(&tmp);
 }
 
 status_t CXmlNode::SetName(CMem *name)
 {
     ASSERT(name);
     ASSERT(this->mem_name);
-    this->mem_name->SetSize(0);
-    this->mem_name->Puts(name);
+    this->mem_name->Destroy();
+    this->mem_name->Init();
+    this->mem_name->Copy(name);
     return OK;
 }
 
@@ -227,14 +261,12 @@ status_t CXmlNode::AddValueData(CFileBase *file)
     end = file->GetOffset() + 1;
     if(end - start > 0)
     {
-        if(this->mf_value == NULL)
-        {
-            NEW(this->mf_value,CMemFile);
-            this->mf_value->Init(1024,1024);
-            this->mf_value->Seek(0);
-        }
-        this->mf_value->WriteFile(file,start,end-start);
-        this->mf_value->Seek(0);
+        ASSERT(this->value == NULL);
+        NEW(this->value,CMem);
+        this->value->Init();
+        this->value->Malloc(end-start);
+        this->value->WriteFile(file,start,end-start);
+        this->value->Seek(0);
     }
 
     return OK;
@@ -256,32 +288,30 @@ status_t CXmlNode::WriteToFile(CFileBase *file)
     file->Puts("\r\n<");
     file->Puts(this->mem_name->CStr());
 
-    if(this->mf_attrib)
+    if(this->attribs)
     {
         file->Putc(' ');
-        this->mf_attrib->Seek(0);
-        while(this->mf_attrib->ReadLine(&mem_buf))
+        for(int i = 0; i< this->attribs->GetLen(); i++)
         {
-            if(mem_buf.C(0) == 0) continue;
-            file->Puts(&mem_buf);
+            file->Puts(this->attribs->GetElem(i));
             file->Putc(' ');
         }
     }
     file->Puts(">\r\n");
     if(this->value_type == VALUE_TYPE_CDATA)
     {
-        if(this->mf_value)
+        if(this->value)
         {
             file->Puts("<![CDATA[\r\n");
-            file->WriteFile(this->mf_value);
+            file->WriteFile(this->value);
             file->Puts("\r\n]]>");
         }
     }
     if(this->value_type == VALUE_TYPE_NORMAL)
     {
-        if(this->mf_value)
+        if(this->value)
         {
-            file->WriteFile(this->mf_value);
+            file->WriteFile(this->value);
         }
     }
     /////////////
@@ -372,15 +402,14 @@ status_t CXmlNode::GetAttrib(const char *name, CFileBase *val)
 
     val->SetSize(0);
 
-    if(this->mf_attrib == NULL)
+    if(this->attribs == NULL)
         return ERROR;
 
     LOCAL_MEM(mem);
 
-    this->mf_attrib->Seek(0);
-    while(!mf_attrib->IsEnd())
+    this->RestartAttrib();
+    while(this->GetNextAttrib(&mem,val))
     {
-        this->GetNextAttrib(&mem,val);
         if(mem.StrCmp(name) == 0)
         {
             return OK;
@@ -393,8 +422,7 @@ status_t CXmlNode::GetAttrib(const char *name, CFileBase *val)
 
 status_t CXmlNode::RestartAttrib()
 {
-    if(mf_attrib)
-        mf_attrib->Seek(0);
+    this->cur_attrib = 0;
     return OK;
 }
 
@@ -402,30 +430,28 @@ status_t CXmlNode::GetNextAttrib(CFileBase *name, CFileBase *val)
 {
     ASSERT(name && val);
 
-    LOCAL_MEM(mem);
     LOCAL_MEM(mem_temp);
 
     val->SetSize(0);
     name->SetSize(0);
-    if(this->mf_attrib == NULL)
+
+    if(this->attribs == NULL)
         return ERROR;
 
-    if(!this->mf_attrib->ReadLine(&mem))
+    if(this->cur_attrib >= this->attribs->GetLen())
         return ERROR;
 
-    if(mem.C(0) == 0)
-	{
-		return ERROR;
-	}
+    CMem *mem = this->attribs->GetElem(this->cur_attrib++);
+    ASSERT(mem);
 
-	mem.SetSplitChars(" =!?\t\r\n\"\'?/<>");
-    mem.Trim();
-    mem.Seek(0);
-    mem.ReadWord(name);
-    mem.ReadWord(&mem_temp);
-    mem.ReadWord(&mem_temp);
+	mem->SetSplitChars(" =!?\t\r\n\"\'?/<>");
+    mem->Trim();
+    mem->Seek(0);
+    mem->ReadWord(name);
+    mem->ReadWord(&mem_temp);
+    mem->ReadWord(&mem_temp);
     ASSERT(mem_temp.C(0) == '\"');
-    if(!mem.ReadCStr(val))
+    if(!mem->ReadCStr(val))
     {
         return ERROR;
     }
@@ -445,9 +471,9 @@ CXmlNode * CXmlNode::GetChildByName(const char *child_name)
     return NULL;
 }
 
-CMemFile *CXmlNode::GetValue()
+CMem *CXmlNode::GetValue()
 {
-    return mf_value;
+    return this->value;
 }
 
 status_t CXmlNode::GetStringValue(CMem *val)
@@ -462,6 +488,12 @@ status_t CXmlNode::GetStringValue(CMem *val)
         return OK;
     }    
     return ERROR;
+}
+
+status_t CXmlNode::SetValue(CFileBase *val)
+{
+    DEL(this->value);
+    return this->AddValueData(val);
 }
 
 int32_t CXmlNode::GetInt32Value()

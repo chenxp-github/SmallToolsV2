@@ -33,6 +33,7 @@ public:
     status_t HasBuffer();
     status_t SetBufSize(int_ptr_t size);
     status_t BufferBlock(fsize_t start_pos);
+    FILE_HANDLE GetFileHandle();
 };
 
 #endif

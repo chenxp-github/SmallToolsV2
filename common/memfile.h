@@ -14,8 +14,7 @@ public:
     int_ptr_t mPageSize;
     uint32_t mod_n;
     uint32_t shift_n;
-public:
-    status_t Transfer(CMemFile *from);
+public:    
     CMemFile();
     ~CMemFile();
     status_t InitBasic();
@@ -38,7 +37,8 @@ public:
     virtual char Getc();
     virtual char UnGetc();
     virtual fsize_t Putc(char ch);
-
+    status_t Transfer(CMemFile *from);
+    status_t Free();
 };
 
 #endif

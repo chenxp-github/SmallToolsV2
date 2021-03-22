@@ -65,14 +65,7 @@ status_t CMemFile::InitShift()
 
 status_t CMemFile::Destroy()
 {
-    if(this->mBase)
-    {
-        for(int_ptr_t i=0;i<this->mPages;i++)
-        {
-            FREE(this->mBase[i]);
-        }
-        FREE(this->mBase);
-    }
+    this->Free();
     CFileBase::Destroy();
     this->InitBasic();
     return OK;
@@ -285,4 +278,18 @@ fsize_t CMemFile::Putc(char ch)
     this->mBase[block][off] = ch;
     mOffset++;
     return 1;
+}
+
+status_t CMemFile::Free()
+{
+    if(this->mBase)
+    {
+        ASSERT(mPages);
+        for(int_ptr_t i=0;i<this->mPages;i++)
+        {
+            FREE(this->mBase[i]);
+        }
+        FREE(this->mBase);
+    }
+    return OK;
 }

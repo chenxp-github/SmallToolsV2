@@ -92,9 +92,9 @@ int wild_match(const char *wild,const char *string)
     return !*wild;
 }
 
-uint64_t hex2dec_64(const char *shex)
+int64_t hex2dec_64(const char *shex)
 {   
-    uint64_t  idec,mid;
+    int64_t  idec,mid;
     int32_t i,len;
     
     int is_minus = 0;
@@ -132,7 +132,7 @@ uint64_t hex2dec_64(const char *shex)
         
     }
 
-    return is_minus?-idec:idec;
+    return is_minus?(-idec):idec;
 }   
 
 
@@ -281,7 +281,9 @@ int64_t str2int_64(const char *str)
 
 uint32_t ac_x31_hash_string(const char *s)
 {
-    uint32_t h = (uint32_t)*s;
+    uint32_t h;
+	ASSERT(s);
+	h = (uint32_t)*s;
     if (h) for (++s ; *s; ++s) h = (h << 5) - h + (int32_t)*s;
     return h;
 }

@@ -21,7 +21,7 @@ uint32_t next_pot(uint32_t x);
 int32_t find_shift(uint32_t size);
 bool_t is_dec(const char *str);
 bool_t is_hex(const char *str);
-uint64_t hex2dec_64(const char *shex);
+int64_t hex2dec_64(const char *shex);
 int32_t hex2dec_32(const char *shex);
 int wild_match(const char *wild, const char *string);
 void generate_uuid(char *uuid); 

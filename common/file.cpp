@@ -203,3 +203,8 @@ bool CFile::IsOpened()
 {
     return crt_is_file_handle(this->fp) != 0;
 }
+
+FILE_HANDLE CFile::GetFileHandle()
+{
+    return this->fp;
+}

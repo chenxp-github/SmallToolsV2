@@ -13,6 +13,7 @@
 #include "memfile.h"
 #include "xmlreader.h"
 #include "file.h"
+#include "memstk.h"
 
 #define XML_STR(s) ((s)==NULL?"":(s))
 #define XML_STRING_TO_DOUBLE(s) atof(s)
@@ -24,13 +25,14 @@ public:
     WEAK_REF_DEFINE();
 public:
     CMem *mem_name;
-    CMemFile *mf_attrib;
-    CMemFile *mf_value;
+    CMemStk *attribs;
+    CMem *value;
     status_t value_type;
     CXmlNode *parent;
     CXmlNode *child;
     CXmlNode *next;
     CXmlNode *tail;
+    int cur_attrib;
 public:
     CXmlNode();
     ~CXmlNode();
@@ -39,6 +41,7 @@ public:
     status_t Print();
     static CXmlNode *Alloc();
     static status_t Free(CXmlNode *node);
+    static status_t DetachFromTree(CXmlNode *node);
     status_t AddChild(CXmlNode *node);
     CXmlNode *GetChild(int i);
     CXmlNode *GetChild();
@@ -60,8 +63,9 @@ public:
     status_t RestartAttrib();
     status_t GetNextAttrib(CFileBase *name, CFileBase *val);
     CXmlNode *GetChildByName(const char *child_name);
-    CMemFile *GetValue();
+    CMem *GetValue();
     status_t GetStringValue(CMem *val);
+    status_t SetValue(CFileBase *val);
     int32_t GetInt32Value();
     int64_t GetInt64Value();
     uint32_t GetUInt32Value();
