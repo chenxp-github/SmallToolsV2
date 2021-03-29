@@ -13,6 +13,7 @@ public:
     WEAK_REF_DEFINE();
 public:
     int_ptr_t m_Pid;
+    int_ptr_t m_PPid;
     CMem m_ExeName;
     CMemStk m_CmdLine;
     int_ptr_t m_MemoryUsage; //KB
@@ -50,6 +51,7 @@ public:
     int Comp(CNativeProcess *_p);
     status_t Print(CFileBase *_buf);
     int_ptr_t GetPid();
+    int_ptr_t GetPPid();
     CMem* GetExeName();
     CMemStk* GetCmdLine();
     int_ptr_t GetMemoryUsage();
@@ -57,6 +59,7 @@ public:
     int GetCpuUsageLimit();
     int GetCpuUsageTick();
     status_t SetPid(int_ptr_t _pid);
+    status_t SetPPid(int_ptr_t _ppid);
     status_t SetExeName(CMem* _exename);
     status_t SetMemoryUsage(int_ptr_t _memoryusage);
     status_t SetMaxCpuUsage(int _maxcpuusage);
@@ -64,6 +67,8 @@ public:
     status_t SetCpuUsageTick(int _cpuusagetick);
     const char* GetExeNameStr();
     status_t SetExeName(const char *_exename);
+    status_t UpdateStat();
+    static bool IsChildProcessOf(int ppid, int pid);
 
     NATIVE_PROCESS_FLAG_FUNC(IsCpuStopped,0x00000001);
 };

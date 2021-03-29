@@ -38,6 +38,7 @@ status_t CNativeProcess::InitBasic()
     this->m_MaxCpuUsage = 0;
     this->m_CpuUsageTick = 0;
     this->m_Flags = 0;
+    this->m_PPid = 0;
     return OK;
 }
 status_t CNativeProcess::Init()
@@ -66,6 +67,7 @@ status_t CNativeProcess::Copy(CNativeProcess *_p)
     ASSERT(_p);
     if(this == _p)return OK;
     this->m_Pid = _p->m_Pid;
+    this->m_PPid = _p->m_PPid;
     this->m_ExeName.Copy(&_p->m_ExeName);
     this->m_CmdLine.Copy(&_p->m_CmdLine);
     this->m_MemoryUsage = _p->m_MemoryUsage;
@@ -96,6 +98,10 @@ status_t CNativeProcess::Print(CFileBase *_buf)
 int_ptr_t CNativeProcess::GetPid()
 {
     return this->m_Pid;
+}
+int_ptr_t CNativeProcess::GetPPid()
+{
+    return this->m_PPid;
 }
 CMem* CNativeProcess::GetExeName()
 {
@@ -130,6 +136,11 @@ const char* CNativeProcess::GetExeNameStr()
 status_t CNativeProcess::SetPid(int_ptr_t _pid)
 {
     this->m_Pid = _pid;
+    return OK;
+}
+status_t CNativeProcess::SetPPid(int_ptr_t _ppid)
+{
+    this->m_PPid = _ppid;
     return OK;
 }
 status_t CNativeProcess::SetExeName(CMem* _exename)
@@ -421,3 +432,54 @@ status_t CNativeProcess::SchedSetAffinity(uint32_t mask)
 #endif
 }
 
+status_t CNativeProcess::UpdateStat()
+{
+    LOCAL_MEM_WITH_SIZE(stat,16*1024);
+    ASSERT(this->LoadProcFile("stat",&stat));
+
+    stat.SetSplitChars(" ()\r\n\t");
+    stat.Seek(0);
+
+    LOCAL_MEM(mem);
+
+    stat.ReadWord(&mem); //pid
+    
+    stat.ReadWord(&mem); 
+    ASSERT(mem.StrCmp("(") == 0);
+    stat.ReadQuoteStr(0,')',&mem);
+
+    stat.ReadWord(&mem); //state
+    stat.ReadWord(&mem); //ppid
+
+    int_ptr_t ppid = atol(mem.CStr());
+    this->SetPPid(ppid);
+
+    return OK;
+}
+
+bool CNativeProcess::IsChildProcessOf(int ppid, int pid)
+{
+    if(ppid == pid)
+    {
+        return false;
+    }  
+    
+    while(pid != 0)
+    {
+        CNativeProcess process;
+        process.Init();
+        process.SetPid(pid);
+        process.UpdateStat();
+
+        if(process.GetPPid() == ppid)
+        {
+            return true;
+        }
+        else
+        {
+            pid = process.GetPPid();
+        }
+    }
+
+    return false;
+}

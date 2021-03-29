@@ -24,6 +24,7 @@ class App{
     [static] int StartMessageCenter(int port);
     [static] array<string> GetArgs();
     [static] void QuitTask(int tid);
+    [static] void StartAutoExitThread(int ms, int exit_code);
 }
 
 class Stream{

@@ -10,6 +10,9 @@
 #include "lualib_simpledisk.h"
 #include "lualib_peerproxy.h"
 #include "dirmgr.h"
+#include "thread.h"
+#include "nativeprocessmanager.h"
+
 /****************************************/
 static int app_getsystemtimer(lua_State *L)
 {
@@ -244,6 +247,94 @@ static status_t app_quittask(lua_State *L)
     return 0;
 }
 
+#if _IS_LINUX_
+static status_t kill_all_child_processes(int ppid)
+{
+    #define MAX_PIDS 1024
+
+    BEGIN_CLOSURE(on_enum)
+    {
+        CLOSURE_PARAM_PTR(CNativeProcess*,process,0);
+        CLOSURE_PARAM_INT(ppid,10);
+        CLOSURE_PARAM_PTR(int_ptr_t*,pids,11);
+        CLOSURE_PARAM_PTR(int*,k,12);
+
+        if(CNativeProcess::IsChildProcessOf(ppid,process->GetPid()))
+        {
+            ASSERT((*k) < MAX_PIDS);
+            pids[(*k)++] = process->GetPid();
+        }
+        return OK;
+    }
+    END_CLOSURE(on_enum);
+
+    int_ptr_t pids[MAX_PIDS];
+    int k = 0;
+
+    on_enum.SetParamInt(10,ppid);
+    on_enum.SetParamPointer(11,pids);
+    on_enum.SetParamPointer(12,&k);
+
+    CNativeProcessManager::EnumAllProcess(&on_enum);
+
+    XLOG(LOG_MODULE_USER,LOG_LEVEL_INFO,"");
+    for(int i = 0; i < k; i++)
+    {
+        XLOG(LOG_MODULE_USER,LOG_LEVEL_INFO,
+            "terminate child process %d",pids[i]
+        );
+        kill(pids[i],9);
+    }
+
+    return OK;
+}
+#endif
+
+class CAutoExitThread:public CThread{
+public:
+    uint32_t timeout;
+    int exit_code;
+public:
+
+   CAutoExitThread(uint32_t to,int exit_code)
+   {
+       this->timeout = to;
+       this->exit_code = exit_code;
+   }
+
+   status_t Run()
+   {
+       uint32_t start_tm = crt_get_sys_timer();
+       while(IsRunning())
+       {
+           uint32_t now_tm = crt_get_sys_timer();
+           if(now_tm - start_tm > this->timeout)
+           {
+                #if _IS_LINUX_
+                kill_all_child_processes(getpid());
+                #endif
+
+                kill(getpid(),9);
+                break;
+           }
+           crt_msleep(10);
+       }
+       return OK;
+   }
+};
+
+static status_t app_startautoexitthread(lua_State *L)
+{
+    int ms = (int)lua_tointeger(L,1);
+    int exit_code = (int)lua_tointeger(L,2);
+    //this process will exit when timeout
+    CAutoExitThread *thread;
+    NEW(thread,CAutoExitThread(ms,exit_code));
+    thread->Init();
+    thread->Start();
+    return 0;
+}
+
 static const luaL_Reg app_lib[] = {
     {"GetSystemTimer",app_getsystemtimer},
     {"GetSelfExePath",app_getselfexepath},
@@ -260,8 +351,10 @@ static const luaL_Reg app_lib[] = {
     {"GetArgs",app_getargs},
 	{"MakeOrderSimpleDiskFromDir",app_makeordersimplediskfromdir},
     {"QuitTask",app_quittask},    
+    {"StartAutoExitThread",app_startautoexitthread},    
     {NULL, NULL}
 };
+
 static int luaL_register_app(lua_State *L)
 {   
     luaL_newmetatable(L, LUA_USERDATA_APP);
