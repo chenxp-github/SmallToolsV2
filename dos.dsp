@@ -226,6 +226,14 @@ SOURCE=.\common\fileinfolist.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\common\thread.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\thread.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\fileutils.cpp
 # End Source File
 # Begin Source File

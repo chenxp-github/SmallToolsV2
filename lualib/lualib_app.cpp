@@ -11,7 +11,10 @@
 #include "lualib_peerproxy.h"
 #include "dirmgr.h"
 #include "thread.h"
+
+#if _IS_LINUX_
 #include "nativeprocessmanager.h"
+#endif
 
 /****************************************/
 static int app_getsystemtimer(lua_State *L)
@@ -312,9 +315,11 @@ public:
            {
                 #if _IS_LINUX_
                 kill_all_child_processes(getpid());
+                kill(getpid(),9);
+                #else
+				exit(0);
                 #endif
 
-                kill(getpid(),9);
                 break;
            }
            crt_msleep(10);
