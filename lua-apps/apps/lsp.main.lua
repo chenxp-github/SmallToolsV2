@@ -175,17 +175,21 @@ function split_lsp_file(lsp,lsp_name)
 end
 
 --tool function, convert a file to escaped js string
-function add_js_string(code,filename)
-    local source = new_mem(filename);
-    if not source then return "" end;
-    local mem = new_mem();
+function add_js_string(code,filename,param)
+    local tmp_code = PrintBuffer.new();
+    add_lsp_file(tmp_code,filename,param);
 
     code:Log("[");
+    
+    local source = tmp_code:GetInnerFile();
     source:Seek(0);
+    local mem = new_mem();
+    
     while source:ReadLine(mem) do
         local escaped = escape_js_string(mem:CStr());
         code:Log("\"%s\",",escaped);
     end
+
     code:Log("].join(\"\\n\")");
 end
 
@@ -241,7 +245,7 @@ function print_help(args)
 
     the parameter 'code' is a PrintBuffer object, and 
     add_lsp_file(code,filename,param) can be used to add another lsp file 
-    add_js_string(code,filename) add escaped js string
+    add_js_string(code,filename,param) add escaped js string
     ]]);
 end
 
