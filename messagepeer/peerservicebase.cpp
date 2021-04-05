@@ -290,13 +290,18 @@ bool CPeerServiceBase::IsConnected()
         return m_ClientSidePeer.IsConnected();
 }
 
-int CPeerServiceBase::GetSendingQueueLength()
+int CPeerServiceBase::GetSendingQueueLength(const char *proxy_name)
 {
-    ASSERT(IsPeerInitiated());
+    ASSERT(IsPeerInitiated());    
     if(IsInServiceSide())
-        return m_ServerSidePeer.GetSendingQueueLength();
+    {
+        ASSERT(proxy_name);
+        return m_ServerSidePeer.GetSendingQueueLength(proxy_name);
+    }
     else
+    {
         return m_ClientSidePeer.GetSendingQueueLength();
+    }
 }
 
 status_t CPeerServiceBase::SetMaxRetries(int max_retries)

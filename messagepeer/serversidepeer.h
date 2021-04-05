@@ -25,7 +25,7 @@ public:
 	status_t OnInitNameMessage(CPeerMessage *msg);
     int GetAliveClientNumber();
     status_t ClearSendingQueue();
-    int GetSendingQueueLength();
+    int GetSendingQueueLength(const char *proxy_name);    
     status_t ResumeFetchMessageTask();
     status_t SuspendFetchMessageTask();
     status_t StartFetchMessageTask();

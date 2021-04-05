@@ -310,10 +310,17 @@ status_t CServerSidePeer::SetCanFetchMessage(bool can)
     return OK;
 }
 
-int CServerSidePeer::GetSendingQueueLength()
+int CServerSidePeer::GetSendingQueueLength(const char *proxy_name)
 {
-  	PEER_GLOBALS(g);
-	return g->GetTotalSendingQueueLength(); //return the total pending messages
+    PEER_GLOBALS(g);
+    if(proxy_name[0] == 0) 
+    {
+        return g->GetTotalSendingQueueLength();
+    }
+
+    CPeerProxy *proxy = g->GetPeerProxyByName(proxy_name);
+    if(!proxy)return 0;
+    return proxy->GetSendingQueueLength();
 }
 
 status_t CServerSidePeer::ClearSendingQueue()
@@ -330,4 +337,7 @@ int CServerSidePeer::GetAliveClientNumber()
     GLOBAL_PEER_MANAGER(mgr);
     return mgr->GetAliveClientNumber();
 }
+
+
+
 

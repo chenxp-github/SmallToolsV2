@@ -57,7 +57,19 @@ static int serversidepeer_getsendingqueuelength(lua_State *L)
 {
 	CServerSidePeer *pserversidepeer = get_serversidepeer(L,1);
 	ASSERT(pserversidepeer);
-	int _ret_0 = (int)pserversidepeer->GetSendingQueueLength();
+
+	const char *proxy_name = "";
+	if(lua_isstring(L,2))
+	{
+		proxy_name = lua_tostring(L,2);
+	}
+
+	if(!proxy_name)
+	{
+		proxy_name = "";
+	}
+
+	int _ret_0 = (int)pserversidepeer->GetSendingQueueLength(proxy_name);
 	lua_pushinteger(L,_ret_0);
 	return 1;
 }

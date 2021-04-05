@@ -28,7 +28,7 @@ public:
     status_t SetRetries(int retry);
     status_t ClearSendingQueue();
     status_t SetMaxRetries(int max_retries);
-    int GetSendingQueueLength();
+    int GetSendingQueueLength(const char *proxy_name);
     bool IsConnected();
     const char * GetName();
     status_t Connect(const char *peer_name);
