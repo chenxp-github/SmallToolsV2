@@ -82,3 +82,47 @@ status_t CWebSocketCallContext::FromMessage(CWebSocketMessage *msg)
 	this->m_Method = msg->GetMethod();
 	return OK;
 }
+
+
+status_t CWebSocketCallContext::Searialize(CMem *stream)
+{
+    ASSERT(stream);  
+    stream->Write(&m_Method,sizeof(m_Method));
+    stream->Write(&m_CallbackId,sizeof(m_CallbackId));
+    return OK;
+}
+
+status_t CWebSocketCallContext::Desearialize(CMem *stream)
+{
+    ASSERT(stream);    
+    stream->Read(&m_Method,sizeof(m_Method));
+    stream->Read(&m_CallbackId,sizeof(m_CallbackId));
+    return OK;
+}
+
+status_t CWebSocketCallContext::Desearialize(const void *buf, size_t size)
+{
+    ASSERT(buf);
+    CMem stream;
+    stream.Init();
+    stream.SetRawBuf((void*)buf,size,true);
+    return this->Desearialize(&stream);
+}
+
+status_t CWebSocketCallContext::Searialize(CClosure *closure, int index)
+{
+    ASSERT(closure);
+    LOCAL_MEM(stream);
+    this->Searialize(&stream);
+    closure->Malloc(index,stream.GetRawBuf(),stream.GetSize());
+    return OK;
+}
+
+status_t CWebSocketCallContext::Desearialize(CClosure *closure, int index)
+{
+    ASSERT(closure);
+    ASSERT(closure->GetParamType(index) == PARAM_TYPE_MALLOC);
+    void *data = closure->GetParamPointer(index);
+    int size = closure->GetMallocSize(index);
+    return this->Desearialize(data,size);
+}

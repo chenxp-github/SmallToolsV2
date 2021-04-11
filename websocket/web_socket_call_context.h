@@ -27,6 +27,13 @@ public:
     int GetCallbackId();
     status_t SetMethod(int _method);
     status_t SetCallbackId(int _callbackid);
+
+    status_t Searialize(CMem *stream);
+    status_t Desearialize(CMem *stream);
+    status_t Desearialize(const void *buf, size_t size);
+    status_t Searialize(CClosure *closure, int index);
+    status_t Desearialize(CClosure *closure, int index);
+
 };
 
 #endif

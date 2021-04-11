@@ -20,8 +20,7 @@
 #define FREE_MEM_IF_BIGGER_THAN(mem,size) do{\
 if((uint32_t)(mem).GetMaxSize() > ((size)+EXTRA_MEM_SIZE))\
 {\
-	(mem).Destroy();\
-	(mem).Init();\
+	(mem).Free();\
 }}while(0)\
 
 #define DEFAULT_READER_BUFFER_SIZE (64*1024)
@@ -386,18 +385,20 @@ status_t CTaskWebSocketServer::RunReader(uint32_t interval)
 			char *data = m_TmpBufForRead.GetRawBuf();
 			int32_t len = (int32_t)m_TmpHeader.GetPayloadLen();
 			
-			ASSURE_MEM_SIZE(m_DecodedBuffer,len*2);
-
-			m_DecodedBuffer.SetSize(0);
+			ASSURE_MEM_SIZE(m_DecodedBuffer,(m_DecodedBuffer.GetSize()+len)*2);
 			m_TmpHeader.DecodeFramePayload(data,len,&m_DecodedBuffer);
-
-			CClosure *callback = m_HostPtr->Callback();
-			callback->SetParamPointer(1,&m_DecodedBuffer);
-            callback->SetParamPointer(2,&m_TmpHeader);
-			callback->Run(CWebSocketServer::EVENT_GOT_PAYLOAD);
+			//the fin indicate the whole payload is complete
+			if(m_TmpHeader.GetFin())
+			{
+				CClosure *callback = m_HostPtr->Callback();
+				callback->SetParamPointer(1,&m_DecodedBuffer);
+        	    callback->SetParamPointer(2,&m_TmpHeader);
+				callback->Run(CWebSocketServer::EVENT_GOT_PAYLOAD);
+				FREE_MEM_IF_BIGGER_THAN(m_DecodedBuffer,DEFAULT_READER_BUFFER_SIZE*2);
+				m_DecodedBuffer.SetSize(0);
+			}
 
 			FREE_MEM_IF_BIGGER_THAN(m_TmpBufForRead,DEFAULT_READER_BUFFER_SIZE);
-			FREE_MEM_IF_BIGGER_THAN(m_DecodedBuffer,DEFAULT_READER_BUFFER_SIZE*2);
 			m_ReaderStep = STEP_PREDICT_PAYLOAD_HEADER_SIZE_1;
         }
     }
@@ -451,4 +452,9 @@ status_t CTaskWebSocketServer::RunWriter(uint32_t interval)
 	}
 
     return OK;
+}
+
+bool CTaskWebSocketServer::IsConnected()
+{
+	return m_Socket.IsConnected();
 }

@@ -89,5 +89,9 @@ status_t CWebSocketServer::SendMessage(CWebSocketMessage *msg)
 
 bool CWebSocketServer::IsConnected()
 {
-	return IsTask(m_TaskWebSocketServer);
+	if(!IsTask(m_TaskWebSocketServer))
+		return false;
+	CTaskWebSocketServer *task = (CTaskWebSocketServer*)GetTask(m_TaskWebSocketServer);
+	ASSERT(task);
+	return task->IsConnected();
 }

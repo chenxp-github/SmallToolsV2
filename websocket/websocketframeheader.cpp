@@ -212,7 +212,6 @@ status_t CWebSocketFrameHeader::Deserialize(CFileBase *file)
 	uint8_t opcode = first_byte & kOpCodeMask;
 	bool masked = (second_byte & kMaskBit) != 0;
 	uint64_t payload_length = second_byte & kPayloadLengthMask;
-
 	if (payload_length == kPayloadLengthWithTwoByteExtendedLengthField) 
 	{
 		uint16_t payload_length_16;

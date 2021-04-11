@@ -63,6 +63,7 @@ public:
 	status_t Start();
 	status_t Stop(int err);
 	CClosure* Callback();
+	bool IsConnected();
 };
 
 #endif
