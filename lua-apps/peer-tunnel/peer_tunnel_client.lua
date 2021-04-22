@@ -37,7 +37,7 @@ end
 
 --@@Begin Method ConnectRemote @@--
 function PeerTunnelClient:ConnectRemote(_server, _port, _callback)
-    local _cbid = self:AddCallback(_callback,-1);
+    local _cbid = self:AddCallback(_callback,15000);
     local _param={
         server = _server,
         port = _port,
