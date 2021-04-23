@@ -154,7 +154,7 @@ end
 function PeerTunnelClient:OnCloseConnection(_context,_param)
     local con = self:GetLocalConnection(_param.handle);
     if con then 
-        printf("close client side connetion %d.",_param.handle);
+        printfnl("close client side connetion %d.",_param.handle);
         con:Close(); 
     end
     local _ret={ret = 1};

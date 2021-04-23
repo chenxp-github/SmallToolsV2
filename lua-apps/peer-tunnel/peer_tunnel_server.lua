@@ -44,7 +44,7 @@ function PeerTunnelServer:OnConnectRemote(_context,_param)
                     handle = self:AllocId(),
                     errStr = "",
                 };
-                printf("new tunnel client arrive %d",_ret.handle);
+                printfnl("new tunnel client arrive %d",_ret.handle);
                 local connection = LocalConnection.new(self,new_socket,_ret.handle);
                 self.local_connections[_ret.handle] = connection;
                 connection:StartForwarding();
@@ -114,7 +114,7 @@ end
 function PeerTunnelServer:OnCloseConnection(_context,_param)
     local con = self:GetLocalConnection(_param.handle);
     if con then 
-        printf("close server side connetion %d.",_param.handle);
+        printfnl("close server side connetion %d.",_param.handle);
         con:Close(); 
     end
     local _ret={ret = 1};
