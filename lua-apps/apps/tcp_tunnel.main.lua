@@ -31,8 +31,7 @@ function app_main(args)
     cmd:AddKeyType(kAsClient,TYPE_KEY,OPTIONAL,"as tunnel client?");
     cmd:AddKeyType(kPeerServer,TYPE_KEY_EQUAL_VALUE,MUST,"message peer server address");
     cmd:AddKeyType(kPeerPort,TYPE_KEY_EQUAL_VALUE,MUST,"message center service port");    
-    cmd:AddKeyType(kPeerName,TYPE_KEY_EQUAL_VALUE,MUST,"self message peer name");        
-    cmd:AddKeyType(kRemotePeerName,TYPE_KEY_EQUAL_VALUE,MUST,"remote message peer name");    
+    cmd:AddKeyType(kPeerName,TYPE_KEY_EQUAL_VALUE,MUST,"self message peer name");            
     cmd:AddKeyType(kTimeout,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"socket inactive timeout (ms).");
     cmd:AddKeyType(kConfig,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"config file as client");
 
@@ -47,8 +46,7 @@ function app_main(args)
     if not is_client and not is_server then
         exit("you must specify at least one %s or %s",kAsServer,kAsServer);
     end
-
-    local remote_peer_name = cmd:GetValueByKey(kRemotePeerName);
+    
     local peer_server = cmd:GetValueByKey(kPeerServer);
     local peer_port = tonumber(cmd:GetValueByKey(kPeerPort));
     local peer_name = cmd:GetValueByKey(kPeerName);    
@@ -58,6 +56,7 @@ function app_main(args)
         if cmd:HasKey(kConfig) then
             local cmd = CommandLine.new();
             cmd:AddKeyType(kConfig,TYPE_KEY_EQUAL_VALUE,MUST,"config file as client");
+            cmd:AddKeyType(kRemotePeerName,TYPE_KEY_EQUAL_VALUE,MUST,"remote message peer name");    
 
             cmd:LoadFromArgv(args);
             if cmd:CheckForErrors() then
@@ -72,6 +71,8 @@ function app_main(args)
             if not tunnel_table then
                 return exit("can not find 'tunnel_table' in config file");
             end
+            
+            local remote_peer_name = cmd:GetValueByKey(kRemotePeerName);
 
             for i,v in ipairs(tunnel_table) do
                 local remote_server = v[1];
@@ -96,12 +97,14 @@ function app_main(args)
             cmd:AddKeyType(kRemotePort,TYPE_KEY_EQUAL_VALUE,MUST,"remote port connect to");
             cmd:AddKeyType(kLocalListeningPort,TYPE_KEY_EQUAL_VALUE,MUST,"local listening port");            
             cmd:AddKeyType(kConfig,TYPE_KEY_EQUAL_VALUE,MUST,"config file as client");
+            cmd:AddKeyType(kRemotePeerName,TYPE_KEY_EQUAL_VALUE,MUST,"remote message peer name");   
 
             cmd:LoadFromArgv(args);
             if cmd:CheckForErrors() then
                 return 1;
             end    
-
+            
+            local remote_peer_name = cmd:GetValueByKey(kRemotePeerName);
             local remote_server = cmd:GetValueByKey(kRemoteServer);
             local remote_port = tonumber(cmd:GetValueByKey(kRemotePort));
             local local_listening_port = tonumber(cmd:GetValueByKey(kLocalListeningPort));
