@@ -260,6 +260,7 @@ string.trim=function(s)
   return (s:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+--把一个Table变成lua源代码
 function object_to_lua(obj,pbuf)
     if type(obj) ~= "table" then
         return;
@@ -298,6 +299,7 @@ function object_to_lua(obj,pbuf)
     end
 end
 
+--使用tcp协议链接服务器，直到成功为止。需要在一个CoThread中执行
 function tcp_connect_to_server(thread,server, port)
     local is_end = false;
     local remote_socket = nil;
@@ -315,3 +317,14 @@ function tcp_connect_to_server(thread,server, port)
     return remote_socket;
 end
 
+--读取unix系统下的伪文件，比如/proc下面的文件,返回mem类
+function read_pseudo_file(filename)
+    local file = new_file(filename);
+    if not file then return end
+    local mf = new_memfile();
+    file:WriteToFile(mf,0,0x7fffffff);
+    local mem = new_mem(mf:GetSize());
+    mem:Write(mf,mf:GetSize());
+    mf:Destroy();
+    return mem;
+end
