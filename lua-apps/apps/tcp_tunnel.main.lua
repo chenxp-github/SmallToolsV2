@@ -96,7 +96,6 @@ function app_main(args)
             cmd:AddKeyType(kRemoteServer,TYPE_KEY_EQUAL_VALUE,MUST,"remote server address connect to");
             cmd:AddKeyType(kRemotePort,TYPE_KEY_EQUAL_VALUE,MUST,"remote port connect to");
             cmd:AddKeyType(kLocalListeningPort,TYPE_KEY_EQUAL_VALUE,MUST,"local listening port");            
-            cmd:AddKeyType(kConfig,TYPE_KEY_EQUAL_VALUE,MUST,"config file as client");
             cmd:AddKeyType(kRemotePeerName,TYPE_KEY_EQUAL_VALUE,MUST,"remote message peer name");   
 
             cmd:LoadFromArgv(args);
