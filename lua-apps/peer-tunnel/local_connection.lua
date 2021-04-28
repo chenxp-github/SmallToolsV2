@@ -50,6 +50,7 @@ function LocalConnection:WriteThread(thread)
             end
 
             local ws = ret.value.ws;
+         
             if ws < 0 then
                 printfnl("remote write fail: %s.",ws);
                 break;

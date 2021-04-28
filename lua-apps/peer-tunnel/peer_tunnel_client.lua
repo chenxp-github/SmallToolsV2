@@ -188,18 +188,29 @@ end
 
 function PeerTunnelClient:OnNewLocalClient(new_socket)    
     function connect_thread(thread)
-        local ret = self:ConnectRemote_Async(thread,self.remote_server,self.remote_port);
-        if ret.result ~= OK then
-            new_socket:Destroy();
-            printfnl("call ConnectRemote_Async timeout, %s:%d",
-                self.remote_server,self.remote_port);
-            return;
-        end
-
-        if ret.value.handle <= 0 then
-            new_socket:Destroy();
-            printfnl("connect remote rejected %s",ret.value.errStr);
-            return;
+        local ret;
+        local retry = 0;
+        while new_socket:IsConnected() do
+            ret = self:ConnectRemote_Async(thread,self.remote_server,self.remote_port);
+            if ret.result ~= OK then
+                --new_socket:Destroy();
+                printfnl("call ConnectRemote_Async timeout, %s:%d, retry",
+                    self.remote_server,self.remote_port);                
+            else
+                if ret.value.handle <= 0 then
+                    --new_socket:Destroy();
+                    printfnl("connect remote rejected %s,retry=%d",ret.value.errStr,retry);
+                else
+                    break;
+                end
+            end
+            retry = retry + 1;
+            if retry >= 5 then
+                new_socket:Destroy();
+                printfnl("exceed max retries,connect remote fail.");
+                return;
+            end            
+            thread:Sleep(2000);
         end
 
         printfnl("connect remote %s:%d success.", self.remote_server,self.remote_port);
