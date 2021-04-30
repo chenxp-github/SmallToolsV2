@@ -56,6 +56,9 @@
 CGlobals g_globals;
 CGlobals *g_globals_ptr = NULL;
 
+static int mainloop_sleep_time = 1;
+static int do_not_use_epoll = 0;
+
 static CTaskMgr* get_global_taskmgr(lua_State *L)
 {
 	GLOBAL_TASKMGR(mgr);
@@ -84,6 +87,7 @@ static const void *get_peer_globals(lua_State *L)
 
 static status_t global_on_before_close_socket(int32_t s)
 {  
+    if(do_not_use_epoll)return OK;
     REMOVE_FROM_EPOLL(g_globals);
     if(g_globals_ptr)
     {
@@ -125,6 +129,7 @@ static status_t on_taskmgr_event(CClosure *closure)
 	if(event == CTaskMgr::EVENT_SOCKET_CONNECTED)
 	{
 		CLOSURE_PARAM_INT(socket,1);
+        if(do_not_use_epoll)return OK;
 		CEpoll *epoll = &self->m_Epoll;
 		if(epoll->AddFd(socket))
 		{
@@ -154,9 +159,15 @@ status_t CGlobals::Init()
 	how_to_get_global_taskmgr = get_global_taskmgr;
     how_to_get_lua_running_flag = get_lua_running_flag;
     how_to_get_peer_globals = get_peer_globals;
-    crt_set_before_close_socket_callback(global_on_before_close_socket);
+
+    crt_set_before_close_socket_callback(
+        global_on_before_close_socket
+    );
+
+    this->LoadEnv();
     return OK;
 }
+
 status_t CGlobals::Destroy()
 {
     if(IsInitiated())
@@ -174,18 +185,45 @@ status_t CGlobals::Destroy()
     return OK;
 }
 
+status_t CGlobals::LoadEnv()
+{
+    const char *str = getenv("MAIN_LOOP_SLEEP_TIME");
+    if(str)
+    {
+        mainloop_sleep_time = atoi(str);
+        if(mainloop_sleep_time <= 0)
+            mainloop_sleep_time = 1;
+        XLOG(LOG_MODULE_USER,LOG_LEVEL_INFO,
+            "mainloop_sleep_time = %d(ms)",
+            mainloop_sleep_time);
+    }
+
+    str = getenv("DO_NOT_USE_EPOLL");
+    if(str)
+    {
+        do_not_use_epoll = atoi(str);
+        XLOG(LOG_MODULE_USER,LOG_LEVEL_INFO,
+            "do_not_use_epoll = %d",do_not_use_epoll);
+    }
+
+    return OK;
+}
+
 status_t CGlobals::MainLoop()
 {
     m_MainLoopRunning = true;
     while(m_MainLoopRunning)
     {   
 		if(!m_TaskMgr.Schedule())
+        {
+            if(!do_not_use_epoll)
+                m_Epoll.Wait(mainloop_sleep_time);
+        }
 
-#ifdef EPOLL_SLEEP_TIME
-    m_Epoll.Wait(EPOLL_SLEEP_TIME);
-#else
-	m_Epoll.Wait(1);
-#endif        
+        if(do_not_use_epoll)
+        {
+            crt_msleep(mainloop_sleep_time);
+        }
     }
     return OK;
 }

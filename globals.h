@@ -25,6 +25,7 @@ public:
 	CEpoll m_Epoll;
     CPeerGlobals m_PeerGlobals;
 public:
+    status_t LoadEnv();
     CMem * GetLuaFilesPath();
     status_t SetLuaFilesPath(CMem *path);
     static const char * OS();

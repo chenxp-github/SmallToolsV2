@@ -194,8 +194,8 @@ function PeerTunnelClient:OnNewLocalClient(new_socket)
             ret = self:ConnectRemote_Async(thread,self.remote_server,self.remote_port);
             if ret.result ~= OK then
                 --new_socket:Destroy();
-                printfnl("call ConnectRemote_Async timeout, %s:%d, retry",
-                    self.remote_server,self.remote_port);                
+                printfnl("call ConnectRemote_Async timeout, %s:%d, retry=%d",
+                    self.remote_server,self.remote_port,retry);
             else
                 if ret.value.handle <= 0 then
                     --new_socket:Destroy();
