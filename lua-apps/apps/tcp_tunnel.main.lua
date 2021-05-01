@@ -44,7 +44,7 @@ function app_main(args)
     local is_server = cmd:HasKey(kAsServer);
 
     if not is_client and not is_server then
-        exit("you must specify at least one %s or %s",kAsServer,kAsServer);
+        exit("you must specify at least one %s or %s",kAsServer,kAsClient);
     end
     
     local peer_server = cmd:GetValueByKey(kPeerServer);
@@ -124,6 +124,7 @@ function app_main(args)
         server:SetName(peer_name);
         server:Start();
         server:StartAutoClearThread();
+        server:SetTimeout(60*1000); --default timeout
 
         if cmd:HasKey(kTimeout) then
             local timeout = cmd:GetValueByKey(kTimeout);

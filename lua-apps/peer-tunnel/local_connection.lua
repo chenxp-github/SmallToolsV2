@@ -45,7 +45,7 @@ function LocalConnection:WriteThread(thread)
             assert(rs == tmp:GetSize(),"rs == tmp:GetSize()");            
             local ret = self.host_peer:WriteData_Async(thread,self.handle,tmp);
             if not ret.value then 
-                printfnl("remote write fail: timoeut.");
+                printfnl("remote write fail: timeout.");
                 break;
             end
 
