@@ -161,7 +161,8 @@ function run_child_process(item,slot)
         "wget --child=%d --cmd=\"%s\" &",
         slot,command
     );
-    self_call(child_cmd);
+    local args = App.GetArgs();
+	return os.execute(args[1].." "..args[2].." "..child_cmd);
 end
 
 function host_mode_main(cmd)
