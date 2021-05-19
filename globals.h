@@ -25,6 +25,7 @@ public:
 	CEpoll m_Epoll;
     CPeerGlobals m_PeerGlobals;
 public:
+    status_t FastFindAppName(const char *lua_fn, CMem *name);
     status_t LoadEnv();
     CMem * GetLuaFilesPath();
     status_t SetLuaFilesPath(CMem *path);

@@ -500,6 +500,74 @@ status_t CGlobals::BareMain()
     return OK;
 }
 
+static int find_str_seq_from_current_position(CFileBase *in_file, const char **seq, int seq_len)
+{
+    fsize_t save_off = in_file->GetOffset();
+
+    LOCAL_MEM(mem);
+
+    int match = 1;
+
+    for(int i = 0; i < seq_len; i++)
+    {
+        if(in_file->IsEnd())
+        {
+            match = 0;
+            break;
+        }
+
+        in_file->ReadWord(&mem);
+        if(mem.StrCmp(seq[i]) != 0)
+        {
+            match = 0;
+            break;
+        }
+    }
+
+    if(!match)
+    {
+        in_file->Seek(save_off);
+    }
+
+    return match;
+}
+
+status_t CGlobals::FastFindAppName(const char *lua_fn, CMem *name)
+{
+    ASSERT(lua_fn && name);
+
+    CMem lua_code;
+    lua_code.Init();
+    ASSERT(lua_code.LoadFile(lua_fn));
+
+    LOCAL_MEM(mem);
+    lua_code.Seek(0);
+    
+    const char *seq[]={
+        "function","app_name","(",")","return"
+    };
+
+    while(!lua_code.IsEnd())
+    {
+        if(find_str_seq_from_current_position(&lua_code,seq,sizeof(seq)/sizeof(seq[0])))
+        {
+            lua_code.ReadWord(&mem);
+            if(mem.StrCmp("\"") != 0)
+                return ERROR;
+            lua_code.ReadWord(&mem);
+            name->StrCpy(&mem);
+            lua_code.ReadWord(&mem);
+            if(mem.StrCmp("\"") != 0)
+                return ERROR;    
+            return OK;
+        }
+
+        lua_code.ReadWord(&mem);//skip next word
+    }
+
+    return ERROR;
+}
+
 status_t CGlobals::FindAllMainLua(CMem *lua_path, CMemStk *all)
 {
     ASSERT(lua_path && all);
@@ -525,13 +593,17 @@ status_t CGlobals::FindAllMainLua(CMem *lua_path, CMemStk *all)
             escape_windows_path(fullname,&tmp);
             if(wild_match("*.main.lua",tmp.CStr()))
             {
-                if(!self->RunLua(&tmp))
+                if(!self->FastFindAppName(tmp.CStr(),&name))
                 {
-                    closure->SetParamInt(12,1); //has error
-                    return ERROR;
+                    if(!self->RunLua(&tmp))
+                    {
+                        closure->SetParamInt(12,1); //has error
+                        return ERROR;
+                    }
+                    if(!self->RunStringLuaFunction("app_name",&name))
+                        return ERROR;
                 }
-                if(!self->RunStringLuaFunction("app_name",&name))
-                    return ERROR;
+
                 tmp.SetFileName(name.CStr());
                 all->InsOrdered(&tmp,0,1);
             }
