@@ -1031,6 +1031,7 @@ static status_t filebase_skip(lua_State *L)
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
     fsize_t size = (fsize_t)lua_tointeger(L,2);
+	if(size < 0)size = 0;
     fsize_t ret0 = pfilebase->Seek(pfilebase->GetOffset()+size);
     lua_pushinteger(L,ret0);
     return 1;
