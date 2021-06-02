@@ -1026,6 +1026,16 @@ static status_t filebase_getzeroendstring(lua_State *L)
     return 0;
 }
 
+static status_t filebase_skip(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    fsize_t size = (fsize_t)lua_tointeger(L,2);
+    fsize_t ret0 = pfilebase->Seek(pfilebase->GetOffset()+size);
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
 static const luaL_Reg filebase_lib[] = {
     {"__gc",filebase_gc_},
     {"__tostring",filebase_tostring_},
@@ -1110,6 +1120,7 @@ static const luaL_Reg filebase_lib[] = {
     {"GetUInt64",filebase_getuint64},
     {"PutZeroEndString",filebase_putzeroendstring},
     {"GetZeroEndString",filebase_getzeroendstring},
+	{"Skip",filebase_skip},
     {NULL, NULL}
 };
 

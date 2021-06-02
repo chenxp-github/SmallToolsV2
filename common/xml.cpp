@@ -264,7 +264,7 @@ status_t CXmlNode::AddValueData(CFileBase *file)
         ASSERT(this->value == NULL);
         NEW(this->value,CMem);
         this->value->Init();
-        this->value->Malloc(end-start);
+        this->value->Malloc((int_ptr_t)(end-start));
         this->value->WriteFile(file,start,end-start);
         this->value->Seek(0);
     }

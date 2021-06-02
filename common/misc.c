@@ -309,7 +309,7 @@ int is_hex_char(char ch)
 
 int hex_str_to_bin(const char *shex, int len, uint8_t *out, int max)
 {
-	char buf[4];
+	char buf[8];
 	int i,k = 0,s=0;
 	
 	ASSERT(shex && out);
@@ -324,6 +324,7 @@ int hex_str_to_bin(const char *shex, int len, uint8_t *out, int max)
 			{
                 if(s < max)
 				{
+                    buf[k] = 0;
                     out[s++] = hex2dec_32(buf);
                 }
                 else

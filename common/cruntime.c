@@ -11,7 +11,7 @@
 #endif
 /////////////////////////////////////////////////////////////
 #if _WIN32_
-#include "crt_win32.c"
+#include "platform/crt_win32.c"
 #endif
 /////////////////////////////////////////////////////////////
 #if _ANDROID_
@@ -19,3 +19,8 @@
 #include "platform/crt_android.c"
 #endif
 
+/////////////////////////////////////////////////////////////
+#if _ANDROID64_
+#include "cc936.c"
+#include "platform/crt_android64.c"
+#endif

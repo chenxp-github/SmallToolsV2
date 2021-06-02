@@ -138,7 +138,7 @@ int CEpoll::Wait(int ms, uint32_t opt)
 	timeout.tv_usec =(ms%1000)*1000;
 	
 	int res = ::select(0,&read_set,NULL,&error_set,&timeout);
-	if(res < 0)crt_msleep(ms);
+	if(res <= 0)crt_msleep(ms);
 
 	if(opt & WAIT_OPT_AUTO_REMOVE)
     {        
