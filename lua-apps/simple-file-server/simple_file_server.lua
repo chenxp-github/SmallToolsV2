@@ -270,7 +270,7 @@ function SimpleFileServer:OnChangeDir(_context,_param)
         if is_windows() then
             local root_dir_ = string.lower(self.m_root_dir);
             local new_cd_ = string.lower(new_cd);
-            cur_dir = remove_path_prefix(new_cd_,root_dir_);
+            cur_dir = "\\"..remove_path_prefix(new_cd_,root_dir_);
         else
             cur_dir = "/"..remove_path_prefix(new_cd,self.m_root_dir);
         end
