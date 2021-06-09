@@ -11,6 +11,7 @@ function LocalConnection:ctor(host_peer,socket,handle)
     self.write_thread = nil;
     self.handle = handle;
     self.timeout = -1;
+    self.start_time = 0;
 end
 
 function LocalConnection:StartForwarding()
@@ -31,7 +32,7 @@ function LocalConnection:WriteThread(thread)
     local tmp = new_mem(64*1024);
     local send_qbuf = QueueFile.new(256*1024);
 
-    local start_time = App.GetSystemTimer();
+    self.start_time = App.GetSystemTimer();
     while self.socket:IsConnected() do
         tmp:SetSize(0);        
         if send_qbuf:GetFreeSize() >= tmp:GetMaxSize() then
@@ -40,7 +41,7 @@ function LocalConnection:WriteThread(thread)
         end
 
         if send_qbuf:GetSize() > 0 then
-            start_time = App.GetSystemTimer();
+            self.start_time = App.GetSystemTimer();
             local rs = send_qbuf:PeekData(tmp,tmp:GetMaxSize());
             assert(rs == tmp:GetSize(),"rs == tmp:GetSize()");            
             local ret = self.host_peer:WriteData_Async(thread,self.handle,tmp);
@@ -61,7 +62,7 @@ function LocalConnection:WriteThread(thread)
             end
         elseif self.timeout > 0 then
             local end_time = App.GetSystemTimer();
-            if end_time - start_time > self.timeout then
+            if end_time - self.start_time > self.timeout then
                 printf("local socket inactive timeout %d", self.handle);
                 break;
             end
@@ -80,6 +81,7 @@ function LocalConnection:Write(data,size)
     if not self.socket:IsConnected() then
         return -1;
     end
+    self.start_time = App.GetSystemTimer();
     return self.socket:Write(data,size);
 end
 
