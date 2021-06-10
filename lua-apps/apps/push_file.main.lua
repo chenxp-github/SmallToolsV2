@@ -11,6 +11,7 @@ function app_name()
 end
 
 local kPeerName = "--peer-name";
+local kServerPeerName = "--server-peer-name";
 local kAsServer = "--as-server";
 local kServer = "--server";
 local kPort = "--port";
@@ -23,7 +24,8 @@ local kPathPrefix = "--path-prefix";
 function app_main(args)
     local cmd = CommandLine.new();
 
-    cmd:AddKeyType(kPeerName,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"peer name of the server,default: simple-file-client");    
+    cmd:AddKeyType(kPeerName,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"peer name of the client,default: simple-file-client");    
+    cmd:AddKeyType(kServerPeerName,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"peer name of the server,default: simple-file-server");    
     cmd:AddKeyType(kAsServer,TYPE_KEY,OPTIONAL,"as tcp server");
     cmd:AddKeyType(kServer,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"message peer server address,default: 127.0.0.1");
     cmd:AddKeyType(kPort,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"message peer port, default: 2016")
@@ -94,7 +96,14 @@ function app_main(args)
         end
 
         file_client:SetName(peer_name);
-        file_client:SetDestPeerName("simple-file-server");
+
+        local peer_name = "simple-file-server";
+
+        if cmd:HasKey(kServerPeerName) then
+            peer_name = cmd:GetValueByKey(kServerPeerName);
+        end
+
+        file_client:SetDestPeerName(peer_name);
         file_client:Start();
 
         if is_file_list then
