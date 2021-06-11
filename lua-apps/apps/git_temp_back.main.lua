@@ -12,7 +12,7 @@ end
 
 
 function split_git_files()
-    local ret = execute_command("git status");
+    local ret = execute_command("git status -u");
     if not ret then return end
     
     local _,mf_file = new_memfile();
