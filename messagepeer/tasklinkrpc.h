@@ -59,6 +59,7 @@ public:
     status_t Run(uint32_t interval);
     virtual const char * ErrorToString(int err);
     status_t ReportError(int err);
+    status_t Reset();
 
     //connection
     virtual status_t OnGetSocket();

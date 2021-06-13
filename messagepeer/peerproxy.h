@@ -60,6 +60,7 @@ public:
 	status_t OnSocketConnected();
 	status_t OnSocketDisconnected();
     bool IsConnected();
+    status_t Reset();
 };
 
 #endif

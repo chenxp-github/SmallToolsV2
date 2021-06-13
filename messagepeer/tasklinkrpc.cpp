@@ -377,6 +377,23 @@ status_t CTaskLinkRpc::OnSocketError()
 {
     return OK;
 }
+
+status_t CTaskLinkRpc::Reset()
+{
+    if(IsTask(mTaskWriter))
+    {
+        QuitTask(&mTaskWriter);
+        this->CreateWriter();
+    }
+
+    if(IsTask(mTaskReader))
+    {
+        QuitTask(&mTaskReader);
+        this->CreateReader();
+    }
+    
+    return OK;
+}
 ///////////////////////////////////////////////////////////////////////////////
 //override
 ///////////////////////////////////////////////////////////////////////////////

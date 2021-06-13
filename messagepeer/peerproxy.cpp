@@ -211,6 +211,7 @@ int CPeerProxy::GetSendingQueueLength()
 
 status_t CPeerProxy::ClearSendingQueue()
 {
+    //not safe when sending messages
     return mPendingMessages->Clear();
 }
 
@@ -255,4 +256,12 @@ bool CPeerProxy::IsConnected()
     CSocket *sock = this->GetSocket();
     if(sock==NULL)return false;
     return sock->IsConnected();
+}
+
+status_t CPeerProxy::Reset()
+{
+    CTaskPeerServer *pt = (CTaskPeerServer *)GetTask(mTaskPeerServer);
+    if(pt)pt->Reset(); //must call this when clear sending queue
+    this->mPendingMessages->Clear();
+    return OK;
 }

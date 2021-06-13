@@ -108,6 +108,11 @@ status_t CPeerGlobals::DispatchMessage(CPeerMessage *msg)
             peer = this->NewPendingPeerProxy(name);
             ASSERT(peer);
         }
+        else if(msg->GetFunc() == PEER_FUNC_RESET_PEER_PROXY)
+        {
+            peer->Reset();
+        }
+
         return peer->AddPendingMessage(msg);
     }
     return OK;
@@ -303,4 +308,3 @@ bool CPeerGlobals::IsPeerConnected(const char *name)
     if(!proxy)return false;
     return proxy->IsConnected();
 }
-

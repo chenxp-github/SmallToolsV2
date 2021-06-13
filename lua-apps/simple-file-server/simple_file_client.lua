@@ -253,3 +253,9 @@ end
 function SimpleFileClient:SetPushFileCallback(cb)
     self.m_push_file_callback = cb;
 end
+
+function SimpleFileClient:Start()
+    self:ResetPeer(self:GetName());
+    self:ResetPeer(self:GetDestPeerName());
+    super(PeerServiceBase).Start(self);
+end

@@ -9,6 +9,7 @@ function SimpleFileServer:ctor()
     self.m_root_dir = "/";
     self.m_cur_big_file=nil;
     self.m_pulling_files = 0;
+    self.thread_running = false;
 end
 
 function SimpleFileServer:OnRequest(_context,_param)
@@ -33,6 +34,10 @@ function SimpleFileServer:OnRequest(_context,_param)
         self:OnChangeDir(_context,_param);
     end	
 --##End OnRequest ##--
+
+    if method == PEER_FUNC_RESET_PEER_PROXY then
+        self:OnResetPeerProxy();
+    end
 end
 
 --@@Begin Method OnList @@--
@@ -141,7 +146,7 @@ function SimpleFileServer:SendFileOnThread(_context,_filename)
         file:Seek(0);
         local has_clients = true;
 
-        while not file:IsEnd() do
+        while not file:IsEnd() and self.thread_running do
             if self:GetAliveClientNumber() == 0 then              
                 printnl("all clients disconnected");
                 has_clients = false;
@@ -190,9 +195,10 @@ function SimpleFileServer:SendFile(_context,_filename)
         context = _context,
         filename = _filename,
     });
+    self.thread_running = true;
 
     function sending_thread(thread)
-        while #g_all_pending_files > 0 do
+        while #g_all_pending_files > 0 and self.thread_running do
             if self.m_pulling_files < 20 then
                 local head = g_all_pending_files[1];
                 table.remove(g_all_pending_files,1);
@@ -215,7 +221,6 @@ function SimpleFileServer:OnPullFile(_context,_param)
     return self:SendFile(_context,self:MakeLocalPath(_param.filename));
 end
 --@@End Method OnPullFile @@--
-
 
 
 --@@Begin Method OnRunCmd @@--
@@ -281,4 +286,8 @@ function SimpleFileServer:OnChangeDir(_context,_param)
         success = success,
     };
     self:SendReturnValue(_context,_ret);
+end
+
+function SimpleFileServer:OnResetPeerProxy()
+    self.thread_running = false;
 end

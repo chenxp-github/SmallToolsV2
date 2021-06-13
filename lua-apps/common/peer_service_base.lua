@@ -19,8 +19,10 @@ local PEER_EVENT_DISCONNECTED = 9002;
 local PEER_EVENT_STOPPED= 9003;
 local PEER_EVENT_CAN_FETCH_MESSAGE = 9004;
 
-PeerServiceBase = class();
+--from peercommon.h
+PEER_FUNC_RESET_PEER_PROXY = 0x10002;
 
+PeerServiceBase = class();
 function PeerServiceBase:ctor()
     self.m_server_side_peer = nil;
     self.m_client_side_peer = nil;
@@ -201,6 +203,10 @@ function PeerServiceBase:SetDestPeerName(name)
     self.m_dest_peer_name = name;
 end
 
+function PeerServiceBase:GetDestPeerName()
+    return self.m_dest_peer_name;
+end
+
 function PeerServiceBase:SendRequest(obj, method,callback_id)
     local bson = ObjectToBson(obj);   
     local msg={
@@ -244,5 +250,9 @@ function PeerServiceBase:GetAliveClientNumber()
     --client side do not know server status
     --so return a positive number
     return 1000000;  
+end
+
+function PeerServiceBase:ResetPeer(name)
+    self:SendRequest({},PEER_FUNC_RESET_PEER_PROXY,0);
 end
 
