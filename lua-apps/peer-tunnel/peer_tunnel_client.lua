@@ -247,10 +247,3 @@ function PeerTunnelClient:StartAutoClearThread()
     self.auto_clear_thread = CoThread.new();
     self.auto_clear_thread:Start(auto_clear);
 end
-
-function PeerTunnelClient:Start()
-    self:ResetPeer(self:GetName());
-    self:ResetPeer(self:GetDestPeerName());
-    super(PeerServiceBase).Start(self);
-end
-
