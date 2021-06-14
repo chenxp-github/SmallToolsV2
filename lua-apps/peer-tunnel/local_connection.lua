@@ -49,7 +49,7 @@ function LocalConnection:WriteThread(thread)
 
             local success = false;
 
-            for r=1,5,1 do
+            for r=1,3,1 do
                 local ret = self.host_peer:WriteData_Async(thread,self.handle,tmp);
                 if not ret.value then 
                     printfnl("remote write fail: timeout.");
@@ -60,7 +60,7 @@ function LocalConnection:WriteThread(thread)
              
                 if ws == -2 then
                     printfnl("remote write fail: %d, will retry %d.",ws,r);
-                    self:Sleep(1000);
+                    thread:Sleep(1000);
                 elseif ws < 0 then
                     printfnl("remote write fail: %d.",ws);
                     break;
@@ -81,7 +81,7 @@ function LocalConnection:WriteThread(thread)
                 break;
             end
         end
-        
+
         thread:Sleep(1);
     end
 

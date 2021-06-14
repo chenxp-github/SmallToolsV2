@@ -172,8 +172,8 @@ end
 function PeerTunnelClient:StartListeningLocalPort(local_port)
     TcpSocket.NewTcpAcceptor(local_port,function(event,new_socket)
         if event == EVENT_STOP then
-            exit("listening tcp port %d fail",local_port);
-            return
+            printfnl("listening tcp port %d fail",local_port);
+            return App.QuitMainLoop();
         end
 
         if event == EVENT_NEW_CLIENT then
