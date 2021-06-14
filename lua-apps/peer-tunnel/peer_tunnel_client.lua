@@ -215,6 +215,7 @@ function PeerTunnelClient:OnNewLocalClient(new_socket)
 
         printfnl("connect remote %s:%d success.", self.remote_server,self.remote_port);
         local connection = LocalConnection.new(self,new_socket,ret.value.handle);
+        connection.peer_name = self:GetDestPeerName();
         self.local_connections[ret.value.handle] = connection;
         connection:StartForwarding();
     end

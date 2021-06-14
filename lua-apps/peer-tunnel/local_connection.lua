@@ -12,6 +12,7 @@ function LocalConnection:ctor(host_peer,socket,handle)
     self.handle = handle;
     self.timeout = -1;
     self.start_time = 0;
+    self.peer_name = nil;
 end
 
 function LocalConnection:StartForwarding()
@@ -43,22 +44,35 @@ function LocalConnection:WriteThread(thread)
         if send_qbuf:GetSize() > 0 then
             self.start_time = App.GetSystemTimer();
             local rs = send_qbuf:PeekData(tmp,tmp:GetMaxSize());
-            assert(rs == tmp:GetSize(),"rs == tmp:GetSize()");            
-            local ret = self.host_peer:WriteData_Async(thread,self.handle,tmp);
-            if not ret.value then 
-                printfnl("remote write fail: timeout.");
-                break;
+            assert(rs == tmp:GetSize(),"rs == tmp:GetSize()");
+            self.host_peer:SetDestPeerName(self.peer_name);
+
+            local success = false;
+
+            for r=1,5,1 do
+                local ret = self.host_peer:WriteData_Async(thread,self.handle,tmp);
+                if not ret.value then 
+                    printfnl("remote write fail: timeout.");
+                    break;
+                end
+
+                local ws = ret.value.ws;
+             
+                if ws == -2 then
+                    printfnl("remote write fail: %d, will retry %d.",ws,r);
+                    self:Sleep(1000);
+                elseif ws < 0 then
+                    printfnl("remote write fail: %d.",ws);
+                    break;
+                elseif ws > 0 then
+                    send_qbuf:Skip(ws);
+                    success = true;
+                    break;
+                end
             end
 
-            local ws = ret.value.ws;
-         
-            if ws < 0 then
-                printfnl("remote write fail: %s.",ws);
+            if not success then
                 break;
-            end
-
-            if ws > 0 then
-                send_qbuf:Skip(ws);
             end
         elseif self.timeout > 0 then
             local end_time = App.GetSystemTimer();
@@ -67,6 +81,7 @@ function LocalConnection:WriteThread(thread)
                 break;
             end
         end
+        
         thread:Sleep(1);
     end
 

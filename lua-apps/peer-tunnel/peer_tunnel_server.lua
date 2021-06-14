@@ -35,7 +35,7 @@ end
 --@@Begin Method OnConnectRemote @@--
 function PeerTunnelServer:OnConnectRemote(_context,_param)
     printfnl("try to connect to %s:%d",_param.server,_param.port);
-
+    local peer_name = _context.from;
     TcpSocket.NewTcpConnector(_param.server,_param.port,
         function(event,new_socket)
             local _ret;
@@ -44,8 +44,9 @@ function PeerTunnelServer:OnConnectRemote(_context,_param)
                     handle = self:AllocId(),
                     errStr = "",
                 };
-                printfnl("new tunnel client arrive %d",_ret.handle);
+                printfnl("new tunnel client from %s arrive %d",peer_name,_ret.handle);
                 local connection = LocalConnection.new(self,new_socket,_ret.handle);
+                connection.peer_name = peer_name;
                 self.local_connections[_ret.handle] = connection;
                 connection:StartForwarding();
                 connection:SetTimeout(self.timeout);
@@ -66,7 +67,7 @@ function PeerTunnelServer:OnWriteData(_context,_param)
     local handle = _param.handle;
     local data = _param.data._binary_;
 
-    local ws = -1;
+    local ws = -2;
     local local_connection = self:GetLocalConnection(handle);
     if local_connection then
         ws = local_connection:Write(data,data:GetSize());
