@@ -109,12 +109,8 @@ static int minibson_getstring(lua_State *L)
     const char* name = (const char*)lua_tostring(L,2);
     CMem str;
     pminibson->GetString(name,&str);
-    if(str.StrLen() > 0)
-    {
-        lua_pushstring(L,str.CStr());
-        return 1;
-    }
-    return 0;
+    lua_pushlstring(L,str.CStr(),str.StrLen());
+    return 1;
 }
 static int minibson_getboolean(lua_State *L)
 {
