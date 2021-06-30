@@ -49,8 +49,12 @@ status_t CTaskPeerServer::Destroy()
         XLOG(LOG_MODULE_MESSAGEPEER,LOG_LEVEL_INFO,
             "peer server \"%s\" exit",this->iHostProxy->GetNameStr()
         );
+
+        PEER_GLOBALS(peer_globals);
+        peer_globals->NotifyPeerDeleted(iHostProxy.get());
+        iHostProxy.Destroy();        
     }
-	iHostProxy.Destroy();
+	
     DEL(this->mSendHeadBuf);
     DEL(this->mRecvHeadBuf);
     DEL(this->mRecvDataBuf);
