@@ -1,92 +1,3 @@
-class MiniBson{
-    fsize_t StartArray(string name);
-    status_t EndArray(fsize_t offset,int32_t array_len);
-    MiniBson,int32_t GetArray(string name);
-    status_t Traverse(bool recursive, callback_ onTraverse);
-    callback static void onTraverse(int info);    
-    
-    Mem GetRawData();    
-    
-    status_t LoadBson_v1(string fn);
-    status_t LoadBson_v2(FileBase file);
-}
-
-class App{
-    [static] int GetSystemTimer();
-    [static] string GetSelfExePath();
-    [static] string MakeFullPathWithExe(string rpath);
-    [static] status_t AddLuaSearchPath(string path,string type,string ext, bool recursive);
-    [static] status_t QuitMainLoop();
-    [static] string OS();
-    [static] void MainLoop();
-    [static] void LuaMain(int args);
-    [static] void PutEnv(string env);    
-    [static] int StartMessageCenter(int port);
-    [static] array<string> GetArgs();
-    [static] void QuitTask(int tid);
-    [static] void StartAutoExitThread(int ms, int exit_code);
-}
-
-class Stream{
-    string GetAsString(int len);
-    FileBase FileBase();
-    Mem Mem();
-}
-
-class FileManager{
-    static status_t DeleteFile(string name);
-    static string ReadLink(string link_name);
-    static status_t SaveFile(string path, FileBase file);
-    static status_t CreateDir(string path);
-    
-    
-    static status_t CopySingleFile_V0(string from,string to, fsize_t start, fsize_t size,fsize_t to_start,uint32_t mode);
-    static status_t CopySingleFile_V1(string from,string to,fsize_t start, fsize_t size,uint32_t mode);
-    static status_t CopySingleFile_V2(string from,string to,uint32_t mode);
-    
-    static bool IsTextFile_V1(FileBase file);
-    static bool IsTextFile_V2(string fn);
-    static status_t ConvertEol_V1(FileBase in, FileBase out, int mode);
-    static status_t ConvertEol_V2(string in, string out, int mode);
-    static bool IsFileSame_V1(FileBase src1, FileBase src2);
-    static bool IsFileSame_V2(string fn1, string fn2);
-    static status_t MakeOrderSimpleDiskFromDir(string dir,SimpleDisk disk);
-    
-    static status_t DeleteDir(string dir);
-}
-
-class CommandLine{
-    void PrintHelp();
-    bool CheckForErrors();
-    string GetValueByKey(string key);
-    bool HasKey(string str);
-    status_t AddKeyType(string key, int type, int option,string help);
-    status_t LoadFromArgv(int args);
-    
-    string SaveToCmdLine();
-    status_t DelByIndex(int index);
-    status_t DelByKey(string key);
-    status_t Print();
-    status_t LoadFromString(string str);
-    int GetCmdEntriesLen();
-    CmdEntry GetCmdEntry(int i);
-
-    array<string> GetAllValuesByKey(string key);
-}
-
-class CmdEntry{
-    status_t SetOption(int option);
-    int GetOption();
-    int GetKeyType();
-    string GetKey();
-    string GetValue();
-    status_t SetKeyType(int _keytype);
-    status_t SetKey(string _key);
-    status_t SetValue(string _value);
-    string GetHelp();
-    status_t SetHelp(string _help);
-}
-
 class FileBase{    
     bool IsEnd();
     char CharAt(fsize_t index);
@@ -97,10 +8,8 @@ class FileBase{
     fsize_t GetOffset();
     fsize_t GetSize();
     fsize_t Putc(char ch);
-    
     fsize_t Puts(FileBase str);
     fsize_t Puts(string str);
-    
     bool ReadLeftStr(FileBase file,bool skip_empty);
     bool ReadWord(FileBase file);
     bool ReadWordWithEmptyChar(FileBase file);
@@ -176,12 +85,287 @@ class FileBase{
 	uint32_t GetUInt32();
 	status_t PutUInt64(uint64_t i);
 	uint64_t GetUInt64();
-	
 	status_t PutZeroEndString(string str);
 	string GetZeroEndString();
-	
-	fsize_t Skip(fsize_t size);
+
+    fsize_t Skip(fsize_t offset);
 }
+
+class Mem:FileBase{
+    void Mem();
+    bool IsMalloc();
+    status_t Transfer(Mem from);
+    status_t Realloc(int_ptr_t newSize);
+    bool StrEqu(Mem str, bool case_sensitive);    
+    char C(int index);
+    status_t Malloc(int_ptr_t asize);
+    status_t Zero();
+    status_t Copy(FileBase file);
+    string CStr();
+    status_t Init();
+    status_t Destroy();
+    int_ptr_t GetRawBuf();
+    status_t SetRawBuf(int_ptr_t buf, int_ptr_t size, bool is_const);
+	Mem Slice(int_ptr_t start, int_ptr_t size);
+    status_t MemCpy(int_ptr_t addr, int_ptr_t size);
+    status_t MemCpy(Mem mem, int_ptr_t size);
+}
+
+class MemFile:FileBase{
+    void MemFile();
+    status_t Transfer(MemFile from);
+    status_t Init();
+    status_t Init(int_ptr_t page_size,int_ptr_t max_pages);
+    status_t Destroy();    
+}
+
+class File:FileBase{
+    void File();
+    bool IsOpened();
+    status_t Init();
+    status_t Destroy();
+    status_t OpenFile(string fn, string mode);
+    status_t CloseFile();
+    fsize_t GetSizeReal();
+    bool HasBuffer();
+    status_t SetBufSize(int_ptr_t size);
+}
+
+
+class Stream{
+    void Stream();
+    string GetAsString(int len);
+    FileBase FileBase();
+	status_t PutString(string str);
+	status_t PutBinary(Mem bin);
+	string GetZeroEndString();
+	status_t PutZeroEndString(string str);
+	status_t PutDouble(double d);
+	double GetDouble();
+	status_t PutBool(bool b);
+	bool GetBool();
+	status_t PutInt8(int8_t i);
+	int8_t GetInt8();
+	status_t PutInt16(int16_t i);
+	int16_t GetInt16();
+	status_t PutInt32(int32_t i);
+	int32_t GetInt32();
+	status_t PutInt64(int64_t i);
+	int64_t GetInt64();
+	status_t PutUInt8(uint8_t i);
+	uint8_t GetUInt8();
+	status_t PutUInt16(uint16_t i);
+	uint16_t GetUInt16();
+	status_t PutUInt32(uint32_t i);
+	uint32_t GetUInt32();
+	status_t PutUInt64(uint64_t i);
+	uint64_t GetUInt64();
+}
+
+
+class MMapFile{
+    void MMapFile();
+    status_t Unlink();  
+    status_t Sync();
+    int GetSize();
+    status_t OpenReadWrite(string filename);
+    status_t OpenCreate(string filename,int size);
+    status_t OpenReadOnly(string filename);
+    status_t Close();
+    status_t SetFileName(string filename);
+    Stream Stream();
+}
+
+class CFunc{
+    [static] int memcmp(int_ptr_t s1, int_ptr_t s2, int_ptr_t n);
+    [static] bool wild_match(string pattern,string str);
+}
+
+class XmlNode{   
+    void XmlNode();    
+    status_t AddAttrib(FileBase file);
+    status_t AddAttrib(string attrib,string val);
+    status_t AddChild(XmlNode node);
+    status_t AddValueData(FileBase file);
+    status_t AddValueData(string str);
+    status_t Destroy();
+    status_t GetAttrib(string name, FileBase val);
+    status_t GetNextAttrib(FileBase name, FileBase val);
+    status_t SetName(Mem name);
+    status_t SetName(string name);
+    status_t SetValueType(int type);
+    status_t WriteToFile(FileBase file);
+    string GetName();
+    string GetPath();
+    string GetStringValue();
+    XmlNode GetChild(int i);
+    XmlNode GetChild();
+    XmlNode GetNext();
+    XmlNode GetChildByName(string child_name);
+    XmlNode GetNodeByPath(string path);
+    XmlNode GetParent();
+    Mem GetValue();
+    status_t RestartAttrib();
+}
+
+class Xml{
+    void Xml();
+    status_t LoadXml(string fn);
+    status_t LoadXml(FileBase file);
+    XmlNode GetNodeByPath(string path);
+    status_t WriteToFile(string fn,Mem header);
+    status_t WriteToFile(FileBase file,Mem header);    
+    status_t Destroy();
+    XmlNode GetRoot();
+    status_t AddRoot(XmlNode node);
+}
+
+class QueueFile:FileBase{
+    void QueueFile(int_ptr_t bytes);
+    int_ptr_t FindTag(Mem tag, int size);
+    int_ptr_t PeekData(Mem data, int_ptr_t size);
+    int Clear();
+    status_t Destroy();
+    fsize_t GetFreeSize();
+    bool HasEmptyLine();
+    bool HasWholeLine();
+}
+
+class CommonTime
+{
+    void CommonTime();
+    int GetYear();
+    int GetMonth();
+    int GetDay();
+    int GetHour();
+    int GetMinute();
+    int GetSecond();
+    int GetMsec();
+    int GetWeekDay();
+    int GetYearDay();
+    status_t SetYear(int _year);
+    status_t SetMonth(int _month);
+    status_t SetDay(int _day);
+    status_t SetHour(int _hour);
+    status_t SetMinute(int _minute);
+    status_t SetSecond(int _second);
+    status_t SetMsec(int _msec);
+    status_t SetWeekDay(int _week_day);
+    status_t SetYearDay(int _year_day);
+    status_t SetNow();
+    status_t Set(uint64_t tm);
+    uint64_t GetLong();
+    status_t SetSystemTime();
+}
+
+class Bson{
+    void Bson();
+    bool IsEnd();
+    Bson GetDocument(string name);
+    uint32_t StartDocument(string name);
+    status_t EndDocument(uint32_t offset);
+    status_t ResetPointer();
+    string GetString(string name);
+    bool GetBoolean(string name);
+    double GetDouble(string name);
+    int GetInt32(string name);
+    status_t PutDouble(string name, double d);
+    status_t PutBoolean(string name, bool b);
+    status_t PutDocument(string name, Bson bson);
+    int32_t GetDocumentSize();
+    status_t PutString(string name, string str);
+    status_t PutInt32(string name, int32_t i);
+    status_t PutInt16(string name, int16_t i);
+    status_t PutInt8(string name, int8_t i);
+    status_t Locate(string path);
+    uint32_t GetPointerPos();
+    status_t SetPointerPos(uint32_t pos);
+    int,string PeekNext();
+    string ToJson();
+    int16_t GetInt16(string name);
+    int8_t GetInt8(string name);
+    status_t PutBinary(string name,FileBase bin);
+
+    status_t PutUInt32(string name, uint32_t i);
+    status_t PutUInt16(string name,uint16_t i);    
+    status_t PutUInt8(string name,uint8_t i);
+    uint8_t GetUInt8(string name);
+    uint16_t GetUInt16(string name);
+    uint32_t GetUInt32(string name);
+}
+
+class Timer{
+    void Timer();
+    status_t Stop();
+    status_t Start();
+    uint32_t GetTimeout();
+    status_t SetOneShot(bool os);    
+    status_t SetTimeout(uint32_t ms);
+    status_t SetCallback([callback] int cb);
+}
+
+class FileManager{
+    [static] string ToAbsPath(string rpath);
+    [static] string ToAbsPath(string prefix,string rpath);
+    [static] string GetCurDir();
+    [static] string SliceFileName(string full, uint32_t mask);
+    [static] void ChangeDir(string dir);
+    [static] bool IsDirExist(string dir);
+    [static] status_t SearchDir(string dir, [callback] void on_search);
+    [static] status_t DeleteFile(string name);
+    [static] bool IsFileExist(string filename);
+    [static] string ReadLink(string link_name);
+    [static] status_t SaveFile(string path, FileBase file);
+    [static] status_t CreateDir(string path);
+    [static] status_t CopySingleFile(string from,string to,fsize_t start, fsize_t size,fsize_t to_start,uint32_t mode);
+    [static] status_t CopySingleFile(string from,string to,fsize_t start, fsize_t size,uint32_t mode);
+    [static] status_t CopySingleFile(string from,string to,uint32_t mode);    
+    [static] bool IsTextFile(FileBase file);
+    [static] bool IsTextFile(string fn);
+    [static] status_t ConvertEol(FileBase in, FileBase out, int mode);
+    [static] status_t ConvertEol(string in, string out, int mode);
+    [static] bool IsFileSame(FileBase src1, FileBase src2);
+    [static] bool IsFileSame(string fn1, string fn2);  
+    [static] status_t DeleteDir(string dir);
+    [static] status_t EncodingConvert(int from, int to, FileBase in, FileBase out);
+    [static] string Md5Sum(FileBase file);
+    [static] string Md5Sum(string fn);
+    [static] bool IsAbsPath(string path);
+    [static] status_t Rename(string oldpath, string newpath);
+}
+
+class CommandLine{
+    void PrintHelp();
+    bool CheckForErrors();
+    string GetValueByKey(string key);
+    bool HasKey(string str);
+    status_t AddKeyType(string key, int type, int option,string help);
+    status_t LoadFromArgv(int args);
+    
+    string SaveToCmdLine();
+    status_t DelByIndex(int index);
+    status_t DelByKey(string key);
+    status_t Print();
+    status_t LoadFromString(string str);
+    int GetCmdEntriesLen();
+    CmdEntry GetCmdEntry(int i);
+
+    array<string> GetAllValuesByKey(string key);
+}
+
+class CmdEntry{
+    status_t SetOption(int option);
+    int GetOption();
+    int GetKeyType();
+    string GetKey();
+    string GetValue();
+    status_t SetKeyType(int _keytype);
+    status_t SetKey(string _key);
+    status_t SetValue(string _value);
+    string GetHelp();
+    status_t SetHelp(string _help);
+}
+
 
 class Mem{
     FileBase FileBase();
@@ -198,38 +382,6 @@ class Mem{
     status_t Destroy_();
     int_ptr_t GetRawBuf();
     status_t SetRawBuf(int_ptr_t buf, int_ptr_t size, bool is_const);
-}
-
-class MemFile{
-    FileBase FileBase();
-    status_t Transfer(MemFile from);
-    status_t Init();
-    status_t Init(int_ptr_t page_size,int_ptr_t max_pages);
-    status_t Destroy_();    
-}
-
-class File{
-    FileBase FileBase();
-    bool IsOpened();
-    status_t Init();
-    status_t Destroy_();
-    status_t OpenFile(string fn, string mode);
-    status_t CloseFile();
-    fsize_t GetSizeReal();
-    bool HasBuffer();
-    status_t SetBufSize(int_ptr_t size);
-}
-
-class MMapFile{
-    status_t Unlink();  
-    status_t Sync();
-    int GetSize();
-    status_t OpenReadWrite(string filename);
-    status_t OpenCreate(string filename,int size);
-    status_t OpenReadOnly(string filename);
-    status_t Close();
-    status_t SetFileName(string filename);
-    Stream Stream();
 }
 
 

@@ -433,6 +433,17 @@ static int filemanager_isabspath(lua_State *L)
     return 1;
 }
 
+static status_t filemanager_rename(lua_State *L)
+{
+    const char* oldpath = (const char*)lua_tostring(L,1);
+    ASSERT(oldpath);
+    const char* newpath = (const char*)lua_tostring(L,2);
+    ASSERT(newpath);
+    status_t ret0 = rename(oldpath,newpath);
+    lua_pushboolean(L,ret0==0);
+    return 1;
+}
+
 static const luaL_Reg filemanager_lib[] = {
     {"ToAbsPath",filemanager_toabspath},
     {"GetCurDir",filemanager_getcurdir},
@@ -453,6 +464,7 @@ static const luaL_Reg filemanager_lib[] = {
     {"EncodingConvert",filemanager_encodingconvert},
     {"Md5Sum",filemanager_md5sum},	
     {"IsAbsPath",filemanager_isabspath},	
+	{"Rename",filemanager_rename},
     {NULL, NULL}
 };
 
