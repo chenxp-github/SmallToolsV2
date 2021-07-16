@@ -171,10 +171,10 @@ static int mem_setrawbuf_v2(lua_State *L)
 
 static int mem_setrawbuf(lua_State *L)
 {
-    if(lua_isnumber(L,2))
-        return mem_setrawbuf_v1(L);
-    else
+    if(lua_isstring(L,2))
         return mem_setrawbuf_v2(L);
+    else
+        return mem_setrawbuf_v1(L);
 }
 
 static int mem_setisreadonly(lua_State *L)
