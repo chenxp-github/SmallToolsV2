@@ -1037,6 +1037,26 @@ static status_t filebase_skip(lua_State *L)
     return 1;
 }
 
+static status_t filebase_putdouble(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    double d = (double)lua_tonumber(L,2);
+    status_t ret0 = pfilebase->Write(&d,sizeof(d));
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
+static status_t filebase_getdouble(lua_State *L)
+{
+    CFileBase *pfilebase = get_filebase(L,1);
+    ASSERT(pfilebase);
+    double d = 0;
+    pfilebase->Read(&d,sizeof(d));
+    lua_pushnumber(L,d);
+    return 1;
+}
+
 static const luaL_Reg filebase_lib[] = {
     {"__gc",filebase_gc_},
     {"__tostring",filebase_tostring_},
@@ -1119,6 +1139,8 @@ static const luaL_Reg filebase_lib[] = {
     {"GetUInt32",filebase_getuint32},
     {"PutUInt64",filebase_putuint64},
     {"GetUInt64",filebase_getuint64},
+    {"GetDouble",filebase_getdouble},
+    {"PutDouble",filebase_putdouble},
     {"PutZeroEndString",filebase_putzeroendstring},
     {"GetZeroEndString",filebase_getzeroendstring},
 	{"Skip",filebase_skip},

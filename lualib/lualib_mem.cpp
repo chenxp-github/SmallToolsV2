@@ -95,7 +95,7 @@ static int mem_malloc(lua_State *L)
 {
     CMem *pmem = get_mem(L,1);
     ASSERT(pmem);
-    int asize = (int)lua_tointeger(L,2);
+    int_ptr_t asize = (int_ptr_t)lua_tointeger(L,2);
     int _ret_0 = (int)pmem->Malloc(asize);
     lua_pushboolean(L,_ret_0);
     return 1;
