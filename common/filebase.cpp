@@ -1067,8 +1067,8 @@ int CFileBase::StrCmp(CFileBase *file)
     fsize_t len2 = file->StrLen();
     while(i < len1 && i < len2)
     {
-        c1 = this->Getc();
-        c2 = file->Getc();
+        c1 = this->CharAt(i);
+        c2 = file->CharAt(i);
         if(c1 != c2)
             return c1 - c2;
         i++;
@@ -1091,8 +1091,8 @@ int CFileBase::StrICmp(CFileBase *file)
     fsize_t len2 = file->StrLen();
     while(i < len1 && i < len2)
     {
-        c1 = this->Getc();
-        c2 = file->Getc();
+        c1 = this->CharAt(i);
+        c2 = file->CharAt(i);
         c1 = crt_tolower(c1);
         c2 = crt_tolower(c2);
         if(c1 != c2)
