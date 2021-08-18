@@ -205,7 +205,7 @@ function pairs_ordered(tab)
     end
 
     table.sort(order_tab,function(e1,e2)
-        if type(e1.key) == "number" and type(e2.key) == number then
+        if type(e1.key) == "number" and type(e2.key) == "number" then
             return e1.key < e2.key;
         end
         return string.lower(e1.key) < string.lower(e2.key);
