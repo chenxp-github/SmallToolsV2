@@ -153,12 +153,33 @@ static int filebase_readleftstr(lua_State *L)
 {
     CFileBase *pfilebase = get_filebase(L,1);
     ASSERT(pfilebase);
-    CFileBase *file = get_filebase(L,2);
-    ASSERT(file);
-    int skip_empty = (int)lua_toboolean(L,3);
-    int _ret_0 = (int)pfilebase->ReadLeftStr(file,skip_empty);
-    lua_pushboolean(L,_ret_0);
-    return 1;
+
+    if(is_filebase(L,2))
+    {
+        CFileBase *file = get_filebase(L,2);
+        ASSERT(file);
+        int skip_empty = (int)lua_toboolean(L,3);
+        int _ret_0 = (int)pfilebase->ReadLeftStr(file,skip_empty);
+        lua_pushboolean(L,_ret_0);
+        return 1;
+    }
+    else
+    {
+        int skip_empty = (int)lua_toboolean(L,2);
+        fsize_t size = pfilebase->GetSize() - pfilebase->GetOffset()+1;
+        AUTO_LOCAL_MEM(tmp,size);
+
+        pfilebase->ReadLeftStr(&tmp,skip_empty);
+		if(skip_empty)tmp.Trim();
+
+        if(tmp.GetSize() > 0)
+        {
+            lua_pushlstring(L,tmp.GetRawBuf(),(size_t)tmp.GetSize());
+            return 1;
+        }
+
+        return 0;
+    }
 }
 static int filebase_readword(lua_State *L)
 {
