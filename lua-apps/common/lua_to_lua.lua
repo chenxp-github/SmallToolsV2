@@ -46,7 +46,7 @@ local function lua_table_to_lua_inner(lua_table,pbuf,convert_userdata)
             pbuf:Printf("{");
             pbuf:Eol();                
             pbuf:IncLogLevel(1);
-            lua_table_to_lua_inner(v,pbuf);
+            lua_table_to_lua_inner(v,pbuf,convert_userdata);
             pbuf:IncLogLevel(-1);
             pbuf:Log("},");
         elseif type(v) == "string" then
