@@ -112,4 +112,21 @@ function ping_net_addr(name,retry)
     end
 end
 
+--把十六进制转换成二进制文件--
+function hex_file_to_bin_file(hex_file, bin_file)
+    hex_file:Seek(0);    
+    local part;
+    while not hex_file:IsEnd() do
+        local ch = hex_file:Getc();
+        local bval = HEX_TO_BIN_TABLE[ch];
+        if bval then
+            if not part then 
+                part = bval*16             
+            else 
+                bin_file:Putc(part+bval);
+                part = nil;
+            end
+        end
+    end
+end
 
