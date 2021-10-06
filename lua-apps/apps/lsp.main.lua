@@ -260,7 +260,7 @@ function app_main(args)
 
     local in_mem = new_mem(in_file);
     if not in_mem then
-        return printf("open file %s fail.",in_file);
+        return exit("open file %s fail.",in_file);       
     end
 
     local work_dir = FileManager.SliceFileName(in_file,FN_PATH);
@@ -274,7 +274,7 @@ function app_main(args)
     if out_mf:WriteToFile(out_file) > 0 then
         printf("save to file %s",out_file);
     else
-        printf("fail to save file %s",out_file);
+        return exit("fail to save file %s",out_file);
     end
 end
 
