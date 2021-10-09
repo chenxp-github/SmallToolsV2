@@ -158,6 +158,18 @@ function AddCodeGen(filename)
     code = nil;
 end
 
+function AddText(str)
+    local mf = new_memfile();
+    mf:Puts(str);
+    if mf:GetSize() > 0 then
+        AddSingleFile(
+            "_inner_text_"..codegen_id,
+            mf
+        );
+        codegen_id = codegen_id + 1;
+    end
+end
+
 function SetRootPath(root_path)
     if g_root_path then
         exit("SetRootPath can only be called once");

@@ -205,6 +205,14 @@ function add_lsp_file(code,filename,param)
     FileManager.ChangeDir(old_path);
 end
 
+function save_lsp_file(filename, new_name)
+    local code = PrintBuffer.new();
+    add_lsp_file(code,filename);
+    local fn = FileManager.ToAbsPath(new_name);
+    local mf = code:GetInnerFile();
+    mf:WriteToFile(fn);
+end
+
 function add_code_block(block,out,param)    
     local code = PrintBuffer.new();
     __gen_code__ = nil;
@@ -246,6 +254,7 @@ function print_help(args)
     the parameter 'code' is a PrintBuffer object, and 
     add_lsp_file(code,filename,param) can be used to add another lsp file 
     add_js_string(code,filename,param) add escaped js string
+    save_lsp_file(filename,new_name)  expand lsp file and save.
     ]]);
 end
 
