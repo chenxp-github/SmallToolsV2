@@ -37,6 +37,7 @@
 #include "lualib_serial.h"
 #include "lualib_queuefile.h"
 #include "lualib_peerproxy.h"
+#include "lualib_commontime.h"
 
 #include "_build_time_.h"
 
@@ -348,7 +349,8 @@ status_t CGlobals::InitLuaVm()
     luaopen_serial(L);
     luaopen_queuefile(L);
     luaopen_peerproxy(L);
-    
+    luaopen_commontime(L);
+
 #if _IS_LINUX_
     luaopen_nativeprocess(L);
     luaopen_nativeprocessmanager(L);
