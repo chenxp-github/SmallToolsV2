@@ -150,6 +150,14 @@ SOURCE=.\common\commandline.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\common\common_time.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\common_time.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\common\commonarray.h
 # End Source File
 # Begin Source File
@@ -223,14 +231,6 @@ SOURCE=.\common\fileinfolist.cpp
 # Begin Source File
 
 SOURCE=.\common\fileinfolist.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\thread.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\thread.cpp
 # End Source File
 # Begin Source File
 
@@ -763,6 +763,14 @@ SOURCE=.\lualib\lualib_commandline.cpp
 # Begin Source File
 
 SOURCE=.\lualib\lualib_commandline.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_commontime.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_commontime.h
 # End Source File
 # Begin Source File
 
@@ -1479,6 +1487,14 @@ SOURCE=.\common\tcp.cpp
 # Begin Source File
 
 SOURCE=.\common\tcp.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\thread.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\thread.h
 # End Source File
 # Begin Source File
 
