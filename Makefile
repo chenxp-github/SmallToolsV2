@@ -74,7 +74,7 @@ OBJCOPY := $(PREFIX)objcopy
 OBJCOPY +=
 
 # The library and the link options ( C and C++ common).
-LDFLAGS := $(APPEND_LDFLAGS) -lstdc++ -lm -ldl
+LDFLAGS := $(APPEND_LDFLAGS) -lstdc++ -lm -ldl -rdynamic 
 
 ifneq ($(NO_X11), 1) 
 LDFLAGS += $(shell $(PKGCONFIG) --libs-only-l gtk+-3.0 x11 glib-2.0)
