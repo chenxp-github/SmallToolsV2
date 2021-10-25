@@ -352,3 +352,12 @@ LUA_API void lua_set_running_flag(lua_State *L, int running)
     G(L)->running_flag = running;
   }
 }
+
+//chenxp 
+LUA_API int lua_get_running_flag(lua_State *L)
+{
+  if(L && G(L)){
+    return G(L)->running_flag;
+  }
+  return 0;
+}

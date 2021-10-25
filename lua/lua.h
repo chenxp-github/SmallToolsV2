@@ -482,5 +482,8 @@ struct lua_Debug {
 * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
+/**by chenxp**/
+LUA_API void lua_set_running_flag(lua_State *L, int running);
+LUA_API int lua_get_running_flag(lua_State *L);
 
 #endif

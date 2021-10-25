@@ -210,11 +210,17 @@ status_t CGlobals::LoadEnv()
     return OK;
 }
 
-status_t CGlobals::MainLoop()
+status_t CGlobals::MainLoop(lua_State *L)
 {
     m_MainLoopRunning = true;
     while(m_MainLoopRunning)
     {   
+        if(L)
+        {
+            if(!lua_get_running_flag(L))
+                break;
+        }
+
 		if(!m_TaskMgr.Schedule())
         {
             if(!do_not_use_epoll)

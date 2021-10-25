@@ -64,7 +64,7 @@ static int app_os(lua_State *L)
 static int app_mainloop(lua_State *L)
 {
     GLOBALS(g);
-    g->MainLoop();
+    g->MainLoop(L);
     return 0;
 }
 static int app_luamain(lua_State *L)

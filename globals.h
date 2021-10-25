@@ -46,7 +46,7 @@ public:
     status_t AddLuaSearchPath(const char *path, const char *type, const char *ext, bool recursive);
     status_t AddLuaSearchPath(lua_State *L,const char *path, const char *type, const char *ext, bool recursive);
     status_t QuitMainLoop();
-    status_t MainLoop();
+    status_t MainLoop(lua_State *L);
     CGlobals();
     virtual ~CGlobals();
     status_t InitBasic();
