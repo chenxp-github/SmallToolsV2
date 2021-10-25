@@ -201,8 +201,10 @@ static int docall (lua_State *L, int narg, int nres) {
   lua_insert(L, base);  /* put it under function and args */
   globalL = L;  /* to be available to 'laction' */
   signal(SIGINT, laction);  /* set C-signal handler */
+  signal(SIGTSTP,laction); //chenxp
   status = lua_pcall(L, narg, nres, base);
   signal(SIGINT, SIG_DFL); /* reset C-signal handler */
+  signal(SIGTSTP,SIG_DFL); //chenxp
   lua_remove(L, base);  /* remove message handler from the stack */
   return status;
 }
