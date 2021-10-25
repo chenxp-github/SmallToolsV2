@@ -146,6 +146,7 @@ public:
     status_t Run(int nargs, int nresults);
     status_t LoadFile(const char *filename);
     status_t ReportError();
+    status_t ReportError(CMem *err);
 
     CLuaVm();
     virtual ~CLuaVm();

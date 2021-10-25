@@ -9,12 +9,14 @@
 #include "epoll.h"
 #include "weak_pointer.h"
 #include "peerglobals.h"
+#include "taskrunner.h"
 
 #define GLOBALS_FLAG_FUNC(func,bit) FLAG_FUNC(m_Flags,func,bit)
 
 class CGlobals{
 public:
     CTaskMgr m_TaskMgr;
+    CTaskRunner m_TaskRunner;
     bool m_MainLoopRunning;
     CLuaVm m_LuaVm;
     uint32_t m_Flags;
@@ -24,6 +26,7 @@ public:
 	int m_Turbo;
 	CEpoll m_Epoll;
     CPeerGlobals m_PeerGlobals;
+    
 public:
     status_t FastFindAppName(const char *lua_fn, CMem *name);
     status_t LoadEnv();
@@ -62,6 +65,7 @@ extern CGlobals *g_globals_ptr;
 
 #define GLOBALS(g) CGlobals *g = g_globals_ptr
 #define GLOBAL_TASKMGR(mgr) CTaskMgr *mgr=&g_globals_ptr->m_TaskMgr
+#define GLOBAL_TASKRUNNER(r) CTaskRunner *r=&g_globals_ptr->m_TaskRunner
 #define GLOBAL_LUAVM(vm) CLuaVm *vm = &g_globals_ptr->m_LuaVm
 #define GLOBAL_PEER_GLOBALS(p) CPeerGlobals *p=&g_globals_ptr->m_PeerGlobals
 //////////////////////////////////////////

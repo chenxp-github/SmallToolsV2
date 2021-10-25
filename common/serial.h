@@ -41,6 +41,8 @@ public:
 
     status_t Copy(CSerial *p){return OK;};
     status_t Print(CFileBase *buf){return OK;}
+
+    bool IsOpened();
 };
 
 #endif

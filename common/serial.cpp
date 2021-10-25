@@ -237,6 +237,10 @@ status_t CSerial::EnableDtrHandshake(bool enable)
     ASSERT(0);
     return OK;
 }
+bool CSerial::IsOpened()
+{
+    return fd > 0;
+}
 //////////////////////////////////////////////////////////////////
 #endif
 //////////////////////////////////////////////////////////////////
@@ -385,6 +389,10 @@ status_t CSerial::EnableDtrHandshake(bool enable)
     }
 
     return ::SetCommState(this->handle,&dcb);
+}
+bool CSerial::IsOpened()
+{
+    return handle != NULL;
 }
 //////////////////////////////////////////////////////////////
 #endif

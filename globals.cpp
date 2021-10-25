@@ -65,7 +65,11 @@ static CTaskMgr* get_global_taskmgr(lua_State *L)
 	GLOBAL_TASKMGR(mgr);
 	return mgr;
 }
-
+static CTaskRunner* get_global_taskrunner(lua_State *L)
+{
+	GLOBAL_TASKRUNNER(r);
+	return r;
+}
 static CLuaVm* get_global_luavm(lua_State *L)
 {
     GLOBAL_LUAVM(vm);
@@ -158,6 +162,7 @@ status_t CGlobals::Init()
 
 	how_to_get_global_luavm = get_global_luavm;
 	how_to_get_global_taskmgr = get_global_taskmgr;
+    how_to_get_global_taskrunner = get_global_taskrunner;
     how_to_get_lua_running_flag = get_lua_running_flag;
     how_to_get_peer_globals = get_peer_globals;
 
@@ -212,6 +217,8 @@ status_t CGlobals::LoadEnv()
 
 status_t CGlobals::MainLoop(lua_State *L)
 {
+    int turbo = 0;
+
     m_MainLoopRunning = true;
     while(m_MainLoopRunning)
     {   
@@ -220,16 +227,25 @@ status_t CGlobals::MainLoop(lua_State *L)
             if(!lua_get_running_flag(L))
                 break;
         }
-
-		if(!m_TaskMgr.Schedule())
+        
+        turbo = 0;
+        if(m_TaskRunner.Schedule())
         {
-            if(!do_not_use_epoll)
-                m_Epoll.Wait(mainloop_sleep_time);
+            turbo ++;
+        }
+
+        if(m_TaskMgr.Schedule())
+        {
+            turbo ++;
         }
 
         if(do_not_use_epoll)
         {
             crt_msleep(mainloop_sleep_time);
+        }
+        else if(turbo == 0)
+        {
+            m_Epoll.Wait(mainloop_sleep_time);
         }
     }
     return OK;

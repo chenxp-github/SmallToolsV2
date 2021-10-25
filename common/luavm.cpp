@@ -86,6 +86,17 @@ status_t CLuaVm::ReportError()
     return OK;
 }
 
+status_t CLuaVm::ReportError(CMem *err)
+{
+    ASSERT(mL && err);
+    const char *msg = lua_tostring(mL, -1);
+    ASSERT(msg);    
+    err->Puts(msg);
+    err->Puts("\r\n");
+    lua_pop(mL, 1);
+    return OK;
+}
+
 status_t CLuaVm::LoadFile(const char *filename)
 {
     ASSERT(filename && mL);

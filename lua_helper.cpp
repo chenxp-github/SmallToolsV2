@@ -4,6 +4,7 @@
 #include "syslog.h"
 
 HOW_TO_GET_GLOBAL_TASKMGR how_to_get_global_taskmgr = NULL;
+HOW_TO_GET_GLOBAL_TASKRUNNER how_to_get_global_taskrunner = NULL;
 HOW_TO_GET_GLOBAL_LUAVM how_to_get_global_luavm = NULL;
 HOW_TO_GET_LUA_RUNNING_FLAG how_to_get_lua_running_flag = NULL;
 HOW_TO_GET_PEER_GLOBALS how_to_get_peer_globals = NULL;
