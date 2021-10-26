@@ -116,6 +116,7 @@ status_t CGlobals::InitBasic()
     m_TaskAutoLuaGc = 0;
     m_Flags = 0;
     m_TaskMgr.InitBasic();
+    m_TaskRunner.InitBasic();
     m_MainLoopRunning = false;
     m_LuaVm.InitBasic();
     m_MainLuaFileList.InitBasic();
@@ -154,6 +155,7 @@ status_t CGlobals::Init()
     m_TaskMgr.Init(1024);
 	m_TaskMgr.Callback()->SetFunc(on_taskmgr_event);
 	m_TaskMgr.Callback()->SetParamPointer(10,this);
+    m_TaskRunner.Init();
     m_MainLoopRunning = false;
     m_MainLuaFileList.Init(1024);
     m_LuaFilesPath.Init();
@@ -180,7 +182,7 @@ status_t CGlobals::Destroy()
     {
         SetIsInitiated(false);
     }
-    
+    m_TaskRunner.Destroy();
 	m_PeerGlobals.Destroy();
     m_LuaVm.Destroy();
     m_TaskMgr.Destroy();
