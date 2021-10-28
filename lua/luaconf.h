@@ -67,6 +67,8 @@
 #if defined(LUA_USE_WINDOWS)
 #define LUA_DL_DLL  /* enable support for DLL */
 #define LUA_USE_C89 /* broadly, Windows is C89 */
+//chenxp
+#define SIGTSTP 20
 #endif
 
 

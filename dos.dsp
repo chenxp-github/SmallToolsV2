@@ -1110,6 +1110,14 @@ SOURCE=.\common\mmapfile.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\common\mutex.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\mutex.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\common\partfile.cpp
 # End Source File
 # Begin Source File
@@ -1447,6 +1455,14 @@ SOURCE=.\messagepeer\taskpeerserver.cpp
 # Begin Source File
 
 SOURCE=.\messagepeer\taskpeerserver.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\taskrunner.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\taskrunner.h
 # End Source File
 # Begin Source File
 
