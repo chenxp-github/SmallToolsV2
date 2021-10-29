@@ -69,6 +69,7 @@
 #define LUA_USE_C89 /* broadly, Windows is C89 */
 //chenxp
 #define SIGTSTP 20
+#define SIGHUP 1
 #endif
 
 
