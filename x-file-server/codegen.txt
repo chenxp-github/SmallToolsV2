@@ -1,0 +1,102 @@
+[Peer xfs][StartId  5566000]
+[Client xFileClient 7788000]
+class xFileServer{	
+    [service] (int result,xFileInfoList list) ListFolder(string path);
+    [service] (int result,xFileInfo info) GetInfo(string path);
+    [service] (int result) ChangeCurrentDirectory(string dir);
+    [service] (int result, string dir) GetCurrentDirectory();
+    [service] (int result, int handle) OpenFile(string path, string mode);
+    [service] (int result) CloseFile(int handle);
+    [service] (int result, array<uint8_t> data) ReadFile(int handle,int64_t offset, int size);
+    [service] (int result, int ws) WriteFile(int handle, int64_t offset, array<uint8_t> data);
+    [service] (int result) CreateFolder(string path);
+    [service] (int result) DeleteFolder(string path);
+    [service] (int result) DeleteFile(string path);
+}
+
+[CodeSwitch code_mark=true, bson=true]
+class xFileInfo{
+    int64_t size;
+    string full_path;
+    string file_name;
+    uint32_t flags;
+    int64_t modify_time;
+    int operation;
+    int64_t current_size;
+}
+
+[CodeSwitch code_mark=true, bson=true]
+[Stack of xFileInfo]
+class xFileInfoList{
+}
+
+
+[CodeSwitch code_mark=true, bson=true]
+class xFileSession{
+    string name;
+    string cur_dir;
+    uint32_t cur_timer;
+    [noset,nobson] xOpenedFileMap opened_file_map;
+}
+
+
+
+[HashMap of xFileSession]
+class xFileSessionMap{
+
+}
+
+[HashMap of File]
+class xOpenedFileMap{
+
+}
+
+
+[CodeSwitch code_mark=true]
+class TaskXServerReadFile{
+    string src_file_name;
+    int src_handle = ERROR_FILE_HANDLE;
+    fsize_t start_offset = 0;
+    fsize_t read_size = -1;
+    [noset] fsize_t already_read_size;
+    FileBase *out_file;
+    string out_file_name;
+    [weak] xFileClient *file_client;
+}
+
+[CodeSwitch code_mark=true]
+class TaskXServerWriteFile{
+    string src_file_name;
+    FileBase *src_file;
+    fsize_t start_offset = 0;
+    fsize_t write_size = -1;
+    [noset] fsize_t already_write_size;
+    int out_handle;
+    string out_file_name;
+    [weak] xFileClient *file_client;
+}
+
+
+[CodeSwitch code_mark=true]
+class TaskXServerListFolder{
+    string folder_name;
+    [weak] xFileClient *file_client;
+    [noset,noget] xFileInfoList pending_queue;
+}
+
+[CodeSwitch code_mark=true,copy_comp_print=false]
+class xFolderDiffer{    
+}
+
+[CodeSwitch code_mark=true]
+class TaskXServerSyncFolder{
+    string local_folder;
+    string remote_folder;
+    [noset,noget] xFileInfoList current_list;
+    [noset,noget] xFileInfoList create_list;
+    [noset,noget] xFileInfoList delete_list;
+    [weak] xFileClient *file_client;
+    string snapshot_name_prefix;
+}
+
+

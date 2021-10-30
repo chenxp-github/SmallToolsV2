@@ -765,3 +765,13 @@ class PeerProxy{
     bool IsConnected();
 }
 
+
+class xFileServer{
+    void xFileServer();
+    status_t InitServiceSidePeer();
+    status_t InitClientSidePeer(string server, int port);
+    status_t SetPeerName(string name);
+    status_t SetRootPath(string root);
+    status_t Start();
+    status_t Destroy();
+}
