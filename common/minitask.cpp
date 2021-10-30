@@ -1,5 +1,5 @@
 #include "minitask.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 CMiniTask::CMiniTask()
 {

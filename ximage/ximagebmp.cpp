@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include "ximagebmp.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 #if CXIMAGE_SUPPORT_BMP
 

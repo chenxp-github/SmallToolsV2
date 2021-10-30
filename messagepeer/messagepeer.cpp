@@ -1,5 +1,5 @@
 #include "messagepeer.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "taskpeerclient.h"
 #include "peercommon.h"
 

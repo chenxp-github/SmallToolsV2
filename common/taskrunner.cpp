@@ -1,5 +1,5 @@
 #include "taskrunner.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 struct closure_extra_info{

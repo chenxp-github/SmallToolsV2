@@ -1,5 +1,5 @@
 #include "fileutils.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 static CMem _buf;

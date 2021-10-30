@@ -1,5 +1,5 @@
 #include "indexfile.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define IDX_FILE_FLAG   0x584449

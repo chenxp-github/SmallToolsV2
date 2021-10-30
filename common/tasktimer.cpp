@@ -1,5 +1,5 @@
 #include "tasktimer.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define STEP_WAIT       1

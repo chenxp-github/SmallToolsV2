@@ -1,7 +1,7 @@
 #include "lualib_ximage.h"
 #include "lualib_ximagegif.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 RGBQUAD int32_to_rgbquad(int32_t c)
 {

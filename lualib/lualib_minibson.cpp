@@ -2,7 +2,7 @@
 #include "lualib_mem.h"
 #include "lualib_filebase.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "memstk.h"
 #include "memfile.h"
 

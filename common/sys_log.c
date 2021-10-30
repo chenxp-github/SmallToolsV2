@@ -1,4 +1,4 @@
-#include "syslog.h"
+#include "sys_log.h"
 
 #define CHECK_MODULE_RANGE(module)\
 if(module < 0 || module > MAX_LOG_ITEMS)\

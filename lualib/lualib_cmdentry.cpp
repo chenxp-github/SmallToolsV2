@@ -1,6 +1,6 @@
 #include "lualib_cmdentry.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 LUA_IS_VALID_USER_DATA_FUNC(CCmdEntry,cmdentry)
 LUA_GET_OBJ_FROM_USER_DATA_FUNC(CCmdEntry,cmdentry)

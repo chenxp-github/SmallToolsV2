@@ -1,6 +1,6 @@
 #include "lualib_app.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "globals.h"
 #include "peerglobals.h"
 #include "tasktcpacceptor.h"

@@ -2,7 +2,7 @@
 #define __COMMONARRAY_H
 
 #include "filebase.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 template <class T>

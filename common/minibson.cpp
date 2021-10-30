@@ -2,7 +2,7 @@
 #include "memstk.h"
 #include "memfile.h"
 #include "file.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 CLOSURE_COMMON_OBJECT_OPS_DEFINE_CPP(CMiniBson,bson)

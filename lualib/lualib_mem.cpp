@@ -2,7 +2,7 @@
 #include "lualib_filebase.h"
 #include "lualib_stream.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 LUA_IS_VALID_USER_DATA_FUNC(CMem,mem)
 LUA_GET_OBJ_FROM_USER_DATA_FUNC(CMem,mem)

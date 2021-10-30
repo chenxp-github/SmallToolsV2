@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "ximagegif.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 static const unsigned long code_mask[] = { 0x0000, 0x0001, 0x0003, 0x0007, 0x000F,
                                   0x001F, 0x003F, 0x007F, 0x00FF,

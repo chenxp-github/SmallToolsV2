@@ -1,6 +1,6 @@
 #include "nativeprocessmanager.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "dirmgr.h"
 #include "misc.h"
 #include "minitask.h"

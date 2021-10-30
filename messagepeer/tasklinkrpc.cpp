@@ -1,5 +1,5 @@
 #include "tasklinkrpc.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define STEP_RETRY          1

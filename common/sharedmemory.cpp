@@ -1,5 +1,5 @@
 #include "sharedmemory.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 #include <sys/ipc.h>
 #include <sys/shm.h>

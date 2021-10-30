@@ -1,6 +1,6 @@
 #include "raw_weak_pointer.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 CRawWeakPointer::CRawWeakPointer()
 {

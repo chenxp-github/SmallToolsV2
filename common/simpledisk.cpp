@@ -1,5 +1,5 @@
 #include "simpledisk.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 #include "encoder.h"
 #include "file.h"

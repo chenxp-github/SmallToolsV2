@@ -4,7 +4,7 @@
 
 #include "ximage.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 #ifndef PI
 #define PI 3.141592653589793f

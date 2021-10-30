@@ -1,6 +1,6 @@
 #include "lualib_xmlnode.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "lualib_filebase.h"
 #include "lualib_mem.h"
 #include "lualib_memfile.h"

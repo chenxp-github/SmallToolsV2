@@ -1,5 +1,5 @@
 #include "mutex.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 CMutex::CMutex()
 {

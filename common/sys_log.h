@@ -1,5 +1,5 @@
-#ifndef __SYSLOG_H
-#define __SYSLOG_H
+#ifndef __SYS_LOG_H
+#define __SYS_LOG_H
 
 #include "cruntime.h"
 

@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 #include "ximagejpg.h"
 #include "jpeg_morecfg.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 #define eBufSize 4096
 

@@ -1,6 +1,6 @@
 #include "lualib_serial.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "lualib_filebase.h"
 
 LUA_IS_VALID_USER_DATA_FUNC(CSerial,serial)

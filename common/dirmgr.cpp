@@ -5,7 +5,7 @@
 #include "memfile.h"
 #include "file.h"
 #include "memstk.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define _MAX_PATH_ (1024)

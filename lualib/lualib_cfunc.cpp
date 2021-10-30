@@ -1,6 +1,6 @@
 #include "lualib_cfunc.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "misc.h"
 
 /****************************************/

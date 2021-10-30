@@ -1,7 +1,7 @@
 #include "fileinfolist.h"
 #include "dirmgr.h"
 #include "encoder.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 #include "minibson.h"
 #include "file.h"

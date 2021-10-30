@@ -1,6 +1,6 @@
 #include <fcntl.h> 
 #include "crt_linux.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 void *crt_memset(void *buf, int_ptr_t n, int_ptr_t size)
 {

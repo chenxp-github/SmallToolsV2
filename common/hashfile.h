@@ -4,7 +4,7 @@
 #include "ptrstk.h"
 #include "indexfile.h"
 #include "memfile.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 #define HASH_FILE_META_DATA "HASH_META_DATA_V1"
 #define HASH_FILE_META_DATA_LEN 17

@@ -1,5 +1,5 @@
 #include "rpc_param_base.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 CRpcParamBase::CRpcParamBase()

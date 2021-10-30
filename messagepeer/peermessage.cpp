@@ -1,5 +1,5 @@
 #include "peermessage.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define BODY_TYPE_MASK  0x000000f0

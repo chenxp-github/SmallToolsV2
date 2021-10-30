@@ -1,6 +1,6 @@
 #include "peerservicebase.h"
 #include "peerglobals.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define CALLBACK_TIMEOUT    10*1000

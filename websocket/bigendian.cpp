@@ -1,5 +1,5 @@
 #include "bigendian.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 template<typename T>

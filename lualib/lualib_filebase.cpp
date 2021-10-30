@@ -1,7 +1,7 @@
 #include "lualib_filebase.h"
 #include "lualib_stream.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "lua_helper.h"
 #include "lualib_file.h"
 #include "lualib_mem.h"

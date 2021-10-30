@@ -1,5 +1,5 @@
 #include "taskpeerclient.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "tasktcpconnector.h"
 #include "peercommon.h"
 #include "memfile.h"

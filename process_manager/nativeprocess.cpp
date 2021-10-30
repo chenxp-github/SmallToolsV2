@@ -1,7 +1,7 @@
 #include <sched.h>
 #include <sys/resource.h>
 #include "nativeprocess.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 #include "file.h"
 #include "dirmgr.h"

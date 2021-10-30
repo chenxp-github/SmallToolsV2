@@ -1,6 +1,6 @@
 #include "lualib_xrandr.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "lualib_xdisplay.h"
 #include "lualib_xwindow.h"
 

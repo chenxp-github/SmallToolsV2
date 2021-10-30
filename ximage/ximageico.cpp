@@ -2,7 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 #include "ximageico.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 #if CXIMAGE_SUPPORT_PNG
 #include "ximagepng.h"

@@ -1,5 +1,5 @@
 #include "common_time.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define YEAR0 1900

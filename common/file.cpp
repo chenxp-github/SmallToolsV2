@@ -1,4 +1,4 @@
-#include "syslog.h"
+#include "sys_log.h"
 #include "file.h"
 #include "mem_tool.h"
 

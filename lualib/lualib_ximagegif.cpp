@@ -1,6 +1,6 @@
 #include "lualib_ximagegif.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "lualib_ximage.h"
 #include "lualib_filebase.h"
 #include "lua_helper.h"

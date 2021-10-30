@@ -5,7 +5,7 @@
 #include "mem.h"
 #include "memfile.h"
 #include "misc.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 static const char * base64_alphabet = 

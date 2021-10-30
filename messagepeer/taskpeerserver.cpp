@@ -1,5 +1,5 @@
 #include "taskpeerserver.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "peerglobals.h"
 #include "peercommon.h"
 

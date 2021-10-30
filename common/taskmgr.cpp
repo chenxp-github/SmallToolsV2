@@ -1,5 +1,5 @@
 #include "taskmgr.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define TASK_IS_RUNNING     0x00000001

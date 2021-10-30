@@ -5,7 +5,7 @@
 #include "ximagehelper.h"
 #include "lua_helper.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 #if CXIMAGE_SUPPORT_WINDOWS
 #include "lualib_luahdc.h"

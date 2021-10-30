@@ -3,7 +3,7 @@
 #include "lua_helper.h"
 #include "closure.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 
 #define CALLBACK_INDEX 15

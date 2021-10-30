@@ -1,6 +1,6 @@
 #include "lualib_websocketserver.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "lualib_websocketmessage.h"
 #include "lualib_tcpsocket.h"
 #include "lualib_mem.h"

@@ -1,5 +1,5 @@
 #include "closure.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 #include "minibson.h"
 #include "raw_weak_pointer.h"

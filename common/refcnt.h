@@ -2,7 +2,7 @@
 #define __REFCNT_H
 
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 #define REF_COUNT_DEFINE()\
 int _ref_count;\

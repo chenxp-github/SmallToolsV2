@@ -1,6 +1,6 @@
 #include "taskwebsocketserver.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "encoder.h"
 #include "sha1calculator.h"
 #include "websocketframeheader.h"

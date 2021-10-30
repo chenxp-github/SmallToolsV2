@@ -1,7 +1,7 @@
 #include "lualib_memfile.h"
 #include "lualib_filebase.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 LUA_IS_VALID_USER_DATA_FUNC(CMemFile,memfile)
 LUA_GET_OBJ_FROM_USER_DATA_FUNC(CMemFile,memfile)

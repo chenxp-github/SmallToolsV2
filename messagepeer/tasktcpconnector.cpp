@@ -1,6 +1,6 @@
 #include "tasktcpconnector.h"
 #include "mem.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #ifndef TCP_CONNECTOR_TIMEOUT 

@@ -1,5 +1,5 @@
 #include "ximagehelper.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "ximagebmp.h"
 #include "ximageico.h"
 #include "ximagejpg.h"

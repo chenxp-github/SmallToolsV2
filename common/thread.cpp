@@ -1,5 +1,5 @@
 #include "thread.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 CThread::CThread()
 {

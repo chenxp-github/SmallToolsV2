@@ -1,6 +1,6 @@
 #include "serial.h"
 #include "mem.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 CSerial::CSerial()
 {

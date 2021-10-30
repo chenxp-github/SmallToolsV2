@@ -1,5 +1,5 @@
 #include "xwindow.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 #include "xdisplay.h"
 #include "mem.h"

@@ -1,5 +1,5 @@
 #include "mem.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define MALLOC_SIZE(asize) ((int_ptr_t)(asize+sizeof(int32_t)))

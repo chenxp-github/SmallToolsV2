@@ -1,5 +1,5 @@
 #include "memfile.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define BLOCK_AND_OFFSET(raw_offset,block,off) \

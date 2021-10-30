@@ -1,6 +1,6 @@
 #include "peerproxy.h"
 #include "peerglobals.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "peercommon.h"
 #include "taskpeerserver.h"
 

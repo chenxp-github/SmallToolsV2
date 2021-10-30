@@ -1,5 +1,5 @@
 #include "websocketserver.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define MAX_SENDING_QUEUE_LEN 4096

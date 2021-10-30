@@ -2,7 +2,7 @@
 #include "lualib_minibson.h"
 #include "lualib_messagepeer.h"
 #include "mem_tool.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "lua_helper.h"
 
 #define CALLBACK_INDEX 15

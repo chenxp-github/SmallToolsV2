@@ -1,7 +1,7 @@
 #include "lua_helper.h"
 #include "mem.h"
 #include "encoder.h"
-#include "syslog.h"
+#include "sys_log.h"
 
 HOW_TO_GET_GLOBAL_TASKMGR how_to_get_global_taskmgr = NULL;
 HOW_TO_GET_GLOBAL_TASKRUNNER how_to_get_global_taskrunner = NULL;

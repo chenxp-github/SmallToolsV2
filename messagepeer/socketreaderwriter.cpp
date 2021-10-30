@@ -1,5 +1,5 @@
 #include "socketreaderwriter.h"
-#include "syslog.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 #define MAX_LINE_LENGTH (64*1024)
