@@ -11277,6 +11277,9 @@ int CxImage::GetTypeByFileHeader(CFileBase *file)
     if(crt_stricmp((char*)temp,"jfif") == 0 || crt_stricmp((char*)temp,"exif") == 0)
         return CXIMAGE_FORMAT_JPG;
 
+    if(p[0] == 0xff && p[1] == 0xd8 && p[2] == 0xff)
+        return CXIMAGE_FORMAT_JPG;
+
     if(p[0] == 0x47 && p[1] == 0x49 && p[2] == 0x46 && p[3] == 0x38 && p[4] == 0x39)
         return CXIMAGE_FORMAT_GIF;
     if(wp[0] == 0 &&(wp[1] ==1 || wp[1] == 2))
