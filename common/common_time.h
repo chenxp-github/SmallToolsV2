@@ -84,6 +84,7 @@ public:
     status_t SetSystemTime();
     status_t SaveReadableString(CFileBase *out);
     status_t LoadReadableString(CFileBase *in);
+    status_t LoadReadableString(const char *str);
 
     status_t Clear();
     status_t Forward(int64_t msec);

@@ -417,6 +417,13 @@ status_t CCommonTime::LoadReadableString(CFileBase *in)
     return OK;
 }
 
+status_t CCommonTime::LoadReadableString(const char *str)
+{
+    ASSERT(str);
+    CMem mem(str);
+    return this->LoadReadableString(&mem);
+}
+
 status_t CCommonTime::Clear()
 {
     SAVE_WEAK_REF_ID(*this,w);

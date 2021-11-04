@@ -310,9 +310,10 @@ char CMem::C(int index)
 bool CMem::StrEqu(CMem *str, bool case_sensitive)
 {
     ASSERT(str);
-
     if(str->StrLen() != this->StrLen())
         return false;
+    if(str->StrLen() == 0 && this->StrLen() == 0)
+        return true;
     if(case_sensitive)
         return crt_strcmp(str->CStr(),this->CStr()) == 0;
     else
