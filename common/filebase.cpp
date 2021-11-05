@@ -1227,10 +1227,15 @@ status_t CFileBase::Trim()
     }
     l -= i;
     n = i;
-    for(i = 0; i < l; i++)
+    
+    if(n > 0)
     {
-        this->SetChar(i,this->CharAt(i+n));
+        for(i = 0; i < l; i++)
+        {
+            this->SetChar(i,this->CharAt(i+n));
+        }
     }
+
     this->SetSize(l);
     return OK;
 }

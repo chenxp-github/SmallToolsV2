@@ -80,10 +80,30 @@ status_t CxFolderDiffer::ReadFinalLink(const char *name, CMem *out)
 int64_t CxFolderDiffer::GetFileModifyTime(CMem *fn)
 {
     ASSERT(fn);
+#if _IS_WINDOWS_
+	WIN32_FIND_DATAA fd;
+    HANDLE handle;
+	
+    handle = FindFirstFileA(fn->CStr(),&fd);
+	if(handle != INVALID_HANDLE_VALUE)
+	{
+		FindClose(handle);
+	}
+    
+	int64_t write_time = 0;
+	uint32_t *p = (uint32_t*)&write_time;
+
+	p[0] = fd.ftLastWriteTime.dwLowDateTime;
+    p[1] = fd.ftLastWriteTime.dwHighDateTime;
+	
+	return write_time;
+#else
     struct stat statbuf;
 	memset(&statbuf,0,sizeof(statbuf));
     lstat(fn->CStr(),&statbuf);
     return statbuf.st_mtim.tv_sec*1000LL+statbuf.st_mtim.tv_nsec/1000000LL;    
+#endif
+
 }
 
 status_t CxFolderDiffer::GetFolderInfos(const char *folder, CxFileInfoList *list)
@@ -109,7 +129,7 @@ status_t CxFolderDiffer::GetFolderInfos(const char *folder, CxFileInfoList *list
         CxFileInfo info;
         info.Init();
         info.SetModifyTime(last_write_time);
-        info.SetIsDir(is_dir);
+        info.SetIsDir(is_dir!=0);
         info.SetFullPath(path);
         info.SetSize(size);
       
@@ -118,13 +138,15 @@ status_t CxFolderDiffer::GetFolderInfos(const char *folder, CxFileInfoList *list
             list->Push(&info);
         }
         else if(event == CDirMgr::EVENT_SINGLE_FILE)
-        {
-            LOCAL_MEM(link);
-            if(self->FollowLinks() && ReadFinalLink(full_name,&link))
+        {            
+#if !_IS_WINDOWS_
+			LOCAL_MEM(link);
+			if(self->FollowLinks() && ReadFinalLink(full_name,&link))
             {
                 info.SetSize(CDirMgr::GetFileSize(&link));
                 info.SetModifyTime(CxFolderDiffer::GetFileModifyTime(&link));
             }
+#endif
             list->Push(&info);
         }
         return OK;

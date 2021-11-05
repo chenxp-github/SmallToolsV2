@@ -67,7 +67,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MT /W3 /Gm /GX /ZI /Od /I "." /I "common" /I "platform" /I "lualib" /I "ximage" /I "resource_manager" /I "messagepeer" /I "lua" /I "websocket" /I "win32" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FD /GZ /c
+# ADD CPP /nologo /MT /W3 /Gm /GX /ZI /Od /I "." /I "common" /I "platform" /I "lualib" /I "ximage" /I "resource_manager" /I "messagepeer" /I "lua" /I "websocket" /I "win32" /I "x-file-server" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FD /GZ /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x804 /d "_DEBUG"
 # ADD RSC /l 0x804 /d "_DEBUG"
@@ -594,6 +594,10 @@ SOURCE=.\lua\linit.c
 # End Source File
 # Begin Source File
 
+SOURCE=".\x-file-server\linkrpc_xfs_types.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\messagepeer\linkrpccommon.h
 # End Source File
 # Begin Source File
@@ -950,6 +954,14 @@ SOURCE=.\lualib\lualib_websocketserver.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\lualib\lualib_xfileserver.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_xfileserver.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lualib\lualib_ximage.cpp
 # End Source File
 # Begin Source File
@@ -1115,6 +1127,86 @@ SOURCE=.\common\mutex.cpp
 # Begin Source File
 
 SOURCE=.\common\mutex.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_change_current_directory.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_change_current_directory.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_close_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_close_file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_create_folder.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_create_folder.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_delete_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_delete_file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_delete_folder.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_delete_folder.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_get_info.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_get_info.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_list_folder.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_list_folder.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_open_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_open_file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_read_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_read_file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_write_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\param_xfs_write_file.h"
 # End Source File
 # Begin Source File
 
@@ -1330,6 +1422,118 @@ SOURCE=.\resource_manager\resourcemanager.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\x-file-server\ret_val_xfs_change_current_directory.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_change_current_directory.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_close_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_close_file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_create_folder.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_create_folder.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_delete_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_delete_file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_delete_folder.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_delete_folder.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_get_current_directory.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_get_current_directory.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_get_info.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_get_info.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_list_folder.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_list_folder.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_open_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_open_file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_read_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_read_file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_write_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\ret_val_xfs_write_file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=.\messagepeer\rpc_call_context.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\messagepeer\rpc_call_context.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\messagepeer\rpc_param_base.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\messagepeer\rpc_param_base.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\messagepeer\rpc_service_base.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\messagepeer\rpc_service_base.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\common\serial.cpp
 # End Source File
 # Begin Source File
@@ -1402,11 +1606,43 @@ SOURCE=.\common\stream.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\common\syslog.c
+SOURCE=.\common\sys_log.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\common\syslog.h
+SOURCE=.\common\sys_log.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\task_xserver_list_folder.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\task_xserver_list_folder.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\task_xserver_read_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\task_xserver_read_file.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\task_xserver_sync_folder.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\task_xserver_sync_folder.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\task_xserver_write_file.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\task_xserver_write_file.h"
 # End Source File
 # Begin Source File
 
@@ -1599,6 +1835,74 @@ SOURCE=.\websocket\websocketservicebase.h
 # Begin Source File
 
 SOURCE=.\ximage\wintypes.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_client.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_client.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_client_messages.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_info.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_info.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_info_list.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_info_list.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_server.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_server.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_session.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_session.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_session_map.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_file_session_map.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_folder_differ.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_folder_differ.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_opened_file_map.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\x-file-server\x_opened_file_map.h"
 # End Source File
 # Begin Source File
 

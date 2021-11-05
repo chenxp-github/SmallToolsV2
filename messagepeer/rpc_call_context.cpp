@@ -151,7 +151,7 @@ status_t CRpcCallContext::Searialize(CClosure *closure, int index)
     ASSERT(closure);
     LOCAL_STREAM(stream);
     this->Searialize(&stream);
-    closure->Malloc(index,stream.GetRawBuf(),stream.GetSize());
+    closure->Malloc(index,stream.GetRawBuf(),(int)stream.GetSize());
     return OK;
 }
 

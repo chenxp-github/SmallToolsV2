@@ -172,14 +172,14 @@ status_t CTaskXServerSyncFolder::Run(uint32_t interval)
             if(_e != OK)
             {
                 XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,"fail: timeout");
-                self->Stop(ERROR_CREATE_DIR_FAIL);
+                self->Stop(CTaskXServerSyncFolder::ERROR_CREATE_DIR_FAIL);
             }
             else
             {
                 if(_ret.GetResult() != OK)
                 {
                     XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,"fail");
-                    self->Stop(ERROR_CREATE_DIR_FAIL);
+                    self->Stop(CTaskXServerSyncFolder::ERROR_CREATE_DIR_FAIL);
                 }
                 else
                 {

@@ -223,13 +223,13 @@ status_t CTaskXServerReadFile::Run(uint32_t interval)
                             self->m_already_read_size += ws;
                             if(self->m_already_read_size == self->m_read_size)
                             {
-                                self->Stop(ERROR_NONE);
+                                self->Stop(CTaskXServerReadFile::ERROR_NONE);
                             }
                         }
                     }
                     else if(self->m_read_size < 0) //unknown size mode
                     {
-                        self->Stop(ERROR_NONE);
+                        self->Stop(CTaskXServerReadFile::ERROR_NONE);
                     }
                 }
             }
@@ -242,7 +242,7 @@ status_t CTaskXServerReadFile::Run(uint32_t interval)
          
         m_file_client->ReadFile(m_src_handle,
             m_start_offset+m_already_read_size, 
-            need_read,done
+            (int)need_read,done
         );
         this->Suspend();
         this->m_Step = STEP_NONE;            

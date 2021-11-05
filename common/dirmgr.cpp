@@ -136,9 +136,6 @@ status_t CDirMgr::SearchDir_Interruptable(CMem *dir, bool recursive, CClosure *c
     p[1] = filename;
     if(!crt_open_dir(dir->CStr(),p))
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "open dir '%s' fail.",dir->CStr()
-        );
         return ERROR;
     }
 
