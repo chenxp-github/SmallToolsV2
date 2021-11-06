@@ -132,6 +132,15 @@ static int app_putenv(lua_State *L)
     putenv((char*)env);
     return 0;
 }
+
+static status_t app_delenv(lua_State *L)
+{
+    const char* name = (const char*)lua_tostring(L,1);
+    ASSERT(name);
+    status_t ret0 = unsetenv(name) == 0;
+    lua_pushboolean(L,ret0);
+    return 1;
+}
 //////////////////////////////////////
 static status_t on_accept(CClosure *closure)
 {
@@ -350,6 +359,7 @@ static const luaL_Reg app_lib[] = {
     {"OS",app_os},
     {"LuaMain",app_luamain},
     {"PutEnv",app_putenv},
+    {"DelEnv",app_delenv},
 	{"StartMessageCenter",app_startmessagecenter},
     {"GetAllPeers",app_getallpeers},
     {"Sleep",app_sleep},	
