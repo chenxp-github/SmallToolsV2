@@ -125,12 +125,17 @@ static int app_luamain(lua_State *L)
     exit(ret);
     return 0;
 }
-static int app_putenv(lua_State *L)
+
+static status_t app_setenv(lua_State *L)
 {
-    const char *env = lua_tostring(L,1);
-    ASSERT(env);
-    putenv((char*)env);
-    return 0;
+    const char* name = (const char*)lua_tostring(L,1);
+    ASSERT(name);
+    const char* value = (const char*)lua_tostring(L,2);
+    ASSERT(value);
+    bool overwrite = (bool)lua_toboolean(L,3);
+    status_t ret0 = setenv(name,value,overwrite);
+    lua_pushboolean(L,ret0);
+    return 1;
 }
 
 static status_t app_delenv(lua_State *L)
@@ -358,7 +363,7 @@ static const luaL_Reg app_lib[] = {
     {"MainLoop",app_mainloop},
     {"OS",app_os},
     {"LuaMain",app_luamain},
-    {"PutEnv",app_putenv},
+    {"SetEnv",app_setenv},
     {"DelEnv",app_delenv},
 	{"StartMessageCenter",app_startmessagecenter},
     {"GetAllPeers",app_getallpeers},
