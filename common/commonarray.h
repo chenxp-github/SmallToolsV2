@@ -304,6 +304,11 @@ bool IsWeakTable()
     return m_IsWeakTable;
 }
 
+void SetIsWeakTable(bool weak)
+{
+    m_IsWeakTable = weak;
+}
+
 status_t DelNode(T *t)
 {
     DEL(t);

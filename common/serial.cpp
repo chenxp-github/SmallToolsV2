@@ -148,7 +148,10 @@ status_t CSerial::Configure(int baudrate,int databits,int stopbits,int parity)
         return ERROR;
     }
 
-    options.c_cflag &= ~CSIZE; 
+    options.c_cflag |= CLOCAL | CREAD;
+    options.c_cflag &= ~CSIZE;
+    options.c_iflag &= ~( IXON | IXOFF | IXANY | ICRNL | INLCR | IGNCR );
+
     switch (databits) 
     {   
         case 7:     
@@ -211,6 +214,9 @@ status_t CSerial::Configure(int baudrate,int databits,int stopbits,int parity)
     tcflush(fd,TCIFLUSH);
     options.c_cc[VTIME] = 0; /* time out 0 seconds*/   
     options.c_cc[VMIN] = 0; /* Update the options and do it NOW */
+
+    options.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN | ISIG);//for linux
+    options.c_oflag &= ~OPOST;/*No Output Processing*/
 
     if (tcsetattr(fd,TCSANOW,&options) != 0)   
     {

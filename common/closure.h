@@ -74,7 +74,8 @@ double var = (closure)->GetParamDouble(n) \
 
 #define __CLOSURE_PARAM_STRING(closure,var,n) \
 ASSERT((closure)->GetParamType(n) == PARAM_TYPE_STRING);\
-const char* var = (closure)->GetParamString(n) \
+const char* var = (closure)->GetParamString(n);\
+ASSERT(var)\
 
 #define __CLOSURE_PARAM_WEAKPTR(closure,type,var,n)\
 ASSERT((closure)->GetParamType(n) == PARAM_TYPE_WEAKPTR);\
