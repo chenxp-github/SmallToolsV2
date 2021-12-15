@@ -132,8 +132,16 @@ static status_t app_setenv(lua_State *L)
     ASSERT(name);
     const char* value = (const char*)lua_tostring(L,2);
     ASSERT(value);
-    bool overwrite = (bool)lua_toboolean(L,3);
+    bool overwrite = lua_toboolean(L,3)!=0;
+#if _IS_WINDOWS_
+	LOCAL_MEM(mem);
+	mem.Puts(name);
+	mem.Puts("=");
+	mem.Puts(value);
+	status_t ret0 = putenv(mem.CStr()) == 0;
+#else
     status_t ret0 = setenv(name,value,overwrite);
+#endif
     lua_pushboolean(L,ret0);
     return 1;
 }
@@ -142,7 +150,14 @@ static status_t app_delenv(lua_State *L)
 {
     const char* name = (const char*)lua_tostring(L,1);
     ASSERT(name);
+#if _IS_WINDOWS_
+	LOCAL_MEM(mem);
+	mem.Puts(name);
+	mem.Puts("=");
+	status_t ret0 = putenv(mem.CStr()) == 0;	
+#else
     status_t ret0 = unsetenv(name) == 0;
+#endif
     lua_pushboolean(L,ret0);
     return 1;
 }
