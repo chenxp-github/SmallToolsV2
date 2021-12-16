@@ -122,7 +122,17 @@ static int mem_cstr(lua_State *L)
 {
     CMem *pmem = get_mem(L,1);
     ASSERT(pmem);
-    lua_pushlstring(L,pmem->CStr(),pmem->StrLen());
+
+    int zero = lua_toboolean(L,2);
+    if(zero)
+    {
+        lua_pushstring(L,pmem->CStr());
+    }
+    else
+    {
+        lua_pushlstring(L,pmem->CStr(),pmem->StrLen());
+    }
+    
     return 1;
 }
 
@@ -171,10 +181,10 @@ static int mem_setrawbuf_v2(lua_State *L)
 
 static int mem_setrawbuf(lua_State *L)
 {
-    if(lua_isstring(L,2))
-        return mem_setrawbuf_v2(L);
-    else
+    if(lua_isinteger(L,2))
         return mem_setrawbuf_v1(L);
+    else
+        return mem_setrawbuf_v2(L);
 }
 
 static int mem_setisreadonly(lua_State *L)
