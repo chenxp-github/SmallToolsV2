@@ -46,7 +46,7 @@ function app_main(args)
     cmd:AddKeyType(kWithMd5,TYPE_KEY,OPTIONAL,"calcu md5 of files.");    
     cmd:AddKeyType(kLuaConfig,TYPE_KEY_EQUAL_VALUE,OPTIONAL,
         "use a lua as config file."..EOL..
-        "        lua function need_this_file(info) must be exist."
+        "        lua function need_this_file(info,root) must be exist."
     );
     
     cmd:LoadFromArgv(args);            
