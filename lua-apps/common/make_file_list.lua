@@ -195,7 +195,7 @@ end
 
 function CopyFilesTo(dest,mode,path_prefix)
     if not mode then
-        mode = MODE_USE_LOG | MODE_CHECKSAME | MODE_OVERWRITE;
+        mode = MODE_USE_LOG | MODE_CHECKSAME | MODE_OVERWRITE | MODE_COPY_LINK;
     end
     
     for filename in pairs(g_all_files_list) do       
