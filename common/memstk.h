@@ -5,6 +5,7 @@
 #include "filebase.h"
 #include "closure.h"
 #include "userfunc.h"
+#include "minibson.h"
 
 class CMemStk:public CUserFunc{
 public:
@@ -57,6 +58,12 @@ public:
 #if _UNICODE_
     status_t PushW(const wchar_t *str);
 #endif
+
+    status_t SaveBson(CMiniBson *_bson);
+    status_t SaveBson(CMem *_mem);
+    status_t LoadBson(CMiniBson *_bson);
+    status_t LoadBson(CFileBase *_file);
+
 };
 
 #endif

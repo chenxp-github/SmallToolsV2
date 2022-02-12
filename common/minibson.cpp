@@ -944,6 +944,8 @@ static status_t _to_json(CClosure *closure)
             json->Puts("]");
         else
             json->Puts("}");     
+		can_put_comma = 1;
+        closure->SetParamInt(INDEX_CAN_PUT_COMMA,can_put_comma);        
     }
 
     return TRUE;

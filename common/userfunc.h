@@ -27,6 +27,7 @@ public:
     status_t InitBasic();
     status_t Init();
     status_t Destroy();
+    status_t Copy(CUserFunc *uf);
 };
 
 #endif

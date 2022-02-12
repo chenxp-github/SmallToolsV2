@@ -76,7 +76,8 @@ status_t CopySingleFile_Interruptable(CMem *_from,CMem *_to, fsize_t start, fsiz
     if(!file_from.OpenFile(from->CStr(),"rb"))
     {
         XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
-            "open src file %s error.",from->CStr());
+            "open src file %s error.",from->CStr()
+        );
         return ERROR;
     }
     
@@ -99,7 +100,8 @@ status_t CopySingleFile_Interruptable(CMem *_from,CMem *_to, fsize_t start, fsiz
 		if(!file_to.OpenFile(to->CStr(),"wb+"))
 		{
 			XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
-                "open dst file %s error.",to->CStr());
+                "open dst file %s error.",to->CStr()
+            );
 			return ERROR;
 		}
 	}
@@ -120,8 +122,9 @@ status_t CopySingleFile_Interruptable(CMem *_from,CMem *_to, fsize_t start, fsiz
     if(mode & MODE_USE_LOG)
     {
         XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
-            "%s ==> %s",from->CStr(),to->CStr());
-    } 
+            "%s ==> %s",from->CStr(),to->CStr()
+        );
+    }
 
     file_from.Seek(start);
 

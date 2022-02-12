@@ -304,8 +304,8 @@ status_t CMemStk::Copy(CMemStk *stk)
     int i;
 
     ASSERT(stk);
-    this->Destroy();
-    this->Init(stk->GetLen());
+    this->Clear();
+    CUserFunc::Copy((CUserFunc*)stk);
     for(i = 0; i < stk->GetLen(); i++)
     {
         CMem *p = stk->GetElem(i);
@@ -500,3 +500,92 @@ status_t CMemStk::PushW(const wchar_t *str)
 #endif
 
 
+status_t CMemStk::SaveBson(CMiniBson *_bson)
+{
+    ASSERT(_bson);
+
+    fsize_t off;
+    _bson->StartArray("_array_",&off);
+    char name[256];
+    for(int i = 0; i < this->GetLen(); i++)
+    {
+        CMem *p = this->GetElem(i);
+        ASSERT(p);        
+        sprintf(name,"%d",i);
+        fsize_t _off;
+        _bson->StartDocument(name,&_off);      
+        _bson->PutString("file_name",
+            p->file_name?p->file_name:""
+        );
+        _bson->PutBinary("data",p);        
+        _bson->EndDocument(_off);
+    }
+    _bson->EndArray(off,this->GetLen());    
+
+    return OK;
+}
+
+status_t CMemStk::SaveBson(CMem *_mem)
+{
+    ASSERT(_mem);
+    CMiniBson _bson;
+    _bson.Init();
+    _bson.SetRawBuf(_mem);
+    _bson.StartDocument();
+    this->SaveBson(&_bson);
+    _bson.EndDocument();
+    _mem->SetSize(_bson.GetDocumentSize());
+    return OK;
+}
+
+status_t CMemStk::LoadBson(CMiniBson *_bson)
+{
+    ASSERT(_bson);
+
+    CMiniBson doc;
+    doc.Init();
+    
+    int len = 0;
+    BSON_CHECK(_bson->GetArray("_array_",&doc,&len));
+    this->Clear();
+    
+    doc.ResetPointer();
+    for(int i = 0; i < len; i++)
+    {
+        CMiniBson sub_doc;
+        sub_doc.Init();
+        doc.GetDocument(NULL,&sub_doc);
+
+
+        CMem *p=NULL;
+        NEW(p,CMem);
+        p->Init();
+
+        CMem fn,data;
+        fn.Init();
+        data.Init();
+
+        BSON_CHECK(sub_doc.GetString("file_name",&fn));
+        BSON_CHECK(sub_doc.GetBinary("data",&data));
+
+        p->Copy(&data);
+        if(fn.StrLen() > 0) //must be after Copy
+        {
+            p->SetFileName(fn.CStr());
+        }
+    
+        this->Push(p);        
+    }
+   
+    return OK;
+}
+
+status_t CMemStk::LoadBson(CFileBase *_file)
+{
+    ASSERT(_file);
+    CMiniBson _bson;
+    _bson.Init();
+    _bson.LoadBson(_file);
+    _bson.ResetPointer();
+    return this->LoadBson(&_bson);
+}

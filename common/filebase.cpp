@@ -1297,7 +1297,8 @@ status_t CFileBase::ReadKeyValue(CFileBase *file_key, const char *split_chars, C
         mem.SetSplitChars(split_chars);
         mem.ReadString(&buf);
         buf.Trim();
-        if(buf.StrICmp(file_key) == 0)
+        CFileBase *_buf = &buf;
+        if(_buf->StrICmp(file_key) == 0)
         {
             mem.ReadWord(&buf);
             if(CFileBase::InStrList(buf.CStr(),split_chars,0))

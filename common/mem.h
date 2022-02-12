@@ -62,6 +62,11 @@ public:
     virtual char Getc();
     virtual char UnGetc();
     virtual fsize_t Putc(char ch);
+   
+    int StrICmp(const char *str);
+    int StrICmp(CMem *file);
+    int StrCmp(CMem *file); 
+    int StrCmp(const char *str);
 
 #if _UNICODE_
     CMem(const wchar_t *str);

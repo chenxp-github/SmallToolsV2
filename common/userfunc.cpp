@@ -50,3 +50,10 @@ uint32_t CUserFunc::GetUseUserFunc()
     return _Flags_;
 }
 
+status_t CUserFunc::Copy(CUserFunc *uf)
+{
+    ASSERT(uf);
+    this->_Flags_ = uf->_Flags_;
+    this->_UserFunc_.Copy(&uf->_UserFunc_);
+    return OK;
+}

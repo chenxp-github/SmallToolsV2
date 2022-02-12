@@ -432,6 +432,44 @@ status_t CMem::Slice(int_ptr_t start, int_ptr_t size,CMem *out)
     out->SetRawBuf(GetRawBuf()+start,real_size,true);
     return OK;    
 }
+   
+int CMem::StrICmp(const char *str)
+{
+    const char *p = this->CStr();
+    if(str==NULL && p==NULL)
+        return 0;
+    if(str==NULL && p!=NULL)
+        return p[0];
+    if(p==NULL && str!=NULL)
+        return -str[0];
+    return crt_stricmp(p,str);        
+}
+
+int CMem::StrICmp(CMem *file)
+{
+    const char *str = NULL;
+    if(file) str = file->CStr();
+    return this->StrICmp(str);
+}
+
+int CMem::StrCmp(const char *str)
+{
+    const char *p = this->CStr();
+    if(str==NULL && p==NULL)
+        return 0;
+    if(str==NULL && p!=NULL)
+        return p[0];
+    if(p==NULL && str!=NULL)
+        return -str[0];
+    return crt_strcmp(p,str);        
+}
+
+int CMem::StrCmp(CMem *file)
+{
+    const char *str = NULL;
+    if(file) str = file->CStr();
+    return this->StrCmp(str);
+}
 ////////////////////////////////////////////////////////////////////////////
 #if _UNICODE_
 ////////////////////////////////////////////////////////////////////////////
