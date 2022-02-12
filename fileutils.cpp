@@ -46,6 +46,7 @@ status_t CopySingleFile_Interruptable(CMem *_from,CMem *_to, fsize_t start, fsiz
                     }
                 }
             }
+            CDirMgr::CreateFilePath(to);
             return symlink(from_link.CStr(),to->CStr()) == 0;
         }
     }
