@@ -413,8 +413,11 @@ status_t CNativeProcessManager::FindProcessByName(const char *name_pattern,int_p
 
         if(process->IsExist())
         {
-            process->UpdateExeName();
-            if(wild_match(name_pattern,process->GetExeNameStr()))
+            process->UpdateCmdLine();
+            LOCAL_MEM_WITH_SIZE(cmd,32*1024);
+            process->GetCmdLine(&cmd);
+
+            if(wild_match(name_pattern,cmd.CStr()))
             {
                 if(*pindex < *buf_size)
                 {

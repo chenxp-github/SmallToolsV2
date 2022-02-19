@@ -283,3 +283,11 @@ int_ptr_t CQueueFile::FindTag(CClosure *match)
     this->RestoreContext(context);
     return find?pos:-1;
 }
+
+status_t CQueueFile::Zero()
+{
+    ASSERT(pdata);
+    memset(pdata,0,max_size);
+    return OK;
+}
+

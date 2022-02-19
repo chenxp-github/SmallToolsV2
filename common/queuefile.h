@@ -36,6 +36,7 @@ public:
     status_t InitBasic();
     fsize_t Seek(fsize_t off);
     status_t SetSize(fsize_t ssize);
+    status_t Zero();
 };
 
 #endif

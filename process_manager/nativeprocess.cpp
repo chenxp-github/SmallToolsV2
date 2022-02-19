@@ -483,3 +483,20 @@ bool CNativeProcess::IsChildProcessOf(int ppid, int pid)
 
     return false;
 }
+
+status_t CNativeProcess::GetCmdLine(CMem *out)
+{
+    ASSERT(out);
+
+    out->SetSize(0);
+    
+    for(int i = 0; i < m_CmdLine.GetLen(); i++)
+    {
+        CMem *mem = m_CmdLine.GetElem(i);
+        if(i >0)out->Putc(' ');
+        out->Puts(mem);
+    }
+
+    return OK;
+}
+

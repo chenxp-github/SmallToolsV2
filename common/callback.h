@@ -6,6 +6,7 @@
 #include "closure.h"
 
 #define E_TIMEOUT 0xffffffff
+#define E_OK      OK
 
 class CCallback{
 public:

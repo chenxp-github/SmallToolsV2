@@ -147,6 +147,20 @@ static int nativeprocess_getcmdline(lua_State *L)
         return 1;
     return 0;
 }
+static int nativeprocess_getcmdlinestring(lua_State *L)
+{
+    CNativeProcess *pnativeprocess = get_nativeprocess(L,1);
+    ASSERT(pnativeprocess);    
+    LOCAL_MEM_WITH_SIZE(cmd,32*1024);
+    pnativeprocess->GetCmdLine(&cmd);
+    if(cmd.StrLen() > 0)
+    {
+        lua_pushlstring(L,cmd.CStr(),cmd.StrLen());
+        return 1;
+    }
+    
+    return 0;
+}
 static int nativeprocess_getmemoryusage(lua_State *L)
 {
     CNativeProcess *pnativeprocess = get_nativeprocess(L,1);
@@ -324,6 +338,7 @@ static const luaL_Reg nativeprocess_lib[] = {
     {"GetPid",nativeprocess_getpid},
     {"GetExeName",nativeprocess_getexename},
     {"GetCmdLine",nativeprocess_getcmdline},
+    {"GetCmdLineString",nativeprocess_getcmdlinestring},
     {"GetMemoryUsage",nativeprocess_getmemoryusage},
     {"GetMaxCpuUsage",nativeprocess_getmaxcpuusage},
     {"GetCpuUsageLimit",nativeprocess_getcpuusagelimit},

@@ -83,13 +83,6 @@ status_t CSerial::Open(const char *dev_name)
             "open %s error\n",dev_name);
         return ERROR;
     }
-
-    struct termios   options;
-    tcgetattr(fd, &options); 
-    options.c_lflag  &= ~(ICANON | ECHO | ECHOE | ISIG);
-    options.c_oflag  &= ~OPOST;   
-    tcsetattr(fd,TCSANOW,&options);
-
     return OK;
 }
 
@@ -107,15 +100,10 @@ static const int name_arr[] =
     38400,19200,9600,4800,2400,1200,300
 };
 
-static status_t set_baud_rate(int fd,int speed)
+static status_t set_baud_rate(int fd,int speed,struct termios *options)
 {
-    int i,find = 0; 
-    int status; 
-    struct termios   Opt;
-    
+    int i,find = 0;   
     int array_size = sizeof(speed_arr)/sizeof(speed_arr[0]);
-    
-    tcgetattr(fd, &Opt); 
     
     for ( i= 0;  i < array_size;  i++) 
     { 
@@ -123,12 +111,8 @@ static status_t set_baud_rate(int fd,int speed)
         {     
             find = 1;
             tcflush(fd, TCIOFLUSH);     
-            cfsetispeed(&Opt, speed_arr[i]);  
-            cfsetospeed(&Opt, speed_arr[i]);   
-            status = tcsetattr(fd, TCSANOW, &Opt);  
-            if  (status != 0) 
-                return ERROR;     
-            tcflush(fd,TCIOFLUSH);   
+            cfsetispeed(options, speed_arr[i]);  
+            cfsetospeed(options, speed_arr[i]);   
         }  
     }
 
@@ -138,19 +122,14 @@ static status_t set_baud_rate(int fd,int speed)
 status_t CSerial::Configure(int baudrate,int databits,int stopbits,int parity)
 {
     ASSERT(this->fd > 0);
-    ASSERT(set_baud_rate(this->fd,baudrate));
     
     struct termios options; 
-    if(tcgetattr(fd,&options)  !=  0) 
-    { 
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "SetupSerial Error 1\n");
-        return ERROR;
-    }
+    memset(&options,0,sizeof(options));
 
     options.c_cflag |= CLOCAL | CREAD;
-    options.c_cflag &= ~CSIZE;
-    options.c_iflag &= ~( IXON | IXOFF | IXANY | ICRNL | INLCR | IGNCR );
+    options.c_cflag &= ~CSIZE;    
+    options.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    options.c_oflag &= ~OPOST;   
 
     switch (databits) 
     {   
@@ -211,12 +190,11 @@ status_t CSerial::Configure(int baudrate,int databits,int stopbits,int parity)
 
     if (parity != 'n')   
         options.c_iflag |= INPCK; 
-    tcflush(fd,TCIFLUSH);
+    
+    ASSERT(set_baud_rate(this->fd,baudrate,&options));
+
     options.c_cc[VTIME] = 0; /* time out 0 seconds*/   
     options.c_cc[VMIN] = 0; /* Update the options and do it NOW */
-
-    options.c_lflag &= ~(ECHO | ECHONL | ICANON | IEXTEN | ISIG);//for linux
-    options.c_oflag &= ~OPOST;/*No Output Processing*/
 
     if (tcsetattr(fd,TCSANOW,&options) != 0)   
     {
@@ -225,6 +203,7 @@ status_t CSerial::Configure(int baudrate,int databits,int stopbits,int parity)
         return ERROR;
     }
 
+    tcflush(fd,TCIFLUSH);
     return OK;  
 }
 

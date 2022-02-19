@@ -69,6 +69,7 @@ public:
     status_t SetExeName(const char *_exename);
     status_t UpdateStat();
     static bool IsChildProcessOf(int ppid, int pid);
+    status_t GetCmdLine(CMem *out);
 
     NATIVE_PROCESS_FLAG_FUNC(IsCpuStopped,0x00000001);
 };
