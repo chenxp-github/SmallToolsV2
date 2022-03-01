@@ -9,6 +9,7 @@ local g_file_list_fn = nil;
 local g_no_file_list_fn = nil;
 local g_copy_mode = 0;
 local g_lua_config = nil;
+local g_ignore_links = nil;
 
 function app_short_help()
     return "copy folder.";
@@ -19,21 +20,48 @@ function app_name()
 end
 
 --default need_this_file
-function need_this_file(fullpath,from)
+function need_this_file(info,root)
     return true;
 end
 
-function copy_single_file_wrapper(from,to,mode,rpath)
-    if need_this_file(from,g_from) then
-        FileManager.CopySingleFile(from,to,mode);
+local function search_folder(folder,callback)
+    FileManager.SearchDir(folder,false,function(info)
+        if info.event == EVENT_BEGIN_DIR then
+            if callback(info) then
+                search_folder(info.full_name,callback);                
+            end            
+        elseif info.event == EVENT_SINGLE_FILE then                
+            callback(info);                
+        elseif info.event == EVENT_END_DIR then
+            callback(info);
+        end        
+    end);       
+end
+
+function copy_single_file_wrapper(info,to,mode,rpath)
+    if need_this_file(info,g_from) then
+        FileManager.CopySingleFile(info.full_name,to,mode);
     end
 end
 
 function copy_folder_raw()
-    FileManager.SearchDir(g_from,true,function(info)
-        if info.event == EVENT_SINGLE_FILE then            
+    search_folder(g_from,function(info)
+        if info.event == EVENT_BEGIN_DIR then
+            if not need_this_file(info,g_from) then
+                return false;
+            end
+
+            local link = FileManager.ReadLink(info.full_name);
+            if not g_ignore_links and link then
+                local rpath = remove_path_prefix(info.full_name,g_from);
+                copy_single_file_wrapper(info,g_to.."/"..rpath,g_copy_mode);
+                return false;
+            end
+            
+            return true;
+        elseif info.event == EVENT_SINGLE_FILE then            
             local rpath = remove_path_prefix(info.full_name,g_from);
-            copy_single_file_wrapper(info.full_name,g_to.."/"..rpath,g_copy_mode);
+            copy_single_file_wrapper(info,g_to.."/"..rpath,g_copy_mode);
         end
     end);
 end
@@ -165,13 +193,15 @@ function app_main(args)
     cmd:AddKeyType(kIgnoreLinks,TYPE_KEY,OPTIONAL,"treat links as normal file.");
     cmd:AddKeyType(kLuaConfig,TYPE_KEY_EQUAL_VALUE,OPTIONAL,
         "use a lua as config file."..EOL..
-        "        lua function need_this_file(fullpath,from) must be exist."
+        "        lua function need_this_file(info,root) must be exist."
     );
     cmd:LoadFromArgv(args);
     
     if cmd:CheckForErrors() then
         return;
     end
+
+    g_ignore_links = cmd:HasKey(kIgnoreLinks)
 
     g_from = FileManager.ToAbsPath(cmd:GetValueByKey(kFrom));
     g_to = FileManager.ToAbsPath(cmd:GetValueByKey(kTo));
