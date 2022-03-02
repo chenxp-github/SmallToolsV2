@@ -73,7 +73,7 @@ function copy_folder_file_list()
         end
         
         copy_single_file_wrapper(
-            g_from.."/"..line,
+            {full_name=g_from.."/"..line},
             g_to.."/"..line,
             g_copy_mode
         );            
@@ -90,7 +90,11 @@ function copy_folder_no_file_list()
         if info.event == EVENT_SINGLE_FILE then            
             local rpath = remove_path_prefix(info.full_name,g_from);            
             if not no_table[rpath] then            
-                copy_single_file_wrapper(info.full_name,g_to.."/"..rpath,g_copy_mode);          
+                copy_single_file_wrapper(
+                    info,
+                    g_to.."/"..rpath,
+                    g_copy_mode
+                );
             end
         end
     end);    
@@ -111,7 +115,7 @@ function copy_folder_exts(exts_table,not_mode)
             end
             
             if do_copy then            
-                copy_single_file_wrapper(info.full_name,g_to.."/"..rpath,g_copy_mode);          
+                copy_single_file_wrapper(info,g_to.."/"..rpath,g_copy_mode);          
             end
         end
     end);
