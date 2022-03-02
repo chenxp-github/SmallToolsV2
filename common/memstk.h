@@ -7,6 +7,8 @@
 #include "userfunc.h"
 #include "minibson.h"
 
+CLOSURE_COMMON_OBJECT_OPS_DEFINE_H(CMemStk,memstk)
+
 class CMemStk:public CUserFunc{
 public:
     CMem **mIndex;

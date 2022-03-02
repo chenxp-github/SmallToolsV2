@@ -2,6 +2,8 @@
 #include "mem_tool.h"
 #include "sys_log.h"
 
+CLOSURE_COMMON_OBJECT_OPS_DEFINE_CPP(CMemStk,memstk)
+
 CMemStk::CMemStk()
 {
     this->InitBasic();  

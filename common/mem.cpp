@@ -467,7 +467,11 @@ int CMem::StrCmp(const char *str)
 int CMem::StrCmp(CMem *file)
 {
     const char *str = NULL;
-    if(file) str = file->CStr();
+    if(file)
+    {
+        str = file->CStr();
+        ASSERT(file->C(file->GetSize()) == 0);
+    }
     return this->StrCmp(str);
 }
 ////////////////////////////////////////////////////////////////////////////

@@ -65,7 +65,6 @@ int CMiniBson::Comp(CMiniBson *p)
 }
 status_t CMiniBson::Print(CFileBase *_buf)
 {
-    this->ResetPointer();
     this->ToJson(_buf,true);
     return OK;
 }
@@ -954,6 +953,8 @@ static status_t _to_json(CClosure *closure)
 status_t CMiniBson::ToJson(CFileBase *json,bool bracket)
 {
     ASSERT(json);
+
+    fsize_t pos = this->GetPointerPos();
     if(bracket)json->Puts("{\r\n");
     CClosure closure(_to_json);
     closure.SetParamPointer(INDEX_JSON_FILE,json);
@@ -967,6 +968,8 @@ status_t CMiniBson::ToJson(CFileBase *json,bool bracket)
     closure.SetParamPointer(INDEX_PATH,&path);
     this->Traverse(true,0,&closure);
     if(bracket)json->Puts("\r\n}\r\n");
+
+    this->SetPointerPos(pos);
     return OK;
 }
 
