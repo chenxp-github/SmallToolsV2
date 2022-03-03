@@ -442,13 +442,28 @@ int CMem::StrICmp(const char *str)
         return p[0];
     if(p==NULL && str!=NULL)
         return -str[0];
+    
+    if(p != NULL)
+    {
+        ASSERT(p[this->GetSize()] == 0);
+    }
+
     return crt_stricmp(p,str);        
 }
 
 int CMem::StrICmp(CMem *file)
 {
     const char *str = NULL;
-    if(file) str = file->CStr();
+    
+    if(file)
+    {
+        str = file->CStr();
+        if(str != NULL)
+        {
+            ASSERT(str[file->GetSize()] == 0);
+        }
+    }
+
     return this->StrICmp(str);
 }
 
@@ -461,6 +476,12 @@ int CMem::StrCmp(const char *str)
         return p[0];
     if(p==NULL && str!=NULL)
         return -str[0];
+
+    if(p != NULL)
+    {
+        ASSERT(p[this->GetSize()] == 0);
+    }
+
     return crt_strcmp(p,str);        
 }
 
@@ -470,7 +491,10 @@ int CMem::StrCmp(CMem *file)
     if(file)
     {
         str = file->CStr();
-        ASSERT(file->C(file->GetSize()) == 0);
+        if(str != NULL)
+        {
+            ASSERT(str[file->GetSize()] == 0);
+        }
     }
     return this->StrCmp(str);
 }
