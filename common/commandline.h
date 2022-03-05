@@ -30,9 +30,11 @@ public:
     bool HasKey(const char *str);
     bool HasKey(CMem *key);
     CCmdEntry* GetByKey(CMem *key);
+    CCmdEntry* GetKeyTypeByKey(CMem *key);
     int GetArgvType(CMem *argv,CCmdEntry** typeEntry);
     status_t LoadFromArgv(int argc, char **argv);
     status_t AddKeyType(const char *key, int type, int option,const char *help);
+    status_t AddKeyTypeDep(const char *dep_key, const char *dep_value,const char *key, int dep_op);
     CCommandLine();
     virtual ~CCommandLine();
     status_t InitBasic();
@@ -44,6 +46,8 @@ public:
 
     status_t GetAllValuesByKey(const char *key,CMemStk *values);
     status_t GetAllValuesByKey(CMem *key,CMemStk *values);
+
+    bool CheckDependErrors(CCmdEntry *key_type);
 };
 
 #endif

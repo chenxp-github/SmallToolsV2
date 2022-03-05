@@ -36,6 +36,9 @@ TYPE_KEY_SPACE_VALUE = 5;
 MUST = 1;
 OPTIONAL = 2;
 
+DEP_OP_AND = 0;
+DEP_OP_OR = 1;
+DEP_OP_NOT = 2;
 ----
 LBUF_SIZE = 32*1024;
 EOL = "\r\n";

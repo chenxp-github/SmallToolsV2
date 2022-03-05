@@ -18,6 +18,8 @@ status_t CCmdEntry::InitBasic()
     this->m_Key.InitBasic();
     this->m_Value.InitBasic();
     this->m_Help.InitBasic();
+    this->m_Depends.InitBasic();
+    this->m_DepOp = DEP_OP_AND;
     return OK;
 }
 status_t CCmdEntry::Init()
@@ -26,6 +28,7 @@ status_t CCmdEntry::Init()
     this->m_Key.Init();
     this->m_Value.Init();
     this->m_Help.Init();
+    this->m_Depends.Init();
     return OK;
 }
 status_t CCmdEntry::Destroy()
@@ -34,6 +37,7 @@ status_t CCmdEntry::Destroy()
     this->m_Key.Destroy();
     this->m_Value.Destroy();
     this->m_Help.Destroy();
+    this->m_Depends.Destroy();
     this->InitBasic();
     return OK;
 }
@@ -298,4 +302,59 @@ status_t CCmdEntry::SaveToArgv(int *argc, char **argv)
     }
     
     return ERROR;
+}
+
+status_t CCmdEntry::ClearDepends()
+{
+    return m_Depends.Clear();
+}
+
+status_t CCmdEntry::AddDepend(CCmdEntry *type)
+{
+    ASSERT(type);
+    return m_Depends.PushPtr(type);
+}
+
+status_t CCmdEntry::ClearValue()
+{
+    return m_Value.SetSize(0);
+}
+
+bool CCmdEntry::HasDepends()
+{
+    return m_Depends.GetLen() > 0;
+}
+
+status_t CCmdEntry::SetDepOp(int op)
+{
+    m_DepOp = op;
+    return OK;
+}
+
+int CCmdEntry::GetDepOp()
+{
+    return m_DepOp;
+}
+
+CCommonArray<CCmdEntry> *CCmdEntry::GetDepends()
+{
+    return &m_Depends;
+}
+
+bool CCmdEntry::HasValue()
+{
+    return m_Value.StrLen() > 0;
+}
+
+status_t CCmdEntry::GetAllDependKeys(CMem *keys)
+{
+    ASSERT(keys);
+
+    for(int i = 0; i < m_Depends.GetLen(); i++)
+    {
+        CCmdEntry *dep = m_Depends.GetElem(i);
+        if(i > 0)keys->Puts(",");
+        keys->Puts(dep->GetKey());
+    }
+    return OK;
 }

@@ -351,6 +351,7 @@ class CommandLine{
     CmdEntry GetCmdEntry(int i);
 
     array<string> GetAllValuesByKey(string key);
+    status_t AddKeyTypeDep(string dep_key, string dep_value,string key, int dep_op);
 }
 
 class CmdEntry{

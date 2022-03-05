@@ -4,6 +4,7 @@
 #include "cruntime.h"
 #include "filebase.h"
 #include "mem.h"
+#include "commonarray.h"
 
 #undef OPTIONAL
 
@@ -24,12 +25,20 @@ public:
         OPTIONAL,
     };
 
+    enum{
+        DEP_OP_AND,
+        DEP_OP_OR,
+        DEP_OP_NOT,
+    };
 public:
     int m_KeyType;
     CMem m_Key;
     CMem m_Value;
     CMem m_Help;
     int m_Option;
+
+    int m_DepOp;
+    CCommonArray<CCmdEntry> m_Depends;
 public:
     status_t SaveToArgv(int *argc, char **argv);
     status_t SetOption(int option);
@@ -58,6 +67,16 @@ public:
     status_t SetHelp(CMem* _help);
     const char* GetHelpStr();
     status_t SetHelp(const char *_help);
+
+    status_t ClearDepends();
+    status_t AddDepend(CCmdEntry *type);
+    status_t ClearValue();
+    bool HasDepends();
+    status_t SetDepOp(int op);
+    int GetDepOp();
+    CCommonArray<CCmdEntry> *GetDepends();
+    bool HasValue();
+    status_t GetAllDependKeys(CMem *keys);
 };
 
 #endif

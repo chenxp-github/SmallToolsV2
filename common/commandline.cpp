@@ -75,6 +75,33 @@ status_t CCommandLine::AddKeyType(const char *key, int type, int option,const ch
     return m_EntryTypes.PushPtr(tmp);
 }
 
+status_t CCommandLine::AddKeyTypeDep(const char *dep_key, const char *dep_value,const char *key,int dep_op)
+{
+    ASSERT(dep_key && key);
+
+    CMem mem_key(key);
+    CMem mem_dep_key(dep_key);
+
+    CCmdEntry *key_type = this->GetKeyTypeByKey(&mem_key);
+    if(!key_type)return ERROR;
+
+    CCmdEntry *dep_key_type = this->GetKeyTypeByKey(&mem_dep_key);
+    if(!dep_key_type)return ERROR;
+
+    CCmdEntry *dep;
+    NEW(dep,CCmdEntry);
+    dep->Copy(dep_key_type);
+    dep->SetDepOp(dep_op);
+
+    dep->ClearValue();
+    if(dep_value)
+    {
+        dep->SetValue(dep_value);
+    }
+
+    return key_type->AddDepend(dep);
+}
+
 status_t CCommandLine::LoadFromArgv(int argc, char **argv)
 {
     ASSERT(argv);
@@ -150,6 +177,20 @@ CCmdEntry* CCommandLine::GetByKey(CMem *key)
     return NULL;
 }
 
+CCmdEntry* CCommandLine::GetKeyTypeByKey(CMem *key)
+{
+    ASSERT(key);
+    for(int i = 0; i < m_EntryTypes.GetLen(); i++)
+    {
+        CCmdEntry *e = m_EntryTypes.GetElem(i);
+        if(e->GetKey()->StrEqu(key,true))
+        {
+            return e;
+        }
+    }
+    return NULL;
+}
+
 bool CCommandLine::HasKey(CMem *key)
 {
     ASSERT(key);
@@ -188,14 +229,33 @@ status_t CCommandLine::CheckForErrors()
     for(int i = 0; i < m_EntryTypes.GetLen(); i++)
     {
         CCmdEntry *e = m_EntryTypes.GetElem(i);
-        if(e->GetOption() == CCmdEntry::MUST)
-        {           
-            if(this->GetByKey(e->GetKey()) == NULL)
+        if(!e->HasDepends())
+        {
+            if(e->GetOption() == CCmdEntry::MUST)
+            {           
+                if(this->GetByKey(e->GetKey()) == NULL)
+                {
+                    has_errors = TRUE;
+                    XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
+                        "error: %s is missing.",e->GetKeyStr()
+                    );
+                }
+            }
+        }
+        else
+        {
+            if(this->CheckDependErrors(e))
             {
-                has_errors = TRUE;
-                XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-                    "error: %s is missing.",e->GetKeyStr()
-                );
+                if(e->GetOption() == CCmdEntry::MUST)
+                {           
+                    if(this->GetByKey(e->GetKey()) == NULL)
+                    {
+                        has_errors = TRUE;
+                        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
+                            "error: %s is missing.",e->GetKeyStr()
+                        );
+                    }
+                }
             }
         }
     }
@@ -222,13 +282,23 @@ status_t CCommandLine::PrintHelp(CFileBase *out)
 {
     for(int i = 0; i < m_EntryTypes.GetLen(); i++)
     {
-        CCmdEntry *e = m_EntryTypes.GetElem(i);     
+        CCmdEntry *e = m_EntryTypes.GetElem(i);
         const char *opt_str = "optional";
         if(e->GetOption() == CCmdEntry::MUST)
+        {
             opt_str = "must";
-        out->Log(
-            "%s: %s, %s",e->GetKeyStr(),opt_str,e->GetHelpStr()
-        );
+        }
+    
+        if(!e->HasDepends())
+        {
+            out->Log("%s: %s, %s",e->GetKeyStr(),opt_str,e->GetHelpStr());
+        }
+        else
+        {
+            LOCAL_MEM(deps);
+            e->GetAllDependKeys(&deps);
+            out->Log("%s: %s(%s), %s",e->GetKeyStr(),opt_str,deps.CStr(),e->GetHelpStr());
+        }
     }
     return OK;
 }
@@ -381,4 +451,65 @@ status_t CCommandLine::GetAllValuesByKey(CMem *key,CMemStk *values)
         }
     }
     return OK;
+}
+
+
+bool CCommandLine::CheckDependErrors(CCmdEntry *key_type)
+{
+    ASSERT(key_type);
+
+    CCommonArray<CCmdEntry> *deps = key_type->GetDepends();
+    ASSERT(deps);
+
+    for(int i = 0; i < deps->GetLen(); i++)
+    {
+        CCmdEntry *dep = deps->GetElem(i);
+        ASSERT(dep);
+
+        bool success = false;
+
+        if(dep->HasValue())
+        {
+            CMem *val = this->GetValueByKey(dep->GetKey());
+            if(val && val->StrEqu(dep->GetValue()))
+            {
+                success = true;
+            }
+        }
+        else
+        {            
+            if(this->HasKey(dep->GetKey()))
+            {
+                success = true;
+            }
+        }
+
+        if(dep->GetDepOp() == CCmdEntry::DEP_OP_OR)
+        {
+            if(success)
+            {
+                return true;
+            }
+        }
+
+        if(dep->GetDepOp() == CCmdEntry::DEP_OP_NOT)
+        {
+            if(success)
+            {
+                return false;   
+            }            
+        }
+
+
+        if(dep->GetDepOp() == CCmdEntry::DEP_OP_AND)
+        {
+            if(!success)
+            {
+                return false;   
+            }            
+        }
+       
+    }
+
+    return true;
 }

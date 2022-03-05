@@ -195,6 +195,21 @@ static status_t commandline_getallvaluesbykey(lua_State *L)
     return 1;
 }
 
+static status_t commandline_addkeytypedep(lua_State *L)
+{
+    CCommandLine *pcommandline = get_commandline(L,1);
+    ASSERT(pcommandline);
+    const char* dep_key = (const char*)lua_tostring(L,2);
+    ASSERT(dep_key);
+    const char* dep_value = (const char*)lua_tostring(L,3); //can be NULL
+    const char* key = (const char*)lua_tostring(L,4);
+    ASSERT(key);
+    int dep_op = (int)lua_tointeger(L,5);
+    status_t ret0 = pcommandline->AddKeyTypeDep(dep_key,dep_value,key,dep_op);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
 static const luaL_Reg commandline_lib[] = {
     {"__gc",commandline_gc_},
     {"__tostring",commandline_tostring_},
@@ -213,7 +228,8 @@ static const luaL_Reg commandline_lib[] = {
     {"LoadFromString",commandline_loadfromstring},
     {"GetCmdEntriesLen",commandline_getcmdentrieslen},
     {"GetCmdEntry",commandline_getcmdentry},
-    {"GetAllValuesByKey",commandline_getallvaluesbykey},    
+    {"GetAllValuesByKey",commandline_getallvaluesbykey},   
+    {"AddKeyTypeDep",commandline_addkeytypedep},     
     {NULL, NULL}
 };
 static int luaL_register_commandline(lua_State *L)
