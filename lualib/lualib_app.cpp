@@ -112,6 +112,7 @@ static int app_luamain(lua_State *L)
         {
             GLOBALS(g);
             g->AddLuaSearchPath(mem.CStr(),"path","lua",false);
+            g->AddLuaSearchPath(mem.CStr(),"cpath","so",false);
         }
     }
     
