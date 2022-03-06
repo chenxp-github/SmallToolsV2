@@ -24,9 +24,10 @@ void on_terminate(int signatl)
     printf("process %d:catch signal %d, exit\n",getpid(),signatl);
     g_abnormal_exit = 1;
 
-    if(g_globals.m_MainLoopRunning)
+    //first time, just quitMainLoop, after this use old signal handler
+    if(g_globals_ptr && g_globals_ptr->m_MainLoopRunning)
     {
-        g_globals.QuitMainLoop();    
+        g_globals_ptr->QuitMainLoop();    
     }
     else
     {
