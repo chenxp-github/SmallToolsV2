@@ -42,7 +42,6 @@ int main(int argc, char **argv)
 {
 #if (!HAVE_WINDOWS_H)
     signal(SIGINT, on_terminate);
-    signal(SIGTSTP,on_terminate);    
     signal(SIGTERM,on_terminate); 
     signal(SIGHUP,on_terminate); 
     signal(SIGPIPE,SIG_IGN);
