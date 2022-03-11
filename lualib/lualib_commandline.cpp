@@ -55,9 +55,12 @@ static int commandline_getvaluebykey(lua_State *L)
     ASSERT(pcommandline);
     const char* key = (const char*)lua_tostring(L,2);
     CMem *value = pcommandline->GetValueByKey(key);
-    ASSERT(value);
-    lua_pushlstring(L,value->GetRawBuf(),value->StrLen());
-    return 1;
+    if(value)
+    {
+        lua_pushlstring(L,value->GetRawBuf(),value->StrLen());
+        return 1;
+    }
+    return 0;
 }
 static int commandline_haskey(lua_State *L)
 {
