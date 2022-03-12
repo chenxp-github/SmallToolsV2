@@ -558,7 +558,6 @@ status_t CMemStk::LoadBson(CMiniBson *_bson)
         sub_doc.Init();
         doc.GetDocument(NULL,&sub_doc);
 
-
         CMem *p=NULL;
         NEW(p,CMem);
         p->Init();
@@ -576,9 +575,9 @@ status_t CMemStk::LoadBson(CMiniBson *_bson)
             p->SetFileName(fn.CStr());
         }
     
-        this->Push(p);        
+        this->PushPtr(p);        
     }
-   
+
     return OK;
 }
 

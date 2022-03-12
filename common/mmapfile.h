@@ -21,6 +21,7 @@ public:
 #if HAVE_WINDOWS_H
     status_t MakeFileMappingName(const char *filename,CMem *obj_name);
 #endif
+    bool IsOpened();
     status_t Unlink();
     status_t SetFileName(CMem* _filename);
     status_t SetFileName(const char *_filename);

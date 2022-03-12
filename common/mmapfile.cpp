@@ -254,6 +254,10 @@ status_t CMMapFile::MakeFileMappingName(const char *filename,CMem *obj_name)
     }
     return OK;
 }
+bool CMMapFile::IsOpened()
+{
+    return  m_FileHandle != NULL;
+}
 /////////////////////////////////////////////////////////////
 #else  //linux
 /////////////////////////////////////////////////////////////
@@ -361,6 +365,9 @@ status_t CMMapFile::Unlink()
 {
     return unlink(m_FileName.CStr()) == 0;
 }
-
+bool CMMapFile::IsOpened()
+{
+    return  m_FileHandle != ERROR_FILE_HANDLE;
+}
 #endif
 /////////////////////////////////////////////////////////////

@@ -25,6 +25,7 @@ status_t CTaskPeerServer::InitBasic()
 status_t CTaskPeerServer::Init(CTaskMgr *mgr,const void *peer_globals)
 {
     this->Destroy();
+
     CTaskLinkRpc::Init(mgr);
     this->SetPeerGlobalContext(peer_globals);
 
@@ -58,6 +59,7 @@ status_t CTaskPeerServer::Destroy()
     DEL(this->mSendHeadBuf);
     DEL(this->mRecvHeadBuf);
     DEL(this->mRecvDataBuf);
+    iHostProxy.Destroy();
     CTaskLinkRpc::Destroy();
     this->InitBasic();
     return OK;
