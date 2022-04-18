@@ -39,6 +39,24 @@ function RemoveFilesByFolder(source_prefix, folder)
     end);    
 end
 
+function RemoveFilesByExts(exts)
+    local ext_tab = {};
+    if type(exts) == "table" then
+        for _,ext in ipairs(exts) do
+            ext_tab[ext] = true;
+        end
+    else
+        ext_tab[exts] = true;
+    end
+
+    for filename,index in pairs(g_all_files_list) do        
+        local ext = FileManager.SliceFileName(filename,FN_EXT);
+        if ext_tab[ext] then
+            g_all_files_list[filename] = nil;
+        end
+    end
+end
+
 function KeepFilesByFolder(source_prefix,folder)
     folder = FileManager.ToAbsPath(folder);
     
