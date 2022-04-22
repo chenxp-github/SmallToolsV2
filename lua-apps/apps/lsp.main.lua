@@ -213,6 +213,35 @@ function save_lsp_file(filename, new_name)
     mf:WriteToFile(fn);
 end
 
+local ifdef_stack=nil;
+function ifdef(condition)
+    if not ifdef_stack then
+        ifdef_stack={};
+    end
+    table.insert(ifdef_stack,condition);
+end
+
+function endif()
+    if not ifdef_stack then
+        return
+    end
+    table.remove(ifdef_stack);
+end
+
+local function ifdef_value()
+    if not ifdef_stack then
+        return true;
+    end    
+
+    for _,v in ipairs(ifdef_stack) do
+        if not v then
+            return false;
+        end
+    end
+
+    return true;
+end
+-----------------------------------------
 function add_code_block(block,out,param)    
     local code = PrintBuffer.new();
     __gen_code__ = nil;
@@ -232,11 +261,17 @@ function expand_lsp(lsp,lsp_name,out,param)
     if not blocks then return end
     for _,block in ipairs(blocks) do
         if block.text then
-            out:Puts(block.text);
+            if ifdef_value() then
+                out:Puts(block.text);
+            end
         elseif block.code then
             local tmp = new_memfile();
             add_code_block(block,tmp,param);
-            expand_lsp(tmp,block.attributes.name,out);
+            
+            if ifdef_value() then
+                expand_lsp(tmp,block.attributes.name,out);
+            end
+
             tmp:Destroy();
         end
     end
@@ -252,9 +287,11 @@ function print_help(args)
         </@@>
 
     the parameter 'code' is a PrintBuffer object, and 
-    add_lsp_file(code,filename,param) can be used to add another lsp file 
-    add_js_string(code,filename,param) add escaped js string
-    save_lsp_file(filename,new_name)  expand lsp file and save.
+    add_lsp_file(code,filename,param), can be used to add another lsp file .
+    add_js_string(code,filename,param), add escaped js string.
+    save_lsp_file(filename,new_name),  expand lsp file and save.
+    ifdef(condition), control whether current code is kept.
+    endif(), pair with ifdef function.
     ]]);
 end
 

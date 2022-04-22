@@ -65,6 +65,7 @@ public:
     status_t Init(CTaskMgr *taskmgr);
     status_t Destroy();
     status_t NeverTimeout();
+    status_t TurboOn();
 };
 
 #endif

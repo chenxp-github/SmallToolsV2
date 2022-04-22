@@ -111,8 +111,7 @@ status_t CSocketReaderWriter::DoWrite(uint32_t interval)
         {
             return OK;
         }
-		ASSERT(iTaskMgr);
-		iTaskMgr->TurboOn();
+		this->TurboOn();
     }
     else if(ws == 0)
     {
@@ -212,13 +211,14 @@ status_t CSocketReaderWriter::DoRead(uint32_t interval)
 
     if(rs > 0)
     {
+        this->TurboOn();
         this->mReadTimer = 0;
         this->mReadLength += rs;
         this->iReadDestFile->Write(buf,rs);
         if(mTotalReadLength>0 && this->mReadLength>=this->mTotalReadLength)
         {
             return OK;
-        }
+        }        
     }
     else if(rs == 0)
     {
@@ -259,6 +259,7 @@ status_t CSocketReaderWriter::DoReadUntilEol(uint32_t interval,bool only_lf)
         int_ptr_t rs = this->iSocket->Read(buf,1);
         if(rs == 1)
         {
+            this->TurboOn();
             this->mReadSizeThisTime += rs;
             this->mReadTimer = 0;
             this->iReadDestFile->Putc(buf[0]);
@@ -331,6 +332,7 @@ status_t CSocketReaderWriter::DoReadUntilEmptyLine(uint32_t interval)
         int_ptr_t rs = this->iSocket->Read(buf,1);
         if(rs == 1)
         {
+            this->TurboOn();
             this->mReadSizeThisTime += rs;
             this->mReadTimer = 0;
             this->iReadDestFile->Putc(buf[0]);
@@ -412,5 +414,11 @@ status_t CSocketReaderWriter::NeverTimeout()
 {
     mTimeout = (uint32_t)(-1);
     return OK;
+}
+
+status_t CSocketReaderWriter::TurboOn()
+{
+    ASSERT(iTaskMgr);
+    return iTaskMgr->TurboOn();
 }
 
