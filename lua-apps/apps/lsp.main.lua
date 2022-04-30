@@ -215,6 +215,9 @@ end
 
 local ifdef_stack=nil;
 function ifdef(condition)
+    if condition==nil then
+        condition = false;
+    end
     if not ifdef_stack then
         ifdef_stack={};
     end
@@ -238,7 +241,6 @@ local function ifdef_value()
             return false;
         end
     end
-
     return true;
 end
 -----------------------------------------
@@ -250,7 +252,8 @@ function add_code_block(block,out,param)
     new_lua_code = new_lua_code..block.code..EOL;
     new_lua_code = new_lua_code.."end";
     if not exec_string(new_lua_code,block.attributes.name) then
-        exit("execute lua chunk fail: "..block.attributes.name);
+        print_table(block);
+        exit("execute lua chunk fail.");
     end
     __gen_code__(code,param);
     out:Puts(code:GetInnerFile());
