@@ -54,13 +54,19 @@ function split_git_files()
     return tab;
 end
 
+function make_dest_path(path)
+    local d = os.date("*t");
+    return path..string.format("/%04d%02d%02d_%02d%02d%02d",
+        d.year,d.month,d.day,d.hour,d.min,d.sec
+    );
+end
 
 function app_main(args)
     local argc = #args;    
     if argc < 2 then
         return print(args[1].." <dest>");        
     end    
-    local dest = args[2];    
+    local dest = make_dest_path(args[2]);
     split_git_files();    
     CopyFilesTo(dest,nil,"");
 end
