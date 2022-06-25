@@ -325,7 +325,7 @@ status_t CCommonTime::Set(int64_t lt)
 
 status_t CCommonTime::SetNow()
 {
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
     SYSTEMTIME st;
     GetLocalTime(&st);
 	int64_t lt = time(NULL);
@@ -356,7 +356,7 @@ int64_t CCommonTime::GetLong()
 
 status_t CCommonTime::SetSystemTime()
 {
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
     SYSTEMTIME st;
     st.wYear = m_year;
     st.wMonth = m_month;

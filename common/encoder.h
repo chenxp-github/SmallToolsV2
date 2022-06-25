@@ -1,13 +1,5 @@
-// Encoder.h: interface for the CEncoder class.
-//
-//////////////////////////////////////////////////////////////////////
-
 #if !defined(AFX_ENCODER_H__E56A70D1_E004_4747_A94E_1F9E2BBD47B1__INCLUDED_)
 #define AFX_ENCODER_H__E56A70D1_E004_4747_A94E_1F9E2BBD47B1__INCLUDED_
-
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
 
 #include "filebase.h"
 

@@ -5,10 +5,6 @@
 #if !defined(AFX_CXmlReader_H__7EB396A9_2415_4B47_B265_D4EA5CD69BE4__INCLUDED_)
 #define AFX_CXmlReader_H__7EB396A9_2415_4B47_B265_D4EA5CD69BE4__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
 #include "memfile.h"
 #include "mem.h"
 #include "memstk.h"

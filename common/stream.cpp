@@ -166,6 +166,16 @@ double CStream::GetDouble()
     return t;
 }
 
+status_t CStream::PutBoolean(bool b)
+{
+	return this->PutUInt8(b);
+}
+
+bool CStream::GetBoolean()
+{
+	return this->GetUInt8()!=0;
+}
+
 status_t CStream::PutZeroEndString(const char *str)
 {
     ASSERT(str);
@@ -201,12 +211,19 @@ status_t CStream::PutBinary(CMem *bin)
     return OK;
 }
 
+status_t CStream::PutBinary(const void *data, uint32_t size)
+{
+	ASSERT(data);
+	this->PutInt32(size);
+	this->Write(data,size);
+	return OK;
+}
+
 status_t CStream::GetBinary(CMem *bin)
 {
     ASSERT(bin);
 
-    bin->Destroy();
-    bin->Init();
+    bin->Free();
 
     int32_t size = 0;
     size = this->GetInt32();

@@ -130,13 +130,13 @@ fsize_t CPartFile::Seek(fsize_t off)
     return this->offset;
 }
 
-int CPartFile::SetHostFile(CFileBase *host, fsize_t off, fsize_t size)
+int CPartFile::SetHostFile(CFileBase *host, fsize_t off, fsize_t _size)
 {
     ASSERT(host);
     this->i_host_file = host;
     this->host_off = off;
-    this->max_size = size;
-    if(size > host->GetMaxSize() - this->host_off)
+    this->max_size = _size;
+    if(_size > host->GetMaxSize() - this->host_off)
         this->max_size = host->GetSize() - this->host_off;
     this->SetSize(this->max_size);
     return OK;

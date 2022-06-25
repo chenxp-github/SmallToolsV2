@@ -14,19 +14,19 @@ if(g_log_config == NULL)\
     return ERROR;\
 }\
 
-static LogConfig *g_log_config = NULL;
+static SysLogConfig *g_log_config = NULL;
 static SYSLOG_PUTS_HANDLER g_puts_handler = NULL;
 static const char *g_cur_file_name = "";
 static int g_cur_line = 0;
 
-status_t syslog_attach(LogConfig *log_config)
+status_t syslog_attach(SysLogConfig *log_config)
 {
     g_log_config = log_config;
     CHECK_LOG_CONFIG();
     return OK;
 }
 
-status_t syslog_init(LogConfig *log_config)
+status_t syslog_init(SysLogConfig *log_config)
 {
     int i;
 

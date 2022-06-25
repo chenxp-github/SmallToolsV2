@@ -5,10 +5,6 @@
 #if !defined(AFX_DIRMGR_H__F1C84966_D130_4527_A59B_A8B8AE067B79__INCLUDED_)
 #define AFX_DIRMGR_H__F1C84966_D130_4527_A59B_A8B8AE067B79__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
 #include "mem.h"
 #include "closure.h"
 

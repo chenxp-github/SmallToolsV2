@@ -338,11 +338,11 @@ status_t CTcpClient::SetServerIP(const char *name)
     }
     return OK;
 }
-status_t CTcpClient::SetPort(int32_t port)
+status_t CTcpClient::SetPort(int32_t _port)
 {
-    if (port > 0)
+    if (_port > 0)
     {
-        sad.sin_port = crt_htons((u_short)port);
+        sad.sin_port = crt_htons((u_short)_port);
     }
     else
     {

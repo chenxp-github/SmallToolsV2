@@ -158,11 +158,11 @@ status_t CPeerProxyStk::Clear()
     return OK;
 }
 
-CPeerProxy * CPeerProxyStk::GetElem(int mIndex)
+CPeerProxy * CPeerProxyStk::GetElem(int index)
 {
-    if(mIndex < 0 || mIndex >= this->mTop)
+    if(index < 0 || index >= this->mTop)
         return NULL;
-    return this->mIndex[mIndex];
+    return this->mIndex[index];
 }
 
 CPeerProxy * CPeerProxyStk::BSearchNode(CPeerProxy *peerproxy,int order)

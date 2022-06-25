@@ -5,10 +5,6 @@
 #if !defined(AFX_FILEBASE_H__BD546014_EE30_43B6_90BB_2EE15AD02697__INCLUDED_)
 #define AFX_FILEBASE_H__BD546014_EE30_43B6_90BB_2EE15AD02697__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
 #include "cruntime.h"
 
 //for vs2008 complie errors

@@ -8,7 +8,7 @@ class CMMapFile{
 public: 
     WEAK_REF_DEFINE();
 public:
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
     HANDLE m_MapHandle;
     HANDLE m_FileHandle;
 #else
@@ -18,7 +18,7 @@ public:
     int_ptr_t m_DataSize;
     CMem m_FileName;
 public:
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
     status_t MakeFileMappingName(const char *filename,CMem *obj_name);
 #endif
     bool IsOpened();

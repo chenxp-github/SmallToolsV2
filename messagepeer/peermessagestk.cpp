@@ -159,11 +159,11 @@ status_t CPeerMessageStk::Clear()
     return OK;
 }
 
-CPeerMessage * CPeerMessageStk::GetElem(int mIndex)
+CPeerMessage * CPeerMessageStk::GetElem(int index)
 {
-    if(mIndex < 0 || mIndex >= this->mTop)
+    if(index < 0 || index >= this->mTop)
         return NULL;
-    return this->mIndex[mIndex];
+    return this->mIndex[index];
 }
 
 CPeerMessage * CPeerMessageStk::BSearchNode(CPeerMessage *peermessage,int order)

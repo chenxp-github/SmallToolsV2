@@ -58,6 +58,7 @@ typedef int  FILE_HANDLE;
 
 #define DLL_EXPORT __attribute__((visibility("default")))
 #define DLL_EXPORT_C extern "C" DLL_EXPORT
+#define CRT_PACKED __attribute__((packed))
 
 #define crt_va_list     va_list
 #define crt_va_end      va_end
@@ -179,10 +180,10 @@ typedef pthread_mutex_t MUTEX_TYPE;
 THREAD_HANDLE crt_create_thread(void(*func)(void*), int32_t stack_size, void *param);
 status_t crt_cancel_thread(THREAD_HANDLE thread_id);
 int_ptr_t crt_get_current_thread_id();
-void crt_init_mutex(MUTEX_TYPE *mutex);
-void crt_destroy_mutex(MUTEX_TYPE *mutex);
-void crt_lock_mutex(MUTEX_TYPE *mutex);
-void crt_unlock_mutex(MUTEX_TYPE *mutex);
+void crt_init_mutex(MUTEX_TYPE *_mutex);
+void crt_destroy_mutex(MUTEX_TYPE *_mutex);
+void crt_lock_mutex(MUTEX_TYPE *_mutex);
+void crt_unlock_mutex(MUTEX_TYPE *_mutex);
 
 #if USE_SOCKET_MODULE
 status_t crt_host_to_ip_async(const char *host, int_ptr_t **context);

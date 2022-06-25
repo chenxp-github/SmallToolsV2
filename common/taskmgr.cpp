@@ -342,10 +342,10 @@ CTask * CTaskMgr::RemoveElem(int i)
 ////////////////////////////////////////////////////////////////
 CTask * CTaskMgr::GetTask(int task_id)
 {
-    int index = this->IdToIndex(task_id);
-    if(index < 0 || index >= this->GetLen())
+    int _index = this->IdToIndex(task_id);
+    if(_index < 0 || _index >= this->GetLen())
         return NULL;
-    return this->GetElem(index);
+    return this->GetElem(_index);
 }
 status_t CTaskMgr::AddTask(CTask *task)
 {
@@ -358,10 +358,10 @@ status_t CTaskMgr::AddTask(CTask *task)
         return ERROR;
     }
 
-    CTask *top = this->GetTop();
-    if(top)
+    CTask *_top = this->GetTop();
+    if(_top)
     {
-        ASSERT(task->GetId() > top->GetId());
+        ASSERT(task->GetId() > _top->GetId());
     }
 
     task->SetTaskMgr(this);

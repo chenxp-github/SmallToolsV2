@@ -24,16 +24,16 @@ extern "C" {
 typedef struct{
     uint16_t parent_index;
     uint16_t log_level;
-}LogItem;
+}SysLogItem;
 
 typedef struct{
-    LogItem log_items[MAX_LOG_ITEMS];
-}LogConfig;
+    SysLogItem log_items[MAX_LOG_ITEMS];
+}SysLogConfig;
 
 typedef status_t (*SYSLOG_PUTS_HANDLER)(int module,int log_level,const char *str);
 
-status_t syslog_attach(LogConfig *log_config);
-status_t syslog_init(LogConfig *log_config);
+status_t syslog_attach(SysLogConfig *log_config);
+status_t syslog_init(SysLogConfig *log_config);
 status_t syslog_destroy();
 status_t syslog_set_log_level(int module, int level);
 status_t syslog_set_puts_handler(SYSLOG_PUTS_HANDLER handler);
@@ -66,6 +66,7 @@ __LOG("assertion fail \"%s\" at file=%s line=%d"),\
 #define RASSERT(f,r) do{if(!(f)){_ASSERT_LOG(f);return r;}}while(0)
 
 #define PD(p) __LOG("%s = %d"),#p,(int)(p))
+#define PLD(p) __LOG("%s = %ld"),#p,(int_ptr_t)(p))
 #define PS(p) __LOG("%s = %s"),#p,p)
 #define PF(p) __LOG("%s = %f"),#p,p)
 #define PP(p) __LOG("%s = %p"),#p,(void*)((int_ptr_t)p))

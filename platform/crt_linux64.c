@@ -655,22 +655,22 @@ int_ptr_t crt_get_current_thread_id()
     return pthread_self();
 }
 
-void crt_init_mutex(MUTEX_TYPE *mutex)
+void crt_init_mutex(MUTEX_TYPE *_mutex)
 {
-    pthread_mutex_init(mutex,NULL);
+    pthread_mutex_init(_mutex,NULL);
 }
 
-void crt_destroy_mutex(MUTEX_TYPE *mutex)
+void crt_destroy_mutex(MUTEX_TYPE *_mutex)
 {
-    pthread_mutex_destroy(mutex);
+    pthread_mutex_destroy(_mutex);
 }
-void crt_lock_mutex(MUTEX_TYPE *mutex)
+void crt_lock_mutex(MUTEX_TYPE *_mutex)
 {
-    pthread_mutex_lock(mutex);
+    pthread_mutex_lock(_mutex);
 }
-void crt_unlock_mutex(MUTEX_TYPE *mutex)
+void crt_unlock_mutex(MUTEX_TYPE *_mutex)
 {
-    pthread_mutex_unlock(mutex);
+    pthread_mutex_unlock(_mutex);
 }
 
 #if USE_SOCKET_MODULE

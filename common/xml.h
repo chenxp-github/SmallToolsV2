@@ -5,10 +5,6 @@
 #if !defined(AFX_XML_H__FA31F9F4_F031_4B0A_8B37_3ABD6AB598ED__INCLUDED_)
 #define AFX_XML_H__FA31F9F4_F031_4B0A_8B37_3ABD6AB598ED__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
 #include "mem.h"
 #include "memfile.h"
 #include "xmlreader.h"

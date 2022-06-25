@@ -1,5 +1,5 @@
-#include "sys_log.h"
 #include "file.h"
+#include "sys_log.h"
 #include "mem_tool.h"
 
 CFile::CFile()
@@ -63,14 +63,14 @@ fsize_t CFile::GetSize()
 }
 fsize_t CFile::GetSizeReal()
 {
-    fsize_t old_off,size;
+    fsize_t old_off,_size;
     
     old_off = crt_ftell(this->fp);
     crt_fseek(this->fp,0,SEEK_END);
-    size = crt_ftell(this->fp);
+    _size = crt_ftell(this->fp);
     crt_fseek(this->fp,old_off,SEEK_SET);
-    this->size = size;
-    return size;    
+    this->size = _size;
+    return _size;    
 }
 
 fsize_t CFile::Seek(fsize_t nOffset)
@@ -173,15 +173,14 @@ status_t CFile::HasBuffer()
     return this->file_buf != NULL;
 }
 
-status_t CFile::SetBufSize(int_ptr_t size)
+status_t CFile::SetBufSize(int_ptr_t _size)
 {
     ASSERT(!IsOpened());
     FREE(this->file_buf);
-    MALLOC(this->file_buf,char,size);
-    this->buf_size = size;
+    MALLOC(this->file_buf,char,_size);
+    this->buf_size = _size;
     this->buf_start = -1;
-    this->init_buf_size = size;
-
+    this->init_buf_size = _size;
     return OK;
 }
 

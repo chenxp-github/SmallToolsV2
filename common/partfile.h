@@ -5,10 +5,6 @@
 #if !defined(AFX_PARTFILE_H__4C18A0DD_E8B2_4491_962E_17E001A18EBC__INCLUDED_)
 #define AFX_PARTFILE_H__4C18A0DD_E8B2_4491_962E_17E001A18EBC__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
 #include "filebase.h"
 
 class CPartFile:public CFileBase{

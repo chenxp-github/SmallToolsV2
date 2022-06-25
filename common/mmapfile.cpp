@@ -3,7 +3,7 @@
 #include "mem_tool.h"
 #include "dirmgr.h"
 
-#if !HAVE_WINDOWS_H
+#if !_IS_WINDOWS_
 #include <sys/mman.h>
 #endif
 
@@ -20,7 +20,7 @@ status_t CMMapFile::InitBasic()
     WEAK_REF_CLEAR();
     m_Data = NULL;
     m_DataSize = 0;
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
     m_MapHandle = NULL;
     m_FileHandle = NULL;
 #else
@@ -81,7 +81,7 @@ status_t CMMapFile::SetFileName(const char *_filename)
     return this->SetFileName(&_mem);
 }
 /////////////////////////////////////////////////////////////
-#if HAVE_WINDOWS_H  //windows
+#if _IS_WINDOWS_  //windows
 /////////////////////////////////////////////////////////////
 status_t CMMapFile::Close()
 {

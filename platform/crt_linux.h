@@ -64,6 +64,7 @@ typedef int  FILE_HANDLE;
 
 #define DLL_EXPORT __attribute__((visibility("default")))
 #define DLL_EXPORT_C extern "C" DLL_EXPORT
+#define CRT_PACKED __attribute__((packed))
 
 #define crt_va_list     va_list
 #define crt_va_end      va_end

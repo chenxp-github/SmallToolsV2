@@ -4,7 +4,7 @@
 #include "cruntime.h"
 #include "filebase.h"
 
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
 #else
 #include <sys/epoll.h>
 #endif
@@ -18,7 +18,7 @@ public:
     };
 public:
 
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
 	fd_set m_fd_set;
 #else
     int m_MaxEventsLen;

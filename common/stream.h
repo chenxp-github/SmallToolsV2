@@ -21,6 +21,7 @@ public:
 	status_t PutString(CMem *str);
 	status_t GetBinary(CMem *out);
 	status_t PutBinary(CMem *bin);
+	status_t PutBinary(const void *data, uint32_t size);
 	status_t GetZeroEndString(CMem *str);
 	status_t PutZeroEndString(const char *str);
 	status_t PutDouble(double d);
@@ -36,6 +37,8 @@ public:
 	int32_t GetInt32();
 	status_t PutInt64(int64_t i);
 	int64_t GetInt64();
+	status_t PutBoolean(bool b);
+	bool GetBoolean();
 
 	status_t PutUInt8(uint8_t i);
 	uint8_t GetUInt8();

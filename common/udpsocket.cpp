@@ -128,3 +128,10 @@ status_t CUdpSocket::GetSrcAddr(CMem *ip, int *port)
 	*port = m_srcaddr.sin_port;
 	return OK;
 }
+
+bool CUdpSocket::IsSocketValid()
+{
+	return m_sock_fd > 0;
+}
+
+

@@ -5,10 +5,6 @@
 #if !defined(AFX_MISC_H__886ED6AD_5EEC_4593_8333_9EB77699295F__INCLUDED_)
 #define AFX_MISC_H__886ED6AD_5EEC_4593_8333_9EB77699295F__INCLUDED_
 
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-
 #ifdef __cplusplus
 extern "C" {
 #endif

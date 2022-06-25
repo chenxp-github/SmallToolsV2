@@ -16,7 +16,7 @@ CEpoll::~CEpoll()
 }
 status_t CEpoll::InitBasic()
 {
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
 	memset(&m_fd_set,0,sizeof(m_fd_set));
 #else
     m_Events = NULL;
@@ -30,7 +30,7 @@ status_t CEpoll::InitBasic()
 status_t CEpoll::Init(int max_)
 {
     this->InitBasic();
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
 #else
     ASSERT(m_EpollHandle == 0);
     m_EpollHandle = epoll_create(max_);
@@ -42,7 +42,7 @@ status_t CEpoll::Init(int max_)
 }
 status_t CEpoll::Destroy()
 {   
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
 #else
     if(m_EpollHandle)
     {
@@ -57,7 +57,7 @@ status_t CEpoll::Destroy()
 
 status_t CEpoll::AddFd(int fd)
 {
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
 	FD_SET(fd,&m_fd_set);
 	return OK;
 #else
@@ -71,7 +71,7 @@ status_t CEpoll::AddFd(int fd)
 
 status_t CEpoll::DelFd(int fd)
 {
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
 	FD_CLR(fd,&m_fd_set);
 	return OK;
 #else
@@ -80,7 +80,7 @@ status_t CEpoll::DelFd(int fd)
 #endif
 }
 
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
 
 static status_t copy_fd_set(fd_set *to, fd_set *from)
 {
@@ -96,7 +96,7 @@ static status_t copy_fd_set(fd_set *to, fd_set *from)
 
 status_t CEpoll::AutoRemoveHungupFds(uint32_t opt)
 {
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
 
 #else
     for(int i = 0; i < m_CurEventsLen; i++)
@@ -128,7 +128,7 @@ status_t CEpoll::AutoRemoveHungupFds(uint32_t opt)
 
 int CEpoll::Wait(int ms, uint32_t opt)
 {
-#if HAVE_WINDOWS_H	
+#if _IS_WINDOWS_	
 	fd_set read_set,error_set;
 	copy_fd_set(&read_set,&m_fd_set);
 	copy_fd_set(&error_set,&m_fd_set);
@@ -190,7 +190,7 @@ int CEpoll::Wait(int ms)
 
 status_t CEpoll::AutoRemoveFd(int fd)
 {
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
 	if(FD_ISSET(fd,&m_fd_set) && this->DelFd(fd))
 	{
 		XLOG(LOG_MODULE_COMMON,LOG_LEVEL_INFO,

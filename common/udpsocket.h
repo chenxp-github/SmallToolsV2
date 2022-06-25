@@ -28,6 +28,7 @@ public:
 	status_t RecvMsg(CMem *data);
 	struct sockaddr_in *GetSrcAddr();
 	status_t GetSrcAddr(CMem *ip, int *port);
+	bool IsSocketValid();
 };
 
 #endif
