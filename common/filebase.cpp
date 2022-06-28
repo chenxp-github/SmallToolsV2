@@ -266,6 +266,13 @@ fsize_t CFileBase::WriteFile(CFileBase *file)
     ASSERT(file);
     return this->WriteFile(file,0,file->GetSize());
 }
+
+fsize_t CFileBase::WriteFile(CFileBase *file, fsize_t ws)
+{
+    ASSERT(file);
+    return this->WriteFile(file,0,ws);
+}
+
 fsize_t CFileBase::WriteToFile(CFileBase *file,fsize_t wsize)
 {
     return this->WriteToFile(file,0,wsize);

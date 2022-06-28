@@ -159,6 +159,9 @@ public:
     int log_tab_level_;
     bool is_sp_chars_malloc;
 public:
+    CFileBase();
+    virtual ~CFileBase();
+
     void* GetUserData();
     void SetUserData(void *ud);
     status_t LoadFile(FILE_HANDLE fp);
@@ -183,10 +186,9 @@ public:
     bool IsEnd();
     fsize_t WriteFile(CFileBase *file);
     fsize_t WriteFile(CFileBase *file, fsize_t start, fsize_t ws);
+    fsize_t WriteFile(CFileBase *file, fsize_t ws);
     fsize_t WriteToFile(CFileBase *file,fsize_t wsize);
     fsize_t WriteToFile(CFileBase *file,fsize_t start,fsize_t wsize);
-    CFileBase();
-    virtual ~CFileBase();
     ////////////////////////////////////////////////////////
     virtual fsize_t GetOffset() = 0;
     virtual fsize_t GetSize() = 0;

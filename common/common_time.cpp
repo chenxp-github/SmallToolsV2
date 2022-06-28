@@ -392,7 +392,7 @@ status_t CCommonTime::LoadReadableString(CFileBase *in)
     ASSERT(in);
 
     LOCAL_MEM(mem);
-    
+    in->Seek(0);        
     in->ReadString(&mem);
     m_year = atoi(mem.CStr());
     
