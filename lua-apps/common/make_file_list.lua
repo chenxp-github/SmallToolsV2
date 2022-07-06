@@ -58,14 +58,17 @@ function RemoveFilesByExts(exts)
 end
 
 function RemoveFilesByPrefix(prefixs)
-    if prefixs == "string" then
+    if type(prefixs) == "string" then
         local tmp = prefixs;
         prefixs={tmp};
     end
+
     for filename,index in pairs(g_all_files_list) do               
         local keep = true;
         for _,prefix in ipairs(prefixs) do
+            print(filename);
             if string.find(filename,prefix,1,true) == 1 then
+                print("remove",filename);
                 keep = false;
             end            
         end        
@@ -98,10 +101,11 @@ function KeepFilesByFolder(source_prefix,folder)
 end
 
 function KeepFilesByPrefix(prefixs)
-    if prefixs == "string" then
+    if type(prefixs) == "string" then
         local tmp = prefixs;
         prefixs={tmp};
     end
+    
     for filename,index in pairs(g_all_files_list) do               
         local keep = false;
         for _,prefix in ipairs(prefixs) do
