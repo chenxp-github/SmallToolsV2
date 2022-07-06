@@ -57,6 +57,24 @@ function RemoveFilesByExts(exts)
     end
 end
 
+function RemoveFilesByPrefix(prefixs)
+    if prefixs == "string" then
+        local tmp = prefixs;
+        prefixs={tmp};
+    end
+    for filename,index in pairs(g_all_files_list) do               
+        local keep = true;
+        for _,prefix in ipairs(prefixs) do
+            if string.find(filename,prefix,1,true) == 1 then
+                keep = false;
+            end            
+        end        
+        if not keep  then
+            g_all_files_list[filename] = nil;
+        end
+    end
+end
+
 function KeepFilesByFolder(source_prefix,folder)
     folder = FileManager.ToAbsPath(folder);
     
@@ -76,6 +94,25 @@ function KeepFilesByFolder(source_prefix,folder)
         if not tmp_list[rpath] then
             g_all_files_list[filename] = nil;
         end        
+    end
+end
+
+function KeepFilesByPrefix(prefixs)
+    if prefixs == "string" then
+        local tmp = prefixs;
+        prefixs={tmp};
+    end
+    for filename,index in pairs(g_all_files_list) do               
+        local keep = false;
+        for _,prefix in ipairs(prefixs) do
+            if string.find(filename,prefix,1,true) == 1 then                
+                keep = true;
+            end            
+        end
+
+        if not keep  then
+            g_all_files_list[filename] = nil;
+        end
     end
 end
 
