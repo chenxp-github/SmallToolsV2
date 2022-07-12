@@ -68,7 +68,6 @@ function RemoveFilesByPrefix(prefixs)
         for _,prefix in ipairs(prefixs) do
             print(filename);
             if string.find(filename,prefix,1,true) == 1 then
-                print("remove",filename);
                 keep = false;
             end            
         end        
