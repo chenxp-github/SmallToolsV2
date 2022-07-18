@@ -74,7 +74,7 @@ function tcp_forward_thread(thread,local_socket,item)
         return
     end
 
-    printfnl("connect to %s ok.",item_string(item));
+    printfnl("connect ok, %s.",item_string(item));
 
     local recv_qbuf = QueueFile.new(256*1024);
     local send_qbuf = QueueFile.new(256*1024);

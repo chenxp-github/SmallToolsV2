@@ -555,7 +555,16 @@ static status_t xwindow_setnetwmname(lua_State *L)
     lua_pushboolean(L,ret0);
     return 1;
 }
-
+static status_t xwindow_copy(lua_State *L)
+{
+    CxWindow *pxwindow = get_xwindow(L,1);
+    ASSERT(pxwindow);
+    CxWindow *other = get_xwindow(L,2);
+    ASSERT(other);
+    status_t ret0 = pxwindow->Copy(other);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
 static const luaL_Reg xwindow_lib[] = {
     {"__gc",xwindow_gc_},
     {"__tostring",xwindow_tostring_},
@@ -606,6 +615,7 @@ static const luaL_Reg xwindow_lib[] = {
     {"Move",xwindow_move},  
     {"GetNetWMName",xwindow_getnetwmname},
     {"SetNetWMName",xwindow_setnetwmname},    
+    {"Copy",xwindow_copy},
     {NULL, NULL}
 };
 static int luaL_register_xwindow(lua_State *L)

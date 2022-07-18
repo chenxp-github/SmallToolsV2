@@ -364,20 +364,24 @@ status_t CxWindow::GetBounds(int *x, int *y, int *width, int *height)
 status_t CxWindow::SetBounds(int x, int y, int width, int height)
 {
     COMMON_XWINDOW_CHECK();
-    return XMoveResizeWindow(
+    status_t r = XMoveResizeWindow(
         m_Display->GetNativeXDisplay() ,
         m_NativeXWindow,
         x,y,width,height
     );
+    m_Display->Flush();
+    return r;
 }
 
 status_t CxWindow::Move(int x, int y)
 {
     COMMON_XWINDOW_CHECK();
-    return XMoveWindow(
+    status_t r = XMoveWindow(
         m_Display->GetNativeXDisplay(),
         m_NativeXWindow,
         x,y);
+    m_Display->Flush();
+    return r;
 }
 
 status_t CxWindow::Raise()
