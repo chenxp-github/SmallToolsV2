@@ -62,13 +62,17 @@ function udp_forward_thread(thread,item)
     local mem = new_mem(64*1024);
 
     while true do
-        mem:SetSize(0);
-        if udp_socket:RecvMsg(mem) then
-            udp_socket:SendMsg(mem);
-        else
-            thread:Sleep(1);
+        for i=1,1000,1 do
+            mem:SetSize(0);
+            if udp_socket:RecvMsg(mem) then
+                udp_socket:SendMsg(mem);
+            else
+                break;
+            end        
         end
-    end    
+        thread:Sleep(1);
+    end
+     
 end
 
 function create_forward_thread(item)
