@@ -53,7 +53,7 @@ function udp_forward_thread(thread,item)
         return
     end
     
-    printfnl("start forwardind: %s.",item_string(item));
+    printfnl("start forwarding: %s.",item_string(item));
 
     udp_socket:SetDestIpAndPort(
         item.remote_server,item.remote_port
