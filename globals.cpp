@@ -39,6 +39,7 @@
 #include "lualib_peerproxy.h"
 #include "lualib_commontime.h"
 #include "lualib_xfileserver.h"
+#include "lualib_icmpsocket.h"
 
 #include "_build_time_.h"
 
@@ -376,7 +377,8 @@ status_t CGlobals::InitLuaVm()
     luaopen_peerproxy(L);
     luaopen_commontime(L);
     luaopen_xfileserver(L);
-
+    luaopen_icmpsocket(L);
+    
 #if _IS_LINUX_
     luaopen_nativeprocess(L);
     luaopen_nativeprocessmanager(L);
