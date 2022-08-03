@@ -44,7 +44,7 @@ public:
     status_t SendEchoMsg(uint16_t id, uint16_t seq, const uint8_t *data, int bytes);
     status_t RecvIcmpMsg(CMem *data, uint8_t *type=NULL, uint8_t *code=NULL);
 
-    static int IpHeaderSize();    
+    int IpHeaderSize(CMem *data);
     static uint16_t CalculateIcmpChecksum(uint8_t *buffer, int bytes);
 };
 

@@ -138,13 +138,6 @@ static status_t icmpsocket_recvicmpmsg(lua_State *L)
     return 3;
 }
 
-static status_t icmpsocket_ipheadersize(lua_State *L)
-{
-    int ret0 = CIcmpSocket::IpHeaderSize();
-    lua_pushinteger(L,ret0);
-    return 1;
-}
-
 static status_t icmpsocket_calculateicmpchecksum(lua_State *L)
 {
     CMem *data = get_mem(L,1);
@@ -170,7 +163,6 @@ static const luaL_Reg icmpsocket_funcs_[] = {
     {"RecvMsg",icmpsocket_recvmsg},
     {"SendEchoMsg",icmpsocket_sendechomsg},
     {"RecvIcmpMsg",icmpsocket_recvicmpmsg},
-    {"IpHeaderSize",icmpsocket_ipheadersize},
     {"CalculateIcmpChecksum",icmpsocket_calculateicmpchecksum},
     {NULL,NULL},
 };

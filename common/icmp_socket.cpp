@@ -219,9 +219,14 @@ status_t CIcmpSocket::SendEchoMsg(uint16_t id, uint16_t seq, const uint8_t *data
     return SendMsg(8,0,tmp.GetRawBuf(),(int)tmp.GetSize());
 }
 
-int CIcmpSocket::IpHeaderSize()
+int CIcmpSocket::IpHeaderSize(CMem *data)
 {
-    return 20;
+    ASSERT(data);
+	fsize_t off = data->GetOffset();
+	data->Seek(0);
+	uint8_t v = data->Getc();
+	data->Seek(off);
+	return v&0x0f;
 }
 
 status_t CIcmpSocket::RecvIcmpMsg(CMem *data,uint8_t *type, uint8_t *code)
@@ -235,7 +240,8 @@ status_t CIcmpSocket::RecvIcmpMsg(CMem *data,uint8_t *type, uint8_t *code)
         return ERROR;
     }
     
-    tmp.Seek(IpHeaderSize());
+	int header_size = IpHeaderSize(&tmp)*4;
+    tmp.Seek(header_size);
     uint8_t v8 = tmp.Getc();
     if(type)(*type) = v8;
     v8 = tmp.Getc();
@@ -246,8 +252,8 @@ status_t CIcmpSocket::RecvIcmpMsg(CMem *data,uint8_t *type, uint8_t *code)
     checksum = ntohs(checksum);
 
 	uint16_t self_checksum = CalculateIcmpChecksum(
-        (uint8_t*)(tmp.GetRawBuf() + IpHeaderSize()),
-        (int)(tmp.GetSize() - IpHeaderSize())
+        (uint8_t*)(tmp.GetRawBuf() + header_size),
+        (int)(tmp.GetSize() - header_size)
     );
 
     if(checksum != self_checksum)
@@ -255,11 +261,10 @@ status_t CIcmpSocket::RecvIcmpMsg(CMem *data,uint8_t *type, uint8_t *code)
         return ERROR;
     }
 
-    data->SetSize(0);
-    
+    data->SetSize(0);    
     data->WriteFile(&tmp,
-        4+IpHeaderSize(),
-        tmp.GetSize()-4-IpHeaderSize()
+        4+header_size,
+        tmp.GetSize()-4-header_size
     );
 
     return OK;
