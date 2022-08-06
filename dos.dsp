@@ -270,6 +270,14 @@ SOURCE=.\websocket\httppair.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\common\icmp_socket.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\common\icmp_socket.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\common\indexfile.cpp
 # End Source File
 # Begin Source File
@@ -799,6 +807,14 @@ SOURCE=.\lualib\lualib_filemanager.cpp
 # Begin Source File
 
 SOURCE=.\lualib\lualib_filemanager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_icmpsocket.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\lualib\lualib_icmpsocket.h
 # End Source File
 # Begin Source File
 
