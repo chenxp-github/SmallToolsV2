@@ -30,7 +30,7 @@ status_t CUdpSocket::Destroy()
 	WEAK_REF_DESTROY();
 	if(m_sock_fd)
 	{
-		close(m_sock_fd);
+		crt_closesocket(m_sock_fd);
 		m_sock_fd = 0;
 	}
 	this->InitBasic();
@@ -54,7 +54,7 @@ status_t CUdpSocket::Bind(int port)
 	int res = bind(m_sock_fd, (struct sockaddr *)&m_addr, sizeof(m_addr));
 	if(res)
 	{
-		close(m_sock_fd);
+		crt_closesocket(m_sock_fd);
 		m_sock_fd = 0;
 	}
 	
