@@ -45,6 +45,7 @@ private:
     uint32_t mTimeout;
     CClosure *mCallback;
 public:
+    int_ptr_t ReadDirect(void *buf, int_ptr_t size, uint32_t interval);
     bool IsConnected();
     fsize_t WriteSizeThisTime();
     fsize_t ReadSizeThisTime();

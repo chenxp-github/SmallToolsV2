@@ -422,3 +422,36 @@ status_t CSocketReaderWriter::TurboOn()
     return iTaskMgr->TurboOn();
 }
 
+int_ptr_t CSocketReaderWriter::ReadDirect(void *buf, int_ptr_t size,uint32_t interval)
+{
+    ASSERT(buf);
+    ASSERT(iSocket);
+
+    int_ptr_t rs = iSocket->Read(buf,size);
+
+    if(rs > 0)
+    {
+        this->TurboOn();
+        this->mReadTimer = 0;
+    }
+    else if(rs == 0)
+    {
+        if(interval < mTimeout)
+            this->mReadTimer += interval;
+        if(HAS_TIMEOUT() && this->mReadTimer >= this->mTimeout)
+        {
+            this->iSocket->CloseConnect();
+            this->Error(ERROR_READ_TIMEOUT);
+            return 0;
+        }
+    }
+    else
+    {
+        this->iSocket->CloseConnect();
+        this->Error(ERROR_READ_ERROR);        
+        return 0;
+    }
+
+    return rs;
+}
+

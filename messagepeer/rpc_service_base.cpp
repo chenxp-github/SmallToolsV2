@@ -89,7 +89,7 @@ status_t CRpcServiceBase::SendPartReturnValue(CRpcCallContext *context, CRpcPara
 int CRpcServiceBase::AddCallback(CClosure *closure)
 {
     if(!closure)return 0;    
-    GLOBAL_PEER_CALLBACK_MAP(map);    
+    GLOBAL_PEER_CALLBACK_MAP(map);
     int callback_id = map->AllocUniqueId();
     if(!map->AddClosure(closure,callback_id))
     {

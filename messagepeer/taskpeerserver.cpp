@@ -217,7 +217,10 @@ status_t CTaskPeerServer::OnGotPackageData(LINKRPC_HEADER *header,CMem *header_d
     }
     else
     {
-        msg->SetFrom(this->iHostProxy->GetName());
+        if(iHostProxy.IsValid())
+        {
+            msg->SetFrom(this->iHostProxy->GetName());
+        }
         g->DispatchMessage(msg);
     }
 
