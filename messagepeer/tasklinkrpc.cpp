@@ -302,6 +302,8 @@ const char * CTaskLinkRpc::ErrorToString(int err)
         return "connect error";
     if(err == ERROR_WRONG_HEADER_FORMAT)
         return "wrong header format";
+    if(err == ERROR_NO_FIRST_MESSAGE)
+        return "no first message";
     return "unknown error";
 }
 status_t CTaskLinkRpc::ReportError(int err)

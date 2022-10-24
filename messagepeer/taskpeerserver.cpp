@@ -217,10 +217,13 @@ status_t CTaskPeerServer::OnGotPackageData(LINKRPC_HEADER *header,CMem *header_d
     }
     else
     {
-        if(iHostProxy.IsValid())
+        if(!iHostProxy.IsValid())
         {
-            msg->SetFrom(this->iHostProxy->GetName());
+            msg->Release();
+            this->Stop(ERROR_NO_FIRST_MESSAGE);
+            return ERROR;
         }
+        msg->SetFrom(this->iHostProxy->GetName());
         g->DispatchMessage(msg);
     }
 

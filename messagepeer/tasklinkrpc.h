@@ -16,6 +16,7 @@ public:
         ERROR_SOCKET_ERROR,
         ERROR_CONNECT_ERROR,
         ERROR_WRONG_HEADER_FORMAT,
+        ERROR_NO_FIRST_MESSAGE,
     };
 public:
     CSocket *mSocket;
