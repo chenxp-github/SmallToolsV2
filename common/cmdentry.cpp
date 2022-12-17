@@ -355,6 +355,8 @@ status_t CCmdEntry::GetAllDependKeys(CMem *keys)
         CCmdEntry *dep = m_Depends.GetElem(i);
         if(i > 0)keys->Puts(",");
         keys->Puts(dep->GetKey());
+        if(dep->GetValueStr())
+            keys->Printf("=%s",dep->GetValueStr());
     }
     return OK;
 }
