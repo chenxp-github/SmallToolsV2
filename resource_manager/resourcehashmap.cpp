@@ -269,10 +269,10 @@ status_t CResourceHashMap::Print(CFileBase *_buf)
 int CResourceHashMap::HashCode(CResource *resource,int capacity)
 {
     ASSERT(resource);
-    LOCAL_MEM(mem);
-    mem.Puts(resource->GetId());
+    LOCAL_MEM(mem);    
     mem.Puts(resource->GetTheme());
     mem.Puts(resource->GetLanguage());
+    mem.Puts(resource->GetId());
     uint32_t code = ac_x31_hash_string(mem.CStr());
     return code % capacity;
 }
