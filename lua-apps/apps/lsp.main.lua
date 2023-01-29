@@ -377,7 +377,7 @@ function add_lsp_folder(code,folder,exts,param1, param2)
         header_footer_mode = true;
         header_table = param1;
         footer_table = param2;        
-        add_files(code,folder,header_table);
+        add_files(code,fullname,header_table);
     end
         
     if not can_be_added then
@@ -388,7 +388,7 @@ function add_lsp_folder(code,folder,exts,param1, param2)
     FileManager.SearchDir(fullname,true,function(info)    
         if info.event == EVENT_SINGLE_FILE then        
             if can_be_added(fullname,info,exts,header_table,footer_table) then
-                table.insert(tmp_list,remove_path_prefix(info.full_name,cur_dir));
+                table.insert(tmp_list,info.full_name);
             end
         end
     end);
@@ -399,7 +399,7 @@ function add_lsp_folder(code,folder,exts,param1, param2)
     end               
 
     if header_footer_mode then
-        add_files(code,folder,footer_table);
+        add_files(code,fullname,footer_table);
     end
 
     FileManager.ChangeDir(cur_dir);
