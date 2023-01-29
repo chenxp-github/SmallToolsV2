@@ -11,7 +11,7 @@ function app_name()
 end
 
 --<@@
-function is_start_tag(lsp)
+function is_start_tag_1(lsp)
     local save_off = lsp:GetOffset();
     local ch = lsp:Getc();
     if ch ~= 60 then
@@ -35,7 +35,7 @@ function is_start_tag(lsp)
 end
 
 --</@@>
-function is_end_tag(lsp)
+function is_end_tag_1(lsp)
     local save_off = lsp:GetOffset();
     local ch = lsp:Getc();
     if ch ~= 60 then
@@ -70,34 +70,96 @@ function is_end_tag(lsp)
     return true;
 end
 
-function read_lua_block(lsp)
+--${{
+function is_start_tag_2(lsp)
+    local save_off = lsp:GetOffset();
+    local ch = lsp:Getc();
+    if ch ~= 36 then
+        lsp:Seek(save_off);
+        return false;
+    end
+    
+    ch = lsp:Getc();
+    if ch ~= 123 then
+        lsp:Seek(save_off);
+        return false;
+    end
+
+    ch = lsp:Getc();
+    if ch ~= 123 then
+        lsp:Seek(save_off);
+        return false;
+    end
+
+    return true;
+end
+
+--}}
+function is_end_tag_2(lsp)
+    local save_off = lsp:GetOffset();     
+    local ch = lsp:Getc();
+    if ch ~= 125 then
+        lsp:Seek(save_off);
+        return false;
+    end
+
+    ch = lsp:Getc();
+    if ch ~= 125 then
+        lsp:Seek(save_off);
+        return false;
+    end
+    return true;
+end
+
+function is_start_tag(lsp)
+    if is_start_tag_1(lsp) then
+        return 1;
+    end
+    if is_start_tag_2(lsp) then
+        return 2;
+    end
+end
+
+function is_end_tag(lsp,mode)
+    if mode == 1 then
+        return is_end_tag_1(lsp);
+    end
+
+    if mode == 2 then
+        return is_end_tag_2(lsp);
+    end
+end
+
+function read_lua_block(lsp,mode)
     local attributes = {};
     local tmp = new_mem();
 
-    while not lsp:IsEnd() do
-        local key = lsp:NextWord();
-        if key == ">" then
-            break;
-        end
+    if mode == 1 then --模式1，可以包含一些属性
+        while not lsp:IsEnd() do
+            local key = lsp:NextWord();
+            if key == ">" then
+                break;
+            end
 
-        local eq = lsp:NextWord();
-        if eq ~= "=" then
-            return
-        end
+            local eq = lsp:NextWord();
+            if eq ~= "=" then
+                return
+            end
 
-        local quote = lsp:NextWord();
-        if quote ~= "\"" then
-            return
+            local quote = lsp:NextWord();
+            if quote ~= "\"" then
+                return
+            end
+            
+            lsp:ReadCStr(tmp);
+            attributes[key] = tmp:CStr();
         end
-        
-        lsp:ReadCStr(tmp);
-        attributes[key] = tmp:CStr();
     end
 
     local lua_code = new_memfile();
 
     while not lsp:IsEnd() do
-        if is_end_tag(lsp) then
+        if is_end_tag(lsp,mode) then
             break;
         else
             ch = lsp:Getc();
@@ -135,7 +197,8 @@ function split_lsp_file(lsp,lsp_name)
 
     lsp:Seek(0);
     while not lsp:IsEnd() do
-        if is_start_tag(lsp) then
+        local start_tag = is_start_tag(lsp);
+        if start_tag then
             if tmp:GetSize() > 0 then
                 table.insert( blocks,{
                     text = file_to_string(tmp)
@@ -143,9 +206,9 @@ function split_lsp_file(lsp,lsp_name)
                 tmp:SetSize(0);
             end
 
-            local attr,code = read_lua_block(lsp);
+            local attr,code = read_lua_block(lsp,start_tag);
             if not attr then
-                printf("lsp syntax error at line %d",calcu_line(lsp,lsp:GetOffset()));
+                exit("lsp syntax error at line %d",calcu_line(lsp,lsp:GetOffset()));
                 return
             end
 
