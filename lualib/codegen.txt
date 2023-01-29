@@ -662,8 +662,8 @@ class ResourceManager{
     string GetPathPrefix();
     status_t DumpResourceFile(string filename);
     status_t SearchByString(string theme, string language,string id, Resource value);
-    int GetLen();
-    status_t GetByIndex(int index, Resource res);
+    int GetTotalSlots();
+    status_t GetBySlot(int slot, Resource res);
 }
 
 class SimpleDisk{

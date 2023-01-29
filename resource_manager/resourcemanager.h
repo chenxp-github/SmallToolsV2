@@ -40,8 +40,8 @@ public:
     int Comp(CResourceManager *_p);
     status_t Print(CFileBase *_buf);
     CResourceHashMap* GetHashMap();
-    int GetLen();
-    status_t GetByIndex(int index, CResource *res);
+    int GetTotalSlots();
+    status_t GetBySlot(int slot, CResource *res);
 };
 
 #endif
