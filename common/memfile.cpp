@@ -50,10 +50,10 @@ status_t CMemFile::InitShift()
 
     for(i = 5; i < (int32_t)sizeof(fsize_t)*8; i++)
     {
-        if( (fsize_t)(1 << i) == this->mPageSize)
+        if( (1 << i) == (uint32_t)this->mPageSize)
         {
             this->shift_n = i;
-            this->mod_n = this->mPageSize - 1;
+            this->mod_n = (uint32_t)(this->mPageSize - 1);
             return OK;
         }
     }

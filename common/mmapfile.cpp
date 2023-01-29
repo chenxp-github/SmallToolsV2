@@ -112,7 +112,7 @@ status_t CMMapFile::OpenReadOnly(const char *filename)
     
     this->Close();
 
-    m_FileHandle = CreateFile(
+    m_FileHandle = CreateFileA(
         filename,
         GENERIC_READ,
         FILE_SHARE_READ,
@@ -130,7 +130,7 @@ status_t CMMapFile::OpenReadOnly(const char *filename)
     LOCAL_MEM(mapping_file_name);
     this->MakeFileMappingName(filename,&mapping_file_name);
 
-    m_MapHandle = CreateFileMapping(m_FileHandle,NULL,PAGE_READONLY,0,0,mapping_file_name.CStr());
+    m_MapHandle = CreateFileMappingA(m_FileHandle,NULL,PAGE_READONLY,0,0,mapping_file_name.CStr());
 
     if(!m_MapHandle)
     {
@@ -152,7 +152,7 @@ status_t CMMapFile::OpenCreate(const char *filename, int_ptr_t size)
     
     this->Close();
 
-    m_FileHandle = CreateFile(
+    m_FileHandle = CreateFileA(
         filename,
         GENERIC_READ | GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -167,12 +167,12 @@ status_t CMMapFile::OpenCreate(const char *filename, int_ptr_t size)
         return ERROR;
     }
 
-    SetFilePointer(m_FileHandle,size,NULL,FILE_BEGIN);
+    SetFilePointer(m_FileHandle,(LONG)size,NULL,FILE_BEGIN);
     SetEndOfFile(m_FileHandle);
     
     LOCAL_MEM(mapping_file_name);
     this->MakeFileMappingName(filename,&mapping_file_name);
-    m_MapHandle = CreateFileMapping(m_FileHandle,NULL,PAGE_READWRITE,0,0,mapping_file_name.CStr());
+    m_MapHandle = CreateFileMappingA(m_FileHandle,NULL,PAGE_READWRITE,0,0,mapping_file_name.CStr());
 
     if(!m_MapHandle)
     {
@@ -192,7 +192,7 @@ status_t CMMapFile::OpenReadWrite(const char *filename)
     
     this->Close();
     
-    m_FileHandle = CreateFile(
+    m_FileHandle = CreateFileA(
         filename,
         GENERIC_READ | GENERIC_WRITE,
         FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -209,7 +209,7 @@ status_t CMMapFile::OpenReadWrite(const char *filename)
     LOCAL_MEM(mapping_file_name);
     this->MakeFileMappingName(filename,&mapping_file_name);
 
-    m_MapHandle = CreateFileMapping(m_FileHandle,NULL,PAGE_READWRITE,0,0,mapping_file_name.CStr());
+    m_MapHandle = CreateFileMappingA(m_FileHandle,NULL,PAGE_READWRITE,0,0,mapping_file_name.CStr());
     
     if(!m_MapHandle)
     {
@@ -226,7 +226,7 @@ status_t CMMapFile::OpenReadWrite(const char *filename)
 }
 status_t CMMapFile::Unlink()
 {
-    return DeleteFile(m_FileName.CStr());
+    return DeleteFileA(m_FileName.CStr());
 }
 status_t CMMapFile::Sync()
 {
@@ -239,7 +239,7 @@ status_t CMMapFile::MakeFileMappingName(const char *filename,CMem *obj_name)
     
     obj_name->Puts("mmapfile::");
 
-    int len = strlen(filename);
+    int len = (int)strlen(filename);
     for(int i = 0; i < len; i++)
     {
         char ch = filename[i];

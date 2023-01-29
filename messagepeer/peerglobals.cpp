@@ -80,7 +80,7 @@ status_t CPeerGlobals::DispatchMessage(CPeerMessage *msg)
             {
                 CMem *name = all_connected->GetElem(i);
                 CPeerProxy *pp = this->mPeerManager->GetPeerByName(name);
-                if(pp != NULL)
+                if(pp && (!pp->IsSendingQueueFull()))
                 {
                     pp->AddPendingMessage(msg);
                 }
@@ -92,7 +92,7 @@ status_t CPeerGlobals::DispatchMessage(CPeerMessage *msg)
                 CPeerProxy *p = this->mPeerManager->GetPeer(i);
                 if(p == peer) continue;
 
-                if(peer->IsPeerConnectedMe(p))
+                if(peer->IsPeerConnectedMe(p) && (!p->IsSendingQueueFull()))
                 {
                     p->AddPendingMessage(msg);
                 }

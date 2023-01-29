@@ -71,6 +71,7 @@ public:
     status_t SetId(const char *_id);
     status_t SetTheme(const char *_theme);
     status_t SetLanguage(const char *_language);
+    status_t Clear();
 };
 
 #endif

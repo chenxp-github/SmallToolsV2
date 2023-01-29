@@ -116,8 +116,7 @@ status_t CSocketReaderWriter::DoWrite(uint32_t interval)
     else if(ws == 0)
     {
         this->mWriteOffset += ws;
-        if(interval < mTimeout)
-            this->mWriteTimer += interval;
+        this->mWriteTimer += interval;
         if(HAS_TIMEOUT() && this->mWriteTimer >= this->mTimeout)
         {
             this->iSocket->CloseConnect();
@@ -222,8 +221,7 @@ status_t CSocketReaderWriter::DoRead(uint32_t interval)
     }
     else if(rs == 0)
     {
-        if(interval < mTimeout)
-            this->mReadTimer += interval;
+        this->mReadTimer += interval;
         if(HAS_TIMEOUT() && this->mReadTimer >= this->mTimeout)
         {
             this->iSocket->CloseConnect();
@@ -296,8 +294,7 @@ status_t CSocketReaderWriter::DoReadUntilEol(uint32_t interval,bool only_lf)
         }
         else if(rs == 0)
         {
-            if(interval < mTimeout)
-                this->mReadTimer += interval;
+            this->mReadTimer += interval;
             if(HAS_TIMEOUT() && this->mReadTimer > this->mTimeout)
             {
                 this->Error(ERROR_READ_TIMEOUT);
@@ -360,8 +357,7 @@ status_t CSocketReaderWriter::DoReadUntilEmptyLine(uint32_t interval)
         }
         else if(rs == 0)
         {
-            if(interval < mTimeout)
-                this->mReadTimer += interval;
+            this->mReadTimer += interval;
             if(HAS_TIMEOUT() && this->mReadTimer > this->mTimeout)
             {
                 this->Error(ERROR_READ_TIMEOUT);
@@ -436,8 +432,7 @@ int_ptr_t CSocketReaderWriter::ReadDirect(void *buf, int_ptr_t size,uint32_t int
     }
     else if(rs == 0)
     {
-        if(interval < mTimeout)
-            this->mReadTimer += interval;
+        this->mReadTimer += interval;
         if(HAS_TIMEOUT() && this->mReadTimer >= this->mTimeout)
         {
             this->iSocket->CloseConnect();

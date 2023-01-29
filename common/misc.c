@@ -27,7 +27,7 @@ int32_t hex2dec_32(const char *shex)
     while(shex[0] == '0')
         shex ++;
 
-    len = crt_strlen(shex);
+    len = (int32_t)crt_strlen(shex);
     mid = 0; idec = 0;   
     
     for( i=0; i<len; i++ )   
@@ -110,7 +110,7 @@ int64_t hex2dec_64(const char *shex)
     while(shex[0] == '0')
         shex ++;
 
-    len = crt_strlen( shex );   
+    len = (int32_t)crt_strlen( shex );   
     
     ASSERT(len <= 16);
     

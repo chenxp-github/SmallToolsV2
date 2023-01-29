@@ -393,7 +393,7 @@ status_t CCommandLine::LoadFromString(CMem *str)
             if(tmp.StrLen() > 0)
             {
                 ASSERT(argc < MAX);
-                argv[argc++] = strdup(tmp.CStr());
+                argv[argc++] = crt_strdup(tmp.CStr());
             }           
             tmp.SetSize(0);
         }
@@ -402,7 +402,7 @@ status_t CCommandLine::LoadFromString(CMem *str)
     if(tmp.StrLen() > 0)
     {       
         ASSERT(argc < MAX);
-        argv[argc++] = strdup(tmp.CStr());
+        argv[argc++] = crt_strdup(tmp.CStr());
     }
 
     status_t ret = this->LoadFromArgv(argc,argv);

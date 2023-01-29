@@ -255,7 +255,7 @@ status_t CSerial::Destroy()
 
 status_t CSerial::Open(const char *dev_name)
 {
-    this->handle = ::CreateFile(dev_name,
+    this->handle = ::CreateFileA(dev_name,
         GENERIC_READ|GENERIC_WRITE,
         0,
         0,
@@ -347,15 +347,27 @@ int_ptr_t CSerial::Read(void *buf,int_ptr_t n)
 {
     ASSERT(this->handle);
     DWORD rsize = 0;
-    ::ReadFile(this->handle,buf,(DWORD)n,&rsize,NULL);
-    return rsize;
+    if(::ReadFile(this->handle, buf, (DWORD)n, &rsize, NULL))
+    {
+        return rsize;
+    }
+    else
+    {
+        return -1;
+    }
 }
 int_ptr_t CSerial::Write(const void *buf,int_ptr_t n)
 {
     ASSERT(this->handle);
     DWORD wsize = 0;
-    ::WriteFile(this->handle,buf,(DWORD)n,&wsize,NULL);
-    return wsize;
+    if(::WriteFile(this->handle,buf,(DWORD)n,&wsize,NULL))
+    {
+        return wsize;
+    }
+    else
+    {
+        return -1;
+    }
 }
 status_t CSerial::EnableDtrHandshake(bool enable)
 {

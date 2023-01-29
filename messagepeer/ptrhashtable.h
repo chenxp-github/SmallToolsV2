@@ -28,7 +28,8 @@ public:
     }
     int Comp(CPtrHashNode *p)
     {
-        return ((int_ptr_t)(this->mPtr)) - ((int_ptr_t)(p->mPtr));
+        int_ptr_t c = ((int_ptr_t)(this->mPtr)) - ((int_ptr_t)(p->mPtr));
+        return (int)c;
     }
     int_ptr_t GetIntValue()
     {

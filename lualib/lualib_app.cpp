@@ -5,9 +5,7 @@
 #include "peerglobals.h"
 #include "tasktcpacceptor.h"
 #include "taskpeerserver.h"
-#include "mkdisk.h"
 #include "lua_helper.h"
-#include "lualib_simpledisk.h"
 #include "lualib_peerproxy.h"
 #include "dirmgr.h"
 #include "thread.h"
@@ -261,16 +259,6 @@ static status_t app_getargs(lua_State *L)
     return 0;
 }
 
-static int app_makeordersimplediskfromdir(lua_State *L)
-{
-    LUA_TO_LOCAL_STRING(dir,L,1);
-    CSimpleDisk *disk = get_simpledisk(L,2);
-    ASSERT(disk);
-    int _ret_0 = (int)MakeOrderSimpleDiskFromDir(dir,disk);
-    lua_pushboolean(L,_ret_0);
-    return 1;
-}
-
 static status_t app_quittask(lua_State *L)
 {
     int tid = (int)lua_tointeger(L,1);
@@ -385,7 +373,6 @@ static const luaL_Reg app_lib[] = {
     {"GetAllPeers",app_getallpeers},
     {"Sleep",app_sleep},	
     {"GetArgs",app_getargs},
-	{"MakeOrderSimpleDiskFromDir",app_makeordersimplediskfromdir},
     {"QuitTask",app_quittask},    
     {"StartAutoExitThread",app_startautoexitthread},    
     {NULL, NULL}

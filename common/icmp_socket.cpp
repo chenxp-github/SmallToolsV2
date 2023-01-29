@@ -78,7 +78,7 @@ status_t CIcmpSocket::SetDestIp(const char *ip)
     m_addr.sin_family = AF_INET;
 
 	struct in_addr in_addr;
-    in_addr.s_addr = inet_addr(ip);
+    in_addr.s_addr = crt_inet_addr(ip);
 
     if(in_addr.s_addr == INADDR_NONE)
     {
@@ -95,7 +95,7 @@ status_t CIcmpSocket::SetDestIp(const char *ip)
 status_t CIcmpSocket::Create()
 {
     ASSERT(m_sock < 0);
-    m_sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+    m_sock = (int)socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
     if(m_sock < 0) 
     {
         return ERROR;

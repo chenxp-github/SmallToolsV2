@@ -56,6 +56,7 @@ public:
     fsize_t GetMaxSize();
     status_t Copy(CFileBase *file);
     status_t SetStr(const char *p);
+    status_t SetStr(const char *p,int_ptr_t len);
     const char* CStr();
     virtual char CharAt(fsize_t index);
     virtual status_t SetChar(fsize_t index,char ch);
@@ -78,6 +79,7 @@ public:
     CMem();
     ~CMem();
     CMem(const char *str);
+    CMem(const char *str, int_ptr_t len);
     status_t Destroy();
 
 };

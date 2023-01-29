@@ -62,8 +62,7 @@ status_t CTaskTcpConnector::Destroy()
 
 status_t CTaskTcpConnector::CheckConnectTimeout(uint32_t interval)
 {
-    if(interval < (uint32_t)mTimeout)
-        this->mConnectTime+=interval;
+    this->mConnectTime+=interval;
     if(this->mConnectTime >= this->mTimeout)
     {
         this->mConnectTime = 0;
@@ -123,7 +122,7 @@ status_t CTaskTcpConnector::Run(uint32_t interval)
         this->InitTcpClient(ip.CStr(),mPort);       
         this->mStep = STEP_CONNECT;
     }
-    
+
     if(this->mStep == STEP_CONNECT)
     {
         if(this->mTcpClient->Connect())

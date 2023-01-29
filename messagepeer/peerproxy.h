@@ -25,6 +25,7 @@ public:
     uint32_t mLifeTime;
 	CClosure *mCallback;
 public:
+    bool IsSendingQueueFull();
     CSocket *GetSocket();
 	CClosure *Callback();
     bool IsServerSide();

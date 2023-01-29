@@ -125,6 +125,27 @@ static int resourcemanager_dumpresourcefile(lua_State *L)
     return 1;
 }
 
+static status_t resourcemanager_getlen(lua_State *L)
+{
+    CResourceManager *presourcemanager = get_resourcemanager(L,1);
+    ASSERT(presourcemanager);
+    int ret0 = presourcemanager->GetLen();
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t resourcemanager_getbyindex(lua_State *L)
+{
+    CResourceManager *presourcemanager = get_resourcemanager(L,1);
+    ASSERT(presourcemanager);
+    int index = (int)lua_tointeger(L,2);
+    CResource *res = get_resource(L,3);
+    ASSERT(res);
+    status_t ret0 = presourcemanager->GetByIndex(index,res);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
 static const luaL_Reg resourcemanager_lib[] = {
     {"__gc",resourcemanager_gc_},
     {"__tostring",resourcemanager_tostring_},
@@ -139,6 +160,8 @@ static const luaL_Reg resourcemanager_lib[] = {
     {"SetPathPrefix",resourcemanager_setpathprefix},
     {"GetPathPrefix",resourcemanager_getpathprefix},
     {"DumpResourceFile",resourcemanager_dumpresourcefile},
+    {"GetLen",resourcemanager_getlen},
+    {"GetByIndex",resourcemanager_getbyindex},    
     {NULL, NULL}
 };
 static int luaL_register_resourcemanager(lua_State *L)

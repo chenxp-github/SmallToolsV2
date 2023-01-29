@@ -77,9 +77,7 @@ status_t CMessagePeer::Print()
 {
     syslog_printf("Name = %s",this->mName->CStr());
     syslog_printf("Server = %s",this->mServer->CStr());
-    char _str_mport[64];
-    sprintf(_str_mport,"%d",mPort);
-    syslog_printf("Port = %s",_str_mport);
+    syslog_printf("Port = %d", mPort);
     return OK;
 }
 

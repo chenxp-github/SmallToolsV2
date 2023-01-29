@@ -229,7 +229,7 @@ status_t CCmdEntry::SetOption(int option)
 static char* cmd_strdup(const char *str)
 {
     bool has_empty_char = false;
-    int len = strlen(str);
+    int len = (int)strlen(str);
     for(int i = 0; i < len; i++)
     {
         if(str[i]==' ' ||str[i]=='\t')
@@ -245,11 +245,11 @@ static char* cmd_strdup(const char *str)
         tmp.Puts("\"");
         tmp.Puts(str);
         tmp.Puts("\"");
-        return strdup(tmp.CStr());
+        return crt_strdup(tmp.CStr());
     }
     else
     {
-        return strdup(str);
+        return crt_strdup(str);
     }
 }
 
@@ -274,7 +274,7 @@ status_t CCmdEntry::SaveToArgv(int *argc, char **argv)
         LOCAL_MEM(tmp);
         cmd_strdup(m_Key.CStr(),&tmp);
         cmd_strdup(m_Value.CStr(),&tmp);
-        argv[(*argc)++] = strdup(tmp.CStr());       
+        argv[(*argc)++] = crt_strdup(tmp.CStr());
         return OK;
     }
     
@@ -291,7 +291,7 @@ status_t CCmdEntry::SaveToArgv(int *argc, char **argv)
         cmd_strdup(m_Key.CStr(),&tmp);
         tmp.Puts("=");
         cmd_strdup(m_Value.CStr(),&tmp);
-        argv[(*argc)++] = strdup(tmp.CStr());           
+        argv[(*argc)++] = crt_strdup(tmp.CStr());
         return OK;
     }
     

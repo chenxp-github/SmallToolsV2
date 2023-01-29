@@ -113,7 +113,7 @@ status_t CXmlNode::DetachFromTree(CXmlNode *node)
 
 status_t CXmlNode::Free(CXmlNode *node)
 {
-    CXmlNode *p , *q;
+    CXmlNode *p = NULL , *q = NULL;
 
     if(node == NULL)
         return OK;

@@ -64,7 +64,7 @@ status_t CMemStk::AutoResize()
         this->mSize *= 2;
         for(i = this->mTop; i < this->mSize; i++)
         {
-            this->mIndex[i] = NULL;
+            if(mIndex)this->mIndex[i] = NULL;
         }
     }
     return OK;
@@ -513,7 +513,7 @@ status_t CMemStk::SaveBson(CMiniBson *_bson)
     {
         CMem *p = this->GetElem(i);
         ASSERT(p);        
-        sprintf(name,"%d",i);
+        crt_snprintf(name,sizeof(name)-1,"%d",i);
         fsize_t _off;
         _bson->StartDocument(name,&_off);      
         _bson->PutString("file_name",

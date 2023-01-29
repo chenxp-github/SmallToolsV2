@@ -142,8 +142,8 @@ status_t CDirMgr::SearchDir_Interruptable(CMem *dir, bool recursive, CClosure *c
     while(crt_read_dir(p))
     {
         if(running && !(*running))break;
-        if(strcmp(filename,".") == 0)continue;
-        if(strcmp(filename,"..") == 0)continue;
+        if(crt_strcmp(filename,".") == 0)continue;
+        if(crt_strcmp(filename,"..") == 0)continue;
 
         bool is_dir = (p[2] != 0);
 
@@ -203,7 +203,7 @@ status_t CDirMgr::GetCurDir(CMem *dir)
 {
     ASSERT(dir);
     int_ptr_t max = (int_ptr_t)(dir->GetMaxSize()-1);
-    int_ptr_t size = (int_ptr_t)crt_get_cur_dir(dir->GetRawBuf(),max);
+    int_ptr_t size = (int_ptr_t)crt_get_cur_dir(dir->GetRawBuf(),(int)max);
     if(size > 0)
     {
         dir->SetSize(size);
@@ -642,7 +642,7 @@ status_t CDirMgr::GetCurDirW(CMem *dir)
 {
     ASSERT(dir);
     int_ptr_t max = (int_ptr_t)((dir->GetMaxSize()-1)*sizeof(wchar_t));
-    int_ptr_t size = crt_get_cur_dir_w((wchar_t*)dir->GetRawBuf(),max);
+    int_ptr_t size = crt_get_cur_dir_w((wchar_t*)dir->GetRawBuf(),(int)max);
     if(size > 0)
     {
         dir->SetSize(size*sizeof(wchar_t));

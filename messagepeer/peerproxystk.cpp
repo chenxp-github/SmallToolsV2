@@ -57,7 +57,7 @@ status_t CPeerProxyStk::AutoResize()
         this->mSize *= 2;
         for(int i = this->mTop; i < this->mSize; i++)
         {
-            this->mIndex[i] = NULL;
+            if(mIndex)this->mIndex[i] = NULL;
         }
     }
     return OK;

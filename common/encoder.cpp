@@ -104,7 +104,7 @@ status_t CEncoder::Base64_Decode_Interruptable(CFileBase *file_base64, CFileBase
             ch = file_base64->Getc();
             p = crt_strchr(base64_alphabet,ch);
             if(p != NULL)
-                buf[i++] =  p - base64_alphabet;;
+                buf[i++] =  (uint8_t)(p - base64_alphabet);
         }
 
         k = 4;

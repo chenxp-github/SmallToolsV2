@@ -108,7 +108,7 @@ status_t CPeerProxyManager::GetPeerProxyIpAddress(const char *peer_name, CMem *i
 	memset(&addr,0,sizeof(addr));
 	getpeername(socket->GetSocketFd(),(struct sockaddr*)&addr,&addrlen);
 
-	ip->StrCpy(inet_ntoa(addr.sin_addr));
+	ip->StrCpy(crt_inet_ntoa(addr.sin_addr));
 	*port = ntohs(addr.sin_port);
 
 	return OK;

@@ -1,5 +1,5 @@
-#ifndef __HASH_FILE_H
-#define __HASH_FILE_H
+#ifndef __T_RESOURCE_HASH_FILE_H
+#define __T_RESOURCE_HASH_FILE_H
 
 #include "ptrstk.h"
 #include "indexfile.h"
@@ -10,7 +10,7 @@
 #define HASH_FILE_META_DATA_LEN 17
 
 template<class HashTable,class HashEntry>
-class CHashFile{
+class TResourceHashFile{
 public:
     int32_t m_HashMapCapacity;
     CIndexFile m_IndexFile;
@@ -19,12 +19,12 @@ public:
     CMem m_IndexDataFile_Mem;
     CFileBase *i_UserMetaData;
 public:
-    CHashFile()
+    TResourceHashFile()
     {
         this->InitBasic();
     }
 
-    ~CHashFile()
+    ~TResourceHashFile()
     {
         this->Destroy();
     }

@@ -25,8 +25,8 @@ public:
     CTcpClient *mTcpClient;
     CMem *mServerName;
     int mPort;
-    int mTimeout;
-    int mConnectTime;
+    uint32_t mTimeout;
+    uint32_t mConnectTime;
     int_ptr_t *hostoip_context;
     int mStep;
     CClosure *mCallback;

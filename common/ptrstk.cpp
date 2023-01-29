@@ -229,7 +229,9 @@ int CPtrStk::CompNode(any_ptr node1, any_ptr node2)
         Callback()->SetParamPointer(2,node2);   
         return Callback()->Run(HOW_TO_COMP);
     }
-    return ((int_ptr_t)node1) - ((int_ptr_t)node2);
+    int_ptr_t p1 = (int_ptr_t)node1;
+    int_ptr_t p2 = (int_ptr_t)node2;
+    return (int)(p1-p2);
 }
 
 status_t CPtrStk::DestroyAllNodes()

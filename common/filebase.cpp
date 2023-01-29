@@ -699,6 +699,7 @@ end:
 
 fsize_t CFileBase::ReadWord_Reverse(CFileBase *file)
 {
+    ASSERT(file);
     this->SkipEmptyChars_Reverse();
     return this->ReadWordWithEmptyChar_Reverse(file);
 }
@@ -743,6 +744,8 @@ status_t CFileBase::Reverse(fsize_t start, fsize_t end)
 
 status_t CFileBase::ReadString_Reverse(CFileBase *file)
 {
+    ASSERT(file);
+
     fsize_t k;
     k = this->ReadWord_Reverse(file);
     while(k)
@@ -1041,6 +1044,7 @@ int_ptr_t CFileBase::StrLen()
 
 status_t CFileBase::StrCat(const char *str)
 {
+    ASSERT(str);
     this->SeekEnd();
     this->Puts(str);
     return OK;
@@ -1048,12 +1052,14 @@ status_t CFileBase::StrCat(const char *str)
 
 int CFileBase::StrCmp(const char *str)
 {
+    ASSERT(str);
     CMem mem(str);
     return this->StrCmp(&mem);
 }
 
 status_t CFileBase::StrCat(CFileBase *file)
 {
+    ASSERT(file);
     this->SeekEnd();
     this->Puts(file);
     return OK;
@@ -1061,6 +1067,7 @@ status_t CFileBase::StrCat(CFileBase *file)
 
 int CFileBase::StrCmp(CFileBase *file)
 {
+    ASSERT(file);
     unsigned char c1,c2;
 
     if(this == file)

@@ -265,3 +265,9 @@ status_t CPeerProxy::Reset()
     this->mPendingMessages->Clear();
     return OK;
 }
+
+bool CPeerProxy::IsSendingQueueFull()
+{
+    return mPendingMessages->IsFull();
+}
+

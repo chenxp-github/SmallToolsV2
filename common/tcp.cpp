@@ -48,7 +48,7 @@ int_ptr_t CSocket::Write(const void *buf, int_ptr_t n)
     int_ptr_t ret;
     ASSERT(this->socket_num > 0);
     if(n <= 0)return 0;
-    ret = crt_send(this->socket_num,(const char*)buf,n,0);
+    ret = crt_send(this->socket_num,(const char*)buf,(int32_t)n,0);
     if(ret ==SOCKET_ERROR)
     {
         if(crt_is_socket_broken())
@@ -68,7 +68,7 @@ int_ptr_t CSocket::Read(void *buf, int_ptr_t n)
     ASSERT(this->socket_num > 0);
     if(n <= 0) return 0;
 
-    ret = crt_recv(this->socket_num,(char*)buf,n,0);
+    ret = crt_recv(this->socket_num,(char*)buf,(int32_t)n,0);
     if(ret==SOCKET_ERROR)
     {
         if(crt_is_socket_broken())
@@ -200,6 +200,27 @@ bool CSocket::IsIpAddress(CMem *str)
     return c == 4;
 }
 
+bool CSocket::IsIpV6Address(CMem* str)
+{
+    ASSERT(str);
+
+    LOCAL_MEM(mem);
+
+    str->SetSplitChars(":");
+    str->Seek(0);
+
+    int c = 0;
+    while (str->ReadString(&mem))
+    {
+        if (!is_hex(mem.CStr()))
+            break;
+        c++;
+    }
+
+    return c > 0;
+}
+
+
 int32_t CSocket::GetSocketFd()
 {
     return socket_num;
@@ -324,11 +345,11 @@ status_t CTcpClient::Destroy()
 status_t CTcpClient::SetServerIP(const char *name)
 {
     struct in_addr addr;
-    addr.s_addr = inet_addr(name);
-    if(addr.s_addr == INADDR_NONE)
+    addr.s_addr = crt_inet_addr(name);
+    if (addr.s_addr == INADDR_NONE)
     {
-        XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "invalidate ip %s\n",name
+        XLOG(LOG_MODULE_COMMON, LOG_LEVEL_ERROR,
+            "invalidate ip %s\n", name
         );
         return ERROR;
     }

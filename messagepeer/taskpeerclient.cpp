@@ -219,7 +219,7 @@ const char * CTaskPeerClient::ErrorToString(int err)
 
     if(iHostPeer.get())
     {
-        sprintf(err_buf,"(%s) %s",iHostPeer->GetNameStr(),ori_str);
+        crt_snprintf(err_buf,sizeof(err_buf)-1,"(%s) %s",iHostPeer->GetNameStr(),ori_str);
         return err_buf;
     }
     else

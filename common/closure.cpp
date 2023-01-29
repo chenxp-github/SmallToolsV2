@@ -253,7 +253,9 @@ status_t CClosure::SetParamObject(int index, void *obj, void** obj_op, int obj_o
     m_Params[index] = (int64_t)p;
 
     p[0] = (int_ptr_t)obj;
-    for(int i = 0; i < OP_INDEX_MAX; i++)
+    if(obj_op_num > OP_INDEX_MAX)
+        obj_op_num = OP_INDEX_MAX;
+    for(int i = 0; i < obj_op_num; i++)
     {
         p[i+1] = (int_ptr_t)obj_op[i];
     }
@@ -315,7 +317,7 @@ status_t CClosure::SetParamString(int index, const char *str,int len)
 status_t CClosure::SetParamString(int index, const char *str)
 {
     ASSERT(str);
-    return this->SetParamString(index,str,crt_strlen(str));
+    return this->SetParamString(index,str,(int)crt_strlen(str));
 }
 
 status_t CClosure::SetParamWeakPointer(int index, CRawWeakPointer *weak_ptr)
@@ -572,7 +574,7 @@ status_t CClosure::BsonToParam(CMiniBson *bson)
         {
             CMem v;
             bson->GetString(NULL,&v);
-            this->SetParamString(i,v.CStr(),v.StrLen());
+            this->SetParamString(i,v.CStr(),(int)v.StrLen());
         }
         else if(type == CMiniBson::BSON_TYPE_DOCUMENT)
         {
@@ -587,8 +589,8 @@ status_t CClosure::BsonToParam(CMiniBson *bson)
             CMem bin;
             bson->GetBinary(NULL,&bin);
             ASSERT(bin.GetSize() > 0);
-            void *p = this->Malloc(i,(int_ptr_t)bin.GetSize());
-            memcpy(p,bin.GetRawBuf(),(int_ptr_t)bin.GetSize());
+            void *p = this->Malloc(i,(int)bin.GetSize());
+            memcpy(p,bin.GetRawBuf(),(int)bin.GetSize());
         }
         else
         {
@@ -609,7 +611,7 @@ status_t CClosure::ParamToBson(CMiniBson *bson)
 
     for(int i = 0; i < MAX_PARAMS; i++)
     {
-        sprintf(name,"%d",i);
+        crt_snprintf(name,sizeof(name)-1,"%d",i);
         int type = this->GetParamType(i);
 
         if(type == PARAM_TYPE_UNKNOWN)

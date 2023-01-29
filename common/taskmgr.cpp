@@ -89,7 +89,7 @@ status_t CTask::SetName(const char *name)
     FREE(mName);
     if(name == NULL)
         return OK;
-    int len = strlen(name);
+    int len = (int)strlen(name);
     MALLOC(mName,char,len+1);
     memcpy(mName,name,len+1);
     return OK;

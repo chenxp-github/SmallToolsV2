@@ -94,10 +94,12 @@ void crt_fclose(FILE_HANDLE fd);
 fsize_t crt_fseek(FILE_HANDLE fd, fsize_t offset, int where);
 fsize_t crt_ftell(FILE_HANDLE fd);
 int_ptr_t crt_fread(FILE_HANDLE fd,void *buffer, int_ptr_t size);
+status_t crt_snprintf(char *string,int size, const char *format, ...);
 int_ptr_t crt_fwrite(FILE_HANDLE fd,const void*buffer,int_ptr_t size);
 status_t crt_vsprintf(char *string, const char *format, crt_va_list param);
 status_t crt_vsnprintf(char *string, int size, const char *format, crt_va_list param);
 int_ptr_t crt_strlen(const char *s);
+char* crt_strdup(const char* str);
 char *crt_strcpy(char *dst,const char *src);
 int crt_strcmp(const char *s1,const char * s2);
 int crt_stricmp(const char *s1,const char * s2);
@@ -165,6 +167,7 @@ int32_t crt_connect( int32_t s, const struct sockaddr* name,int32_t namelen);
 status_t crt_is_connect_complete(int32_t s);
 status_t crt_get_all_ip(char *out);
 status_t crt_is_socket_broken();
+uint32_t crt_inet_addr(const char* cp);
 ///////////////////////////////////////////////////////////////////
 #endif //#if USE_SOCKET_MODULE
 ///////////////////////////////////////////////////////////////////
@@ -173,7 +176,7 @@ status_t crt_is_socket_broken();
 #if USE_THREAD_MODULE
 ///////////////////////////////////////////////////////////////////
 #include <process.h>
-typedef  unsigned long THREAD_HANDLE;
+typedef int_ptr_t THREAD_HANDLE;
 typedef CRITICAL_SECTION  MUTEX_TYPE;
 THREAD_HANDLE crt_create_thread(void(*func)(void*), int32_t stack_size, void *param);
 int_ptr_t crt_get_current_thread_id();

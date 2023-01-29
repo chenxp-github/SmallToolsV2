@@ -914,14 +914,6 @@ SOURCE=.\lualib\lualib_serversidepeer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\lualib\lualib_simpledisk.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\lualib\lualib_simpledisk.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\lualib\lualib_stream.cpp
 # End Source File
 # Begin Source File
@@ -1119,14 +1111,6 @@ SOURCE=.\common\misc.c
 # Begin Source File
 
 SOURCE=.\common\misc.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\mkdisk.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\mkdisk.h
 # End Source File
 # Begin Source File
 
@@ -1579,30 +1563,6 @@ SOURCE=.\websocket\sha1calculator.cpp
 # Begin Source File
 
 SOURCE=.\websocket\sha1calculator.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\simpledisk.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\simpledisk.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\simplediskfsentry.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\simplediskfsentry.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\simplediskfsindex.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\common\simplediskfsindex.h
 # End Source File
 # Begin Source File
 

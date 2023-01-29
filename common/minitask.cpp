@@ -33,7 +33,7 @@ status_t CMiniTask::Stop(const char *szFormat, ...)
     char szBuffer [4096];
     crt_va_list pArgList;
     crt_va_start(pArgList, szFormat);
-    crt_vsprintf(szBuffer, szFormat, pArgList);
+    crt_vsnprintf(szBuffer, sizeof(szBuffer)-1, szFormat, pArgList);
     crt_va_end (pArgList);
     XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,szBuffer);
     this->Quit();

@@ -66,7 +66,7 @@ status_t CFileInfoList::AutoResize()
         this->mSize *= 2;
         for(int i = this->mTop; i < this->mSize; i++)
         {
-            this->mIndex[i] = NULL;
+            if(mIndex)this->mIndex[i] = NULL;
         }
     }
     return OK;
@@ -483,7 +483,7 @@ status_t CFileInfoList::LoadFromBson(const char *filename)
 status_t CFileInfoList::RemoveDirPrefix(const char *dir)
 {
     ASSERT(dir);
-    int len = strlen(dir);
+    int len = (int)strlen(dir);
     if(len <= 0)dir="/";
     
     if(dir[len-1] != '/' && dir[len-1] != '\\')

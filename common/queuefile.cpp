@@ -30,7 +30,7 @@ status_t CQueueFile::Init(int_ptr_t bytes)
     int_ptr_t shift;
     this->InitBasic();
     CFileBase::Init();
-    shift = find_shift(bytes);
+    shift = find_shift((uint32_t)bytes);
     ASSERT(shift >= 0 && shift <= 31);
     this->size_shift = shift;
     this->size_mod = (1<<shift) - 1;

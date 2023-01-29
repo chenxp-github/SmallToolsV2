@@ -109,6 +109,15 @@ status_t crt_vsnprintf(char *string, int size, const char *format, crt_va_list p
     return vsprintf(string, format, param);
 }
 
+status_t crt_snprintf(char *string,int size, const char *format, ...)
+{
+	crt_va_list pArgList;
+	crt_va_start(pArgList, format);
+	crt_vsnprintf(string, size, format, pArgList);
+	crt_va_end (pArgList);
+	return OK;
+}
+
 int_ptr_t crt_strlen(const char *s)
 {
     return strlen(s);
@@ -137,6 +146,11 @@ char *crt_strcat(char *dest,const char *src)
 char *crt_strchr(const char *src,int ch)
 {
     return strchr(src,ch);
+}
+
+char* crt_strdup(const char* str)
+{
+	return strdup(str);
 }
 
 void crt_strcpy_w(wchar_t *dst, const wchar_t *src)
@@ -587,6 +601,10 @@ status_t crt_is_socket_broken()
 {
     int err = WSAGetLastError();
     return (err!=WSAEWOULDBLOCK && err!= WSAEINTR);
+}
+uint32_t crt_inet_addr(const char* cp)
+{
+	return inet_addr(cp);
 }
 ///////////////////////////////////////////////////////////////////
 #endif //#if USE_SOCKET_MODULE

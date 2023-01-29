@@ -239,3 +239,12 @@ status_t CResource::UnSerialize(CFileBase *buf)
     return OK;
 }
 
+status_t CResource::Clear()
+{
+    SAVE_WEAK_REF_ID(*this,w);
+    this->Destroy();
+    this->Init();
+    RESTORE_WEAK_REF_ID(*this,w);
+    return OK;
+}
+

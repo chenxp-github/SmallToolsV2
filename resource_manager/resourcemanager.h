@@ -4,9 +4,9 @@
 #include "cruntime.h"
 #include "filebase.h"
 #include "resourcehashmap.h"
-#include "hashfile.h"
+#include "resourcehashfile.h"
 
-typedef CHashFile<CResourceHashMap,CResource> CResourceHashFile;
+typedef TResourceHashFile<CResourceHashMap,CResource> CResourceHashFile;
 
 class CResourceManager{
 public:
@@ -40,6 +40,8 @@ public:
     int Comp(CResourceManager *_p);
     status_t Print(CFileBase *_buf);
     CResourceHashMap* GetHashMap();
+    int GetLen();
+    status_t GetByIndex(int index, CResource *res);
 };
 
 #endif

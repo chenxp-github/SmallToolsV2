@@ -37,7 +37,7 @@ typedef struct{
     if(!(context))\
     {\
         MALLOC(context,WeakRefContext_t,1);\
-        (context)->weak_ref_id = crt_get_unique_id();\
+        (context)->weak_ref_id = (int)crt_get_unique_id();\
         (context)->ref_count = 1;\
     }\
 }while(0)\

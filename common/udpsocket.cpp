@@ -40,7 +40,7 @@ status_t CUdpSocket::Destroy()
 status_t CUdpSocket::Create()
 {
 	ASSERT(m_sock_fd == 0);
-	m_sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
+	m_sock_fd = crt_socket(AF_INET, SOCK_DGRAM, 0);
 	ASSERT(m_sock_fd > 0);
 	return OK;
 }
@@ -66,7 +66,7 @@ status_t CUdpSocket::SetDestIpAndPort(const char *ip, int port)
 	ASSERT(ip);
 	m_destaddr.sin_family = AF_INET;
 	m_destaddr.sin_port = htons(port);
-	m_destaddr.sin_addr.s_addr = inet_addr(ip);
+	m_destaddr.sin_addr.s_addr = crt_inet_addr(ip);
 	return OK;
 }
 status_t CUdpSocket::SendMsg(const void *data, int data_len)
@@ -124,7 +124,7 @@ status_t CUdpSocket::GetSrcAddr(CMem *ip, int *port)
 {
 	ASSERT(ip && port);
 	ip->SetSize(0);
-	ip->Puts(inet_ntoa(m_srcaddr.sin_addr));
+	ip->Puts(crt_inet_ntoa(m_srcaddr.sin_addr));
 	*port = m_srcaddr.sin_port;
 	return OK;
 }

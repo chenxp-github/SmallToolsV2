@@ -11,7 +11,6 @@
 #include "commandline.h"
 #include "mmapfile.h"
 #include "fileutils.h"
-#include "simpledisk.h"
 #include "tcp.h"
 
 int g_argc = 0;

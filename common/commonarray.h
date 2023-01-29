@@ -87,7 +87,7 @@ status_t AutoResize()
         this->m_Size *= 2;
         for(i = this->m_Top; i < this->m_Size; i++)
         {
-            this->m_Index[i] = NULL;
+            if(m_Index)this->m_Index[i] = NULL;
         }
     }
     return OK;

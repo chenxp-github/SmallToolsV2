@@ -11,6 +11,7 @@ public:
 public:
     int32_t GetSocketFd();
     static bool IsIpAddress(CMem *str);
+    static bool IsIpV6Address(CMem* str);
     bool CanReadOrWrite(bool check_read);
     bool CanRead();
     bool CanWrite();

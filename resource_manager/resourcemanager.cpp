@@ -222,3 +222,21 @@ status_t CResourceManager::DumpResourceFile(const char *filename)
     return OK;
 }
 
+int CResourceManager::GetLen()
+{
+    CIndexFile *index_file = &m_HashFile.m_IndexFile;
+    return (int)index_file->GetBlockCount() - 1; //skip meta data
+}
+
+status_t CResourceManager::GetByIndex(int index, CResource *res)
+{
+    ASSERT(res);
+    ASSERT(index >= 0 && index < GetLen());
+    res->Clear();
+    CIndexFile *index_file = &m_HashFile.m_IndexFile;    
+    CPartFile tmp;
+    index_file->GhostBlock(index,&tmp);        
+    tmp.Read(&res->__next_index,sizeof(res->__next_index));
+    res->UnSerialize(&tmp);
+    return OK;
+}

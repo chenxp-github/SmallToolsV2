@@ -48,7 +48,7 @@ status_t CStream::Print(CFileBase *_buf)
 
 status_t CStream::PutInt8(int8_t i)
 {
-    return Write(&i,sizeof(i));
+    return Write(&i,sizeof(i))==1;
 }
 
 int8_t CStream::GetInt8()
@@ -60,7 +60,7 @@ int8_t CStream::GetInt8()
 
 status_t CStream::PutInt16(int16_t i)
 {
-    return Write(&i,sizeof(i));
+    return Write(&i,sizeof(i)) ==2;
 }
 
 int16_t CStream::GetInt16()
@@ -72,7 +72,7 @@ int16_t CStream::GetInt16()
 
 status_t CStream::PutInt32(int32_t i)
 {
-    return Write(&i,sizeof(i));
+    return Write(&i,sizeof(i)) == 4;
 }
 
 int32_t CStream::GetInt32()
@@ -84,7 +84,7 @@ int32_t CStream::GetInt32()
 
 status_t CStream::PutInt64(int64_t i)
 {
-    return Write(&i,sizeof(i));
+    return Write(&i,sizeof(i)) == 8;
 }
 
 int64_t CStream::GetInt64()
@@ -96,7 +96,7 @@ int64_t CStream::GetInt64()
 
 status_t CStream::PutUInt8(uint8_t i)
 {
-    return Write(&i,sizeof(i));
+    return Write(&i,sizeof(i))==1;
 }
 
 uint8_t CStream::GetUInt8()
@@ -108,7 +108,7 @@ uint8_t CStream::GetUInt8()
 
 status_t CStream::PutUInt16(uint16_t i)
 {
-    return Write(&i,sizeof(i));
+    return Write(&i,sizeof(i))==2;
 }
 
 uint16_t CStream::GetUInt16()
@@ -120,7 +120,7 @@ uint16_t CStream::GetUInt16()
 
 status_t CStream::PutUInt32(uint32_t i)
 {
-    return Write(&i,sizeof(i));
+    return Write(&i,sizeof(i))==4;
 }
 
 uint32_t CStream::GetUInt32()
@@ -132,7 +132,7 @@ uint32_t CStream::GetUInt32()
 
 status_t CStream::PutUInt64(uint64_t i)
 {
-    return Write(&i,sizeof(i));
+    return Write(&i,sizeof(i))==8;
 }
 
 uint64_t CStream::GetUInt64()
@@ -145,7 +145,7 @@ uint64_t CStream::GetUInt64()
 status_t CStream::PutBool(bool b)
 {
     int8_t t = b;
-    return Write(&t,sizeof(t));
+    return Write(&t,sizeof(t))==1;
 }
 
 bool CStream::GetBool()
@@ -156,7 +156,7 @@ bool CStream::GetBool()
 }
 status_t CStream::PutDouble(double d)
 {
-    return Write(&d,sizeof(d));
+    return Write(&d,sizeof(d))==sizeof(d);
 }
 
 double CStream::GetDouble()
@@ -200,7 +200,7 @@ status_t CStream::GetZeroEndString(CMem *str)
     }
     this->Seek(GetOffset()+size);
     str->SetRawBuf((void*)p,size,true);
-    return size;
+    return (status_t)size;
 }
 
 status_t CStream::PutBinary(CMem *bin)
@@ -213,9 +213,12 @@ status_t CStream::PutBinary(CMem *bin)
 
 status_t CStream::PutBinary(const void *data, uint32_t size)
 {
-	ASSERT(data);
+    if(!data)size = 0;
 	this->PutInt32(size);
-	this->Write(data,size);
+    if(data)
+	{
+        this->Write(data,size);
+    }
 	return OK;
 }
 

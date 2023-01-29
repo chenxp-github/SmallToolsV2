@@ -20,6 +20,12 @@ CMem::CMem(const char *str)
     this->SetStr(str);
 }
 
+CMem::CMem(const char *str, int_ptr_t len)
+{
+    this->Init();
+    this->SetStr(str,len);
+}
+
 status_t CMem::InitBasic()
 {
     CFileBase::InitBasic();
@@ -274,6 +280,12 @@ status_t CMem::SetStr(const char *p)
 {
     ASSERT(p);
     return this->SetRawBuf((void*)p,crt_strlen(p),true);
+}
+
+status_t CMem::SetStr(const char *p,int_ptr_t len)
+{
+    ASSERT(p);
+    return this->SetRawBuf((void*)p,len,true);
 }
 
 const char *CMem::CStr()

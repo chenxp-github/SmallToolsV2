@@ -268,7 +268,7 @@ status_t CMiniBson::PutString(CMem *name, CMem *str)
     ASSERT(name && str);
     this->WriteByte(BSON_TYPE_STRING);
     this->WriteCString(name);
-    this->WriteInt32(str->StrLen());
+    this->WriteInt32((int32_t)str->StrLen());
     this->WriteCString(str);
     return OK;
 }

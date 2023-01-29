@@ -25,7 +25,6 @@
 #include "lualib_ximagehelper.h"
 #include "lualib_resource.h"
 #include "lualib_resourcemanager.h"
-#include "lualib_simpledisk.h"
 #include "lualib_messagepeer.h"
 #include "lualib_websocketserver.h"
 #include "lualib_websocketmessage.h"
@@ -363,7 +362,6 @@ status_t CGlobals::InitLuaVm()
     luaopen_ximagehelper(L);
     luaopen_resource(L);
     luaopen_resourcemanager(L);
-    luaopen_simpledisk(L);
 	luaopen_messagepeer(L);
     luaopen_websocketmessage(L);
     luaopen_websocketserver(L);

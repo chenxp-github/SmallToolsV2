@@ -91,6 +91,7 @@ int_ptr_t crt_fread(FILE_HANDLE fd,void *buffer, int_ptr_t size);
 int_ptr_t crt_fwrite(FILE_HANDLE fd,const void*buffer,int_ptr_t size);
 int crt_vsprintf(char *string, const char *format, crt_va_list param);
 status_t crt_vsnprintf(char *string, size_t size,const char *format, crt_va_list param);
+status_t crt_snprintf(char *string,int size, const char *format, ...);
 int_ptr_t crt_strlen(const char *s);
 char *crt_strcpy(char *dst,const char *src);
 char* crt_strncpy(char *dest,const char *src,int n);
@@ -98,6 +99,7 @@ int crt_strcmp(const char *s1,const char * s2);
 int crt_stricmp(const char *s1,const char * s2);
 char *crt_strcat(char *dest,const char *src);
 char *crt_strchr(const char *src,int ch);
+char* crt_strdup(const char* str);
 void crt_strcpy_w(wchar_t *dst, const wchar_t *src);
 wchar_t *crt_strcat_w(wchar_t *dest,const wchar_t *src);
 int_ptr_t crt_strlen_w(const wchar_t *str);
@@ -172,6 +174,7 @@ int32_t crt_connect( int32_t s, const struct sockaddr* name,int32_t namelen);
 status_t crt_is_connect_complete(int32_t s);
 status_t crt_get_all_ip(char *out);
 status_t crt_is_socket_broken();
+uint32_t crt_inet_addr(const char* cp);
 ///////////////////////////////////////////////////////////////////
 #endif //#if USE_SOCKET_MODULE
 ///////////////////////////////////////////////////////////////////
