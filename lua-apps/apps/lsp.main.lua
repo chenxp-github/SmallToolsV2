@@ -265,6 +265,7 @@ function add_lsp_file(code,filename,param)
     local path = FileManager.SliceFileName(filename,FN_PATH);
     FileManager.ChangeDir(path);        
     expand_lsp(tmp,filename,code:GetInnerFile(),param);
+    code:Eol(); --add a empty line
     FileManager.ChangeDir(old_path);
 end
 
@@ -306,6 +307,104 @@ local function ifdef_value()
     end
     return true;
 end
+
+
+local function default_can_be_added(root,info,exts,header_table,footer_table)
+    local can_add = false;
+    
+    local ext = FileManager.SliceFileName(info.full_name,FN_EXT);    
+    for _,v in pairs(exts) do    
+        if ext == v then
+            can_add = true;
+            break;
+        end
+    end
+    
+    if not can_add then
+        return false;
+    end
+    
+    local rpath = remove_path_prefix(info.full_name,root);
+
+    if header_table then
+        for _,fn in pairs(header_table) do
+            if rpath == fn then
+                return false;
+            end
+        end
+    end
+
+    if footer_table then
+        for _,fn in pairs(footer_table) do        
+            if rpath == fn then
+                return false;
+            end
+        end
+    end
+
+    return true;
+end
+
+local function add_files(code,path,files_table)
+    for k,filename in ipairs(files_table) do
+        add_lsp_file(code,path.."/"..filename);
+    end
+end
+
+
+function add_lsp_folder(code,folder,exts,param1, param2)        
+    local fullname = FileManager.ToAbsPath(folder);
+    if not FileManager.IsDirExist(fullname) then
+        return
+    end
+
+    local cur_dir = FileManager.GetCurDir();
+    if type(exts) == "string" then
+        exts = {exts};
+    end
+    
+    local can_be_added = default_can_be_added;
+    local header_table = nil;
+    local footer_table = nil;
+    
+    if type(param1) == "function" then
+        can_be_added = param1;
+    end
+    
+    local header_footer_mode = false;
+    
+    if type(param1) == "table" then
+        header_footer_mode = true;
+        header_table = param1;
+        footer_table = param2;        
+        add_files(code,folder,header_table);
+    end
+        
+    if not can_be_added then
+        can_be_added = default_can_be_added;
+    end
+
+    local tmp_list = {};    
+    FileManager.SearchDir(fullname,true,function(info)    
+        if info.event == EVENT_SINGLE_FILE then        
+            if can_be_added(fullname,info,exts,header_table,footer_table) then
+                table.insert(tmp_list,remove_path_prefix(info.full_name,cur_dir));
+            end
+        end
+    end);
+
+    table.sort(tmp_list);
+    for k,v in ipairs(tmp_list) do
+        add_lsp_file(code,v);
+    end               
+
+    if header_footer_mode then
+        add_files(code,folder,footer_table);
+    end
+
+    FileManager.ChangeDir(cur_dir);
+end
+
 -----------------------------------------
 function add_code_block(block,out,param)    
     local code = PrintBuffer.new();
@@ -351,11 +450,11 @@ function print_help(args)
             code:Log("something");
             add_lsp_file(code,"ttt/2.lsp");
         </@@>
-
     the parameter 'code' is a PrintBuffer object, and 
-    add_lsp_file(code,filename,param), can be used to add another lsp file .
+    add_lsp_file(code,filename,param), can be used to add another lsp file.
     add_js_string(code,filename,param), add escaped js string.
     save_lsp_file(filename,new_name),  expand lsp file and save.
+    add_lsp_folder(code,folder,exts,param1, param2), recursively add a folder.
     ifdef(condition), control whether current code is kept.
     endif(), pair with ifdef function.
     ]]);
