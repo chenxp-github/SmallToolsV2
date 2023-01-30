@@ -94,7 +94,7 @@ function is_start_tag_2(lsp)
     return true;
 end
 
---}}
+--}}$
 function is_end_tag_2(lsp)
     local save_off = lsp:GetOffset();     
     local ch = lsp:Getc();
@@ -108,6 +108,13 @@ function is_end_tag_2(lsp)
         lsp:Seek(save_off);
         return false;
     end
+
+    ch = lsp:Getc();
+    if ch ~= 36 then
+        lsp:Seek(save_off);
+        return false;
+    end
+
     return true;
 end
 
