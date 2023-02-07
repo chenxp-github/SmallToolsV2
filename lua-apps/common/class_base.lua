@@ -95,9 +95,15 @@ function clone_table(ori_tab)
 end
 
 function string_to_table(str)
+    local run_code,errors = load("return "..str);
+    if not run_code then
+        print(errors); 
+        print(debug.traceback());
+    end
+
     local ret_str = nil;
     local r,errors = pcall(function()
-        ret_str = load("return "..str)();
+        ret_str = run_code();
     end);
     if not r then print(errors); end
     return ret_str;
@@ -113,9 +119,15 @@ function load_lua_lib(name)
 end
 
 function exec_string(code,name)
+    local run_code,errors = load(code,name);
+    if not run_code then
+        print(errors); 
+        print(debug.traceback());
+    end
+
     local ret;
     local r,errors = pcall(function() 
-        ret = load(code,name)(); 
+        ret = run_code(); 
     end);
     if not r then 
         print(errors); 
@@ -125,10 +137,16 @@ function exec_string(code,name)
 end
 
 function exec_file(fn)
-    local ret;
+    local run_code,errors = loadfile(fn);
+    if not run_code then
+        print("loadfile "..fn.." fail.");
+        print(errors); 
+        print(debug.traceback());
+    end
 
+    local ret;
     local r,errors = pcall(function() 
-        ret = loadfile(fn)(); 
+        ret = run_code(); 
     end);
 
     if not r then
@@ -136,5 +154,6 @@ function exec_file(fn)
         print(errors); 
         print(debug.traceback());
     end
+
     return r,ret;
 end
