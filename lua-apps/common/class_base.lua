@@ -99,6 +99,7 @@ function string_to_table(str)
     if not run_code then
         print(errors); 
         print(debug.traceback());
+        return;
     end
 
     local ret_str = nil;
@@ -123,6 +124,7 @@ function exec_string(code,name)
     if not run_code then
         print(errors); 
         print(debug.traceback());
+        return;
     end
 
     local ret;
@@ -142,6 +144,7 @@ function exec_file(fn)
         print("loadfile "..fn.." fail.");
         print(errors); 
         print(debug.traceback());
+        return;
     end
 
     local ret;
