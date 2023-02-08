@@ -263,6 +263,17 @@ function add_js_string(code,filename,param)
     code:Log("].join(\"\\n\")");
 end
 
+function add_lua_file(filename)
+    local old_path = FileManager.GetCurDir();
+    local path = FileManager.SliceFileName(filename,FN_PATH);
+    FileManager.ChangeDir(path);        
+    local fn = FileManager.SliceFileName(filename,FN_FILENAME);
+    if not exec_file(fn) then
+        return exit("load lua file '%s' fail.",filename);
+    end
+    FileManager.ChangeDir(old_path);
+end
+
 function add_lsp_file(code,filename,param)
     local old_path = FileManager.GetCurDir();
     local tmp = new_mem(filename);
@@ -459,6 +470,7 @@ function print_help(args)
         </@@>
     the parameter 'code' is a PrintBuffer object, and 
     add_lsp_file(code,filename,param), can be used to add another lsp file.
+    add_lua_file(filename), load a lua file directly.
     add_js_string(code,filename,param), add escaped js string.
     save_lsp_file(filename,new_name),  expand lsp file and save.
     add_lsp_folder(code,folder,exts,param1, param2), recursively add a folder.
