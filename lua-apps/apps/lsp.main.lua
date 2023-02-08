@@ -423,6 +423,7 @@ function add_lsp_folder(code,folder,exts,param1, param2)
     FileManager.ChangeDir(cur_dir);
 end
 
+g_current_code = nil;
 -----------------------------------------
 function add_code_block(block,out,param)    
     local code = PrintBuffer.new();
@@ -435,7 +436,9 @@ function add_code_block(block,out,param)
         print_table(block);
         exit("execute lua chunk fail.");
     end
+    g_current_code = code;
     __gen_code__(code,param);
+    g_current_code = code;
     out:Puts(code:GetInnerFile());
 end
 
