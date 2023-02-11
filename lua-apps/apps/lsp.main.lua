@@ -200,7 +200,6 @@ end
 function split_lsp_file(lsp,lsp_name)
     local blocks={};
     local tmp = new_memfile();
-    local block_num = 1;
 
     lsp:Seek(0);
     while not lsp:IsEnd() do
@@ -220,15 +219,13 @@ function split_lsp_file(lsp,lsp_name)
             end
 
             if not attr.name then
-                attr.name = "/"..lsp_name.."/"..block_num;
+                attr.name = code;
             end
 
             table.insert( blocks,{
                 attributes = attr,
                 code = code,
             });
-
-            block_num = block_num + 1;
         else
             tmp:Putc(lsp:Getc());
         end
