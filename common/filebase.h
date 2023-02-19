@@ -142,7 +142,7 @@ public:
     fsize_t Log(const char *szFormat, ...);
     status_t Eol();    
     status_t Tab();
-    int IncLogLevel(int inc);
+    status_t IncLogLevel(int inc);
     status_t SetLogLevel(int l);
     status_t GetLogLevel(); 
     int_ptr_t ReadZeroEndString(CFileBase *str);

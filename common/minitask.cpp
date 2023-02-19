@@ -30,7 +30,7 @@ status_t CMiniTask::Destroy()
 
 status_t CMiniTask::Stop(const char *szFormat, ...)
 {
-    char szBuffer [4096];
+    char szBuffer [LBUF_SIZE];
     crt_va_list pArgList;
     crt_va_start(pArgList, szFormat);
     crt_vsnprintf(szBuffer, sizeof(szBuffer)-1, szFormat, pArgList);

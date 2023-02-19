@@ -50,7 +50,7 @@ fsize_t CSerial::GetMaxSize()
 }
 
 //////////////////////////////////////////////////////////////////
-#if !_IS_WINDOWS_
+#if !_IS_WINDOWS_ && !_IS_ESP32_
 //////////////////////////////////////////////////////////////////
 status_t CSerial::InitBasic()
 {
@@ -395,3 +395,87 @@ bool CSerial::IsOpened()
 #endif
 //////////////////////////////////////////////////////////////
 
+
+//////////////////////////////////////////////////////////////////
+#if _IS_ESP32_
+//////////////////////////////////////////////////////////////////
+
+#define BUF_SIZE 1024
+
+status_t CSerial::InitBasic()
+{
+    CFileBase::InitBasic();
+    this->fd = ERROR_FILE_HANDLE;
+    return OK;
+}
+
+status_t CSerial::Destroy()
+{
+    if(this->fd >= 0)
+    {
+        uart_driver_delete(this->fd);
+        this->fd = ERROR_FILE_HANDLE;
+    }
+
+    CFileBase::Destroy();
+    this->InitBasic();
+    return OK;
+}
+
+status_t CSerial::Open(int port_num)
+{
+    ASSERT(this->fd < 0);
+    this->fd = port_num;
+    return OK;
+}
+
+status_t CSerial::Configure(int baudrate,int databits,int stopbits,int parity)
+{
+    ASSERT(this->fd >= 0);
+
+    uart_config_t uart_config;
+    memset(&uart_config,0,sizeof(uart_config));
+    
+    uart_config.baud_rate = baudrate;
+    uart_config.data_bits = (uart_word_length_t)databits;
+    uart_config.parity    = (uart_parity_t)parity;
+    uart_config.stop_bits = (uart_stop_bits_t)stopbits;
+    uart_config.flow_ctrl = UART_HW_FLOWCTRL_DISABLE;
+    uart_config.source_clk = UART_SCLK_DEFAULT;
+    uart_config.rx_flow_ctrl_thresh = UART_HW_FLOWCTRL_DISABLE;
+
+    ESP_ERROR_CHECK(uart_driver_install(
+        this->fd, BUF_SIZE , BUF_SIZE, 0, NULL, 0
+    ));
+
+    ESP_ERROR_CHECK(uart_param_config(this->fd, &uart_config));
+
+    return OK;  
+}
+
+int_ptr_t CSerial::Read(void *buf,int_ptr_t n)
+{
+    ASSERT(this->fd >= 0);
+    return uart_read_bytes(this->fd,buf,n,0);
+}
+
+int_ptr_t CSerial::Write(const void *buf,int_ptr_t n)
+{
+    ASSERT(this->fd >= 0);
+    return uart_write_bytes(this->fd,buf,n);
+}
+
+status_t CSerial::EnableDtrHandshake(bool enable)
+{
+    ASSERT(0);
+    return OK;
+}
+
+bool CSerial::IsOpened()
+{
+    return fd >= 0;
+}
+
+//////////////////////////////////////////////////////////////////
+#endif  //ESP32
+//////////////////////////////////////////////////////////////////

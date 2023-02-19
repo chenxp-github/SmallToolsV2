@@ -1,6 +1,13 @@
 #include "peerproxymanager.h"
 #include "sys_log.h"
 
+#if LINKRPC_LOW_MEMORY
+#define PEER_PROXY_LIST_SIZE 64
+#else
+#define PEER_PROXY_LIST_SIZE 1024
+#endif
+
+
 CPeerProxyManager::CPeerProxyManager()
 {
     this->InitBasic();
@@ -18,7 +25,7 @@ status_t CPeerProxyManager::Init()
 {
     this->Destroy();
     NEW(this->mAllPeers,CPeerProxyStk);
-    this->mAllPeers->Init(1024);
+    this->mAllPeers->Init(PEER_PROXY_LIST_SIZE);
     return OK;
 }
 status_t CPeerProxyManager::Destroy()

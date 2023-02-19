@@ -3,6 +3,7 @@
 
 #include "cruntime.h"
 
+#define LINKRPC_LOW_MEMORY _LOW_MEMORY_
 #define LINKRPC_TAG 0x6b6e694c
 
 typedef struct {

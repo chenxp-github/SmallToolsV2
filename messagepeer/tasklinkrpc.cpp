@@ -77,7 +77,7 @@ status_t CTaskLinkRpc::Destroy()
     return OK;
 }
 
-static int on_reader_event(CClosure *closure)
+static status_t on_reader_event(CClosure *closure)
 {
     CLOSURE_PARAM_INT(event,0);
     CLOSURE_PARAM_PTR(CTaskLinkRpc*,self,10);
@@ -141,7 +141,7 @@ status_t CTaskLinkRpc::CreateReader()
     return OK;
 }
 
-static int on_writer_event(CClosure *closure)
+static status_t on_writer_event(CClosure *closure)
 {
     CLOSURE_PARAM_INT(event,0);
     CLOSURE_PARAM_PTR(CTaskLinkRpc*,self,10);

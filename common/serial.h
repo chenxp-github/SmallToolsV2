@@ -3,13 +3,17 @@
 
 #include "filebase.h"
 
-#if !_IS_WINDOWS_
+#if !_IS_WINDOWS_ && !_IS_ESP32_
 #include <unistd.h>     
 #include <sys/types.h>  
 #include <sys/stat.h>   
 #include <fcntl.h>      
 #include <termios.h>    
 #include <errno.h>
+#endif
+
+#if _IS_ESP32_
+#include "esp32_common.h"
 #endif
 
 class CSerial:public CFileBase{
@@ -32,7 +36,13 @@ public:
     fsize_t GetMaxSize();
     status_t Configure(int baudrate = 115200,
         int databits = 8, int stopbits = 1,int parity='n');
+
+#if _IS_ESP32_
+    status_t Open(int port_num);
+#else
     status_t Open(const char *dev_name);
+#endif
+
     CSerial();
     virtual ~CSerial();
     status_t Init();

@@ -5,11 +5,14 @@
 #include "filebase.h"
 #include "closure.h"
 
-#define E_TIMEOUT 0xffffffff
-#define E_OK      OK
 
 class CCallback{
 public:
+    enum{
+        E_TIMEOUT = 0xffffffff,
+        E_OK = OK,
+    };
+
     int m_CallbackId;
     int m_Time,m_Timeout;
     CClosure *i_Closure;

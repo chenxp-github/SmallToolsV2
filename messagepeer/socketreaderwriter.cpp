@@ -1,8 +1,16 @@
 #include "socketreaderwriter.h"
+#include "linkrpccommon.h"
 #include "sys_log.h"
 #include "mem_tool.h"
 
+#if LINKRPC_LOW_MEMORY
+#define MAX_LINE_LENGTH (1024)
+#define LOCAL_BUF_SIZE (2*1024)
+#else
 #define MAX_LINE_LENGTH (64*1024)
+#define LOCAL_BUF_SIZE (64*1024)
+#endif
+
 #define HAS_TIMEOUT() ((mTimeout&0x80000000)==0)
 
 CSocketReaderWriter::CSocketReaderWriter()
@@ -87,7 +95,7 @@ status_t CSocketReaderWriter::DoWrite(uint32_t interval)
         return OK;
     }
 
-    char buf[64*1024];
+    char buf[LOCAL_BUF_SIZE];
 
     int_ptr_t need_write= (int_ptr_t)(this->mWriteEndOffset - this->mWriteOffset);  
     if(need_write > (int_ptr_t)sizeof(buf))need_write = sizeof(buf);
@@ -193,7 +201,7 @@ status_t CSocketReaderWriter::DoRead(uint32_t interval)
         return OK;
     }
     
-    char buf[64*1024];
+    char buf[LOCAL_BUF_SIZE];
     int_ptr_t need_read;
     if(mTotalReadLength > 0)
     {

@@ -42,7 +42,7 @@ status_t CRpcServiceBase::Copy(CRpcServiceBase *_p)
     return OK;
 }
 
-status_t CRpcServiceBase::Comp(CRpcServiceBase *_p)
+int CRpcServiceBase::Comp(CRpcServiceBase *_p)
 {
     ASSERT(0);
     return 0;

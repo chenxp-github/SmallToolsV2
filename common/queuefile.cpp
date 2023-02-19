@@ -240,7 +240,7 @@ int_ptr_t CQueueFile::FindTag(const void *tag, int size)
         CLOSURE_PARAM_PTR(char*,tag,10);
         CLOSURE_PARAM_INT(size,11);
         
-        char tmp[1024];
+        char tmp[LBUF_SIZE];
         ASSERT((size_t)size <= sizeof(tmp));
         
         if(self->Read(tmp,size) < size)

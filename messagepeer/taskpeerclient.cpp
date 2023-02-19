@@ -4,6 +4,16 @@
 #include "peercommon.h"
 #include "memfile.h"
 
+#if LINKRPC_LOW_MEMORY
+#define MSG_HEAD_BUF_SIZE  1024
+#define RECV_HEAD_BUF_SIZE  1024
+#define LARGE_LOCAL_BUF_SIZE 1024
+#else
+#define MSG_HEAD_BUF_SIZE  4096
+#define RECV_HEAD_BUF_SIZE  4096
+#define LARGE_LOCAL_BUF_SIZE 32*1024
+#endif
+
 CTaskPeerClient::CTaskPeerClient()
 {
     this->InitBasic();
@@ -36,11 +46,11 @@ status_t CTaskPeerClient::Init(CTaskMgr *mgr)
 
     NEW(this->mMessageHeader,CMem);
     this->mMessageHeader->Init();
-    this->mMessageHeader->Malloc(4096);
+    this->mMessageHeader->Malloc(MSG_HEAD_BUF_SIZE);
 
     NEW(this->mHeaderRecvBuf,CMem);
     this->mHeaderRecvBuf->Init();
-    this->mHeaderRecvBuf->Malloc(4096);
+    this->mHeaderRecvBuf->Malloc(RECV_HEAD_BUF_SIZE);
     this->SetHeaderBuf(this->mHeaderRecvBuf);
 
     NEW(mCallback,CClosure);
@@ -98,7 +108,7 @@ static status_t on_tcp_connector_event(CClosure *closure)
 		CMemStk *all = self->iHostPeer->GetAllConnectedPeers();
         ASSERT(all);
 
-        LOCAL_MEM_WITH_SIZE(buf,32*1024);
+        LOCAL_MEM_WITH_SIZE(buf,LARGE_LOCAL_BUF_SIZE);
 		buf.Write(&init_param,sizeof(init_param));
         all->SaveLines(&buf);
         msg->SetBody(&buf);

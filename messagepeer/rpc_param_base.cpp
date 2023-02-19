@@ -35,7 +35,7 @@ status_t CRpcParamBase::Copy(CRpcParamBase *_p)
     return OK;
 }
 
-status_t CRpcParamBase::Comp(CRpcParamBase *_p)
+int CRpcParamBase::Comp(CRpcParamBase *_p)
 {
     return 0;
 }

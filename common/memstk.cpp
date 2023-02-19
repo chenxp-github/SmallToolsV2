@@ -547,7 +547,7 @@ status_t CMemStk::LoadBson(CMiniBson *_bson)
     CMiniBson doc;
     doc.Init();
     
-    int len = 0;
+    int32_t len = 0;
     BSON_CHECK(_bson->GetArray("_array_",&doc,&len));
     this->Clear();
     

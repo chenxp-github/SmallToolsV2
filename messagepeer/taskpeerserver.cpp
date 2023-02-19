@@ -3,6 +3,14 @@
 #include "peerglobals.h"
 #include "peercommon.h"
 
+#if LINKRPC_LOW_MEMORY
+#define RECV_HEAD_BUF_SIZE  1024
+#define SEND_HEAD_BUF_SIZE  1024
+#else
+#define RECV_HEAD_BUF_SIZE  4096
+#define SEND_HEAD_BUF_SIZE  4096
+#endif
+
 CTaskPeerServer::CTaskPeerServer()
 {
     this->InitBasic();
@@ -35,12 +43,12 @@ status_t CTaskPeerServer::Init(CTaskMgr *mgr,const void *peer_globals)
 
     NEW(this->mRecvHeadBuf,CMem);
     this->mRecvHeadBuf->Init();
-    this->mRecvHeadBuf->Malloc(4096);
+    this->mRecvHeadBuf->Malloc(RECV_HEAD_BUF_SIZE);
     this->SetHeaderBuf(this->mRecvHeadBuf);
 
     NEW(this->mSendHeadBuf,CMem);
     this->mSendHeadBuf->Init();
-    this->mSendHeadBuf->Malloc(4096);
+    this->mSendHeadBuf->Malloc(SEND_HEAD_BUF_SIZE);
     return OK;
 }
 status_t CTaskPeerServer::Destroy()

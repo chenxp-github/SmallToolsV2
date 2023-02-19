@@ -1,6 +1,8 @@
 #ifndef __PEERCOMMON_H
 #define __PEERCOMMON_H
 
+#include "linkrpccommon.h"
+
 enum{
     PEER_FUNC_INIT_NAME = 0x10000,
     PEER_FUNC_INIT_CHECK_FAIL,
@@ -9,7 +11,12 @@ enum{
 };
 
 #define MESSAGE_PEER_VERSION 1
+
+#if LINKRPC_LOW_MEMORY
+#define MESSAGE_PEER_SENDING_QUEUE_LEN 512
+#else
 #define MESSAGE_PEER_SENDING_QUEUE_LEN 4096
+#endif
 
 enum{
 	PEER_EVENT_GOT_MESSAGE = 9000,

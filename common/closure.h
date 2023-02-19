@@ -21,7 +21,7 @@ enum{
 };
 
 class CClosure;
-typedef int (*CLOSURE_FUNC)(CClosure *);
+typedef status_t (*CLOSURE_FUNC)(CClosure *);
 
 #define BEGIN_CLOSURE_FUNC(name) \
 class T##name{public: \

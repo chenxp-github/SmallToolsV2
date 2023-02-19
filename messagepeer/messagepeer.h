@@ -30,7 +30,7 @@ public:
     status_t OnTaskPeerClientStop(int err);
     status_t SetMaxRetries(int max_retries);
     int GetRetries();
-    int SetRetries(int retry);
+    status_t SetRetries(int retry);
     status_t ClearSendingQueue();
     int GetSendingQueueLength();
     bool IsConnected();

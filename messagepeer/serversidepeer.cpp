@@ -6,6 +6,12 @@
 #include "tasktimer.h"
 #include "socketreaderwriter.h"
 
+#if LINKRPC_LOW_MEMORY
+#define LARGE_LOCAL_BUF_SIZE (1024)
+#else
+#define LARGE_LOCAL_BUF_SIZE (32*1024)
+#endif
+
 CServerSidePeer::CServerSidePeer()
 {
     this->InitBasic();
@@ -222,7 +228,7 @@ status_t CServerSidePeer::Start()
 	init_param.version = MESSAGE_PEER_VERSION;
 	init_param.socket_rw_timeout = SOCKETRW_TIMEOUT;
 
-    LOCAL_MEM_WITH_SIZE(buf,32*1024);
+    LOCAL_MEM_WITH_SIZE(buf,LARGE_LOCAL_BUF_SIZE);
 	buf.Write(&init_param,sizeof(init_param));
     mAllConnectedPeers->SaveLines(&buf);
     msg->SetBody(&buf);

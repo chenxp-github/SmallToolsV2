@@ -6,6 +6,12 @@
 
 #define _PEER_PROXY_MAX_LIFE_TIME (30*1000)
 
+#if LINKRPC_LOW_MEMORY
+#define CALLBACK_MAP_SIZE 256
+#else
+#define CALLBACK_MAP_SIZE 1024
+#endif
+
 CPeerGlobals::CPeerGlobals()
 {
     this->InitBasic();
@@ -38,7 +44,7 @@ status_t CPeerGlobals::Init(CTaskMgr *mgr)
     this->mPeerManager->Init();
 
     NEW(this->mCallbackMap,CCallbackMap);
-    this->mCallbackMap->Init(mgr,1024);
+    this->mCallbackMap->Init(mgr,CALLBACK_MAP_SIZE);
     this->mCallbackMap->StartAutoTimeoutTimer();
 
     this->StartTaskPeerKiller();

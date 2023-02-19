@@ -46,7 +46,7 @@ status_t CRpcCallContext::Copy(CRpcCallContext *_p)
     return OK;
 }
 
-status_t CRpcCallContext::Comp(CRpcCallContext *_p)
+int CRpcCallContext::Comp(CRpcCallContext *_p)
 {
     ASSERT(_p);
     if(this == _p)return 0;
@@ -75,12 +75,12 @@ const char* CRpcCallContext::GetFromStr()
     return m_from.CStr();
 }
 
-int CRpcCallContext::GetCallbackId()
+int32_t CRpcCallContext::GetCallbackId()
 {
     return m_callback_id;
 }
 
-int CRpcCallContext::GetMethod()
+int32_t CRpcCallContext::GetMethod()
 {
     return m_method;
 }
@@ -97,13 +97,13 @@ status_t CRpcCallContext::SetFrom(const char *_from)
     return this->SetFrom(&tmp);
 }
 
-status_t CRpcCallContext::SetCallbackId(int _callback_id)
+status_t CRpcCallContext::SetCallbackId(int32_t _callback_id)
 {
     this->m_callback_id = _callback_id;
     return OK;
 }
 
-status_t CRpcCallContext::SetMethod(int _method)
+status_t CRpcCallContext::SetMethod(int32_t _method)
 {
     this->m_method = _method;
     return OK;
