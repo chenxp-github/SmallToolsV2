@@ -136,6 +136,14 @@ static status_t cfunc_gethostbyname(lua_State *L)
     return 0;
 }
 
+static status_t cfunc_generate_uuid(lua_State *L)
+{
+	char uuid[64];
+	generate_uuid(uuid);
+    lua_pushlstring(L,uuid,36);
+    return 1;
+}
+
 static const luaL_Reg cfunc_lib[] = {
     {"memcmp",cfunc_memcmp},
     {"memcpy",cfunc_memcpy},
@@ -144,6 +152,7 @@ static const luaL_Reg cfunc_lib[] = {
     {"getpid",cfunc_getpid},
 #endif
 	{"gethostbyname",cfunc_gethostbyname},
+	{"generate_uuid",cfunc_generate_uuid},
     {NULL, NULL}
 };
 

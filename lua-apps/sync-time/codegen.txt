@@ -1,0 +1,6 @@
+[Peer tm][StartId 11000]
+[Client TimeSyncClient 22000]
+class TimeSyncServer{
+	[service] int64_t GetHostTimeLong();
+}
+
