@@ -36,13 +36,15 @@ const char* lua_to_local_string(lua_State *L, int index,CMem *out)
 	
     size_t len = 0;
     const char *utf8_str = lua_tolstring(L,index,&len);
-    ASSERT(utf8_str); ASSERT(len > 0);
+    ASSERT(utf8_str);
 
-    CMem tmp;
-    tmp.Init();
-    tmp.SetRawBuf((void*)utf8_str,len,true);
-    
-    CEncoder::EncodingConvert(ENCODING_UTF8,LOCAL_ENCODING,&tmp,out);
+    if(len > 0)
+    {
+        CMem tmp;
+        tmp.Init();
+        tmp.SetRawBuf((void*)utf8_str,len,true);
+        CEncoder::EncodingConvert(ENCODING_UTF8,LOCAL_ENCODING,&tmp,out);
+	}
 
     return out->CStr();
 #else
@@ -59,13 +61,15 @@ const wchar_t* lua_to_unicode_string(lua_State *L, int index,CMem *out)
 	
     size_t len = 0;
     const char *utf8_str = lua_tolstring(L,index,&len);
-    ASSERT(utf8_str); ASSERT(len > 0);
-	
-    CMem tmp;
-    tmp.Init();
-    tmp.SetRawBuf((void*)utf8_str,len,true);
-    
-    CEncoder::EncodingConvert(ENCODING_UTF8,ENCODING_UNICODE,&tmp,out);
-	
+    ASSERT(utf8_str);
+
+    if(len > 0)
+    {
+        CMem tmp;
+        tmp.Init();
+        tmp.SetRawBuf((void*)utf8_str,len,true);
+        CEncoder::EncodingConvert(ENCODING_UTF8,ENCODING_UNICODE,&tmp,out);
+    }
+  
     return out->CStrW();
 }
