@@ -23,11 +23,13 @@ public:
 	status_t Create();	
 	status_t Bind(int port);
 	status_t SetDestIpAndPort(const char *ip, int port);
+	status_t SetDestIpAndPort(int_ptr_t ip, int port);
 	status_t SendMsg(const void *data, int data_len);
 	status_t SendMsg(CMem *data);
 	status_t RecvMsg(CMem *data);
 	struct sockaddr_in *GetSrcAddr();
 	status_t GetSrcAddr(CMem *ip, int *port);
+	status_t GetSrcAddr(int_ptr_t *ip, int *port);
 	bool IsSocketValid();
 };
 

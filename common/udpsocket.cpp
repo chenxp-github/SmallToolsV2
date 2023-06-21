@@ -69,6 +69,15 @@ status_t CUdpSocket::SetDestIpAndPort(const char *ip, int port)
 	m_destaddr.sin_addr.s_addr = crt_inet_addr(ip);
 	return OK;
 }
+
+status_t CUdpSocket::SetDestIpAndPort(int_ptr_t ip, int port)
+{
+	m_destaddr.sin_family = AF_INET;
+	m_destaddr.sin_port = htons(port);
+	crt_memcpy(&m_destaddr.sin_addr.s_addr,&ip,sizeof(m_destaddr.sin_addr.s_addr));
+	return OK;
+}
+
 status_t CUdpSocket::SendMsg(const void *data, int data_len)
 {
 	ASSERT(m_sock_fd > 0);
@@ -125,7 +134,17 @@ status_t CUdpSocket::GetSrcAddr(CMem *ip, int *port)
 	ASSERT(ip && port);
 	ip->SetSize(0);
 	ip->Puts(crt_inet_ntoa(m_srcaddr.sin_addr));
-	*port = m_srcaddr.sin_port;
+	*port = ntohs(m_srcaddr.sin_port);
+	return OK;
+}
+
+status_t CUdpSocket::GetSrcAddr(int_ptr_t *ip, int *port)
+{
+	ASSERT(ip && port);
+	ASSERT(sizeof(m_srcaddr.sin_addr) <= sizeof(int_ptr_t));
+	crt_memset(ip,0,sizeof(int_ptr_t));
+	crt_memcpy(ip,&m_srcaddr.sin_addr,sizeof(m_srcaddr.sin_addr));
+	*port = ntohs(m_srcaddr.sin_port);
 	return OK;
 }
 

@@ -76,12 +76,28 @@ static status_t udpsocket_setdestipandport(lua_State *L)
 {
     CUdpSocket *pudpsocket = get_udpsocket(L,1);
     ASSERT(pudpsocket);
-    const char* ip = (const char*)lua_tostring(L,2);
-    ASSERT(ip);
-    int port = (int)lua_tointeger(L,3);
-    status_t ret0 = pudpsocket->SetDestIpAndPort(ip,port);
-    lua_pushboolean(L,ret0);
-    return 1;
+	
+	if(lua_isstring(L,2))
+	{
+		const char* ip = (const char*)lua_tostring(L,2);
+		ASSERT(ip);
+		int port = (int)lua_tointeger(L,3);
+		status_t ret0 = pudpsocket->SetDestIpAndPort(ip,port);
+		lua_pushboolean(L,ret0);
+		return 1;
+	}
+
+	if(lua_isinteger(L,2))
+	{
+		int_ptr_t ip = (int_ptr_t)lua_tointeger(L,2);
+		ASSERT(ip);
+		int port = (int)lua_tointeger(L,3);
+		status_t ret0 = pudpsocket->SetDestIpAndPort(ip,port);
+		lua_pushboolean(L,ret0);
+		return 1;
+	}
+
+	return 0;
 }
 
 static status_t udpsocket_sendmsg(lua_State *L)
@@ -110,12 +126,26 @@ static status_t udpsocket_getsrcaddr(lua_State *L)
 {
     CUdpSocket *pudpsocket = get_udpsocket(L,1);
     ASSERT(pudpsocket);
-    LOCAL_MEM(ip);
-    int port;
-    pudpsocket->GetSrcAddr(&ip,&port);
-    lua_pushstring(L,ip.CStr());
-    lua_pushinteger(L,port);
-    return 2;
+
+	int int_addr = lua_toboolean(L,2);
+	
+	if(int_addr)
+	{
+		int_ptr_t ip;
+		int port;
+		pudpsocket->GetSrcAddr(&ip,&port);
+		lua_pushinteger(L,ip);
+		lua_pushinteger(L,port);
+	}
+    else
+	{
+		LOCAL_MEM(ip);
+		int port;
+		pudpsocket->GetSrcAddr(&ip,&port);
+		lua_pushstring(L,ip.CStr());
+		lua_pushinteger(L,port);
+	}
+	return 2;
 }
 static status_t udpsocket_setblocking(lua_State *L)
 {
