@@ -44,7 +44,7 @@ function CoThread:IsSleeping(interval)
 end
 
 function CoThread:Sleep(ms)
-    if ms > 0 then
+    if ms >= 0 then
         self.m_flags = self.m_flags | THREAD_IS_SLEEPING;
         self.m_sleep_time = 0;
         self.m_total_sleep_time = ms;
