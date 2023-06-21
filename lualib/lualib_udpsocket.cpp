@@ -77,9 +77,9 @@ static status_t udpsocket_setdestipandport(lua_State *L)
     CUdpSocket *pudpsocket = get_udpsocket(L,1);
     ASSERT(pudpsocket);
 	
-	if(lua_isstring(L,2))
+	if(lua_isinteger(L,2))
 	{
-		const char* ip = (const char*)lua_tostring(L,2);
+		int_ptr_t ip = (int_ptr_t)lua_tointeger(L,2);
 		ASSERT(ip);
 		int port = (int)lua_tointeger(L,3);
 		status_t ret0 = pudpsocket->SetDestIpAndPort(ip,port);
@@ -87,9 +87,9 @@ static status_t udpsocket_setdestipandport(lua_State *L)
 		return 1;
 	}
 
-	if(lua_isinteger(L,2))
+	if(lua_isstring(L,2))
 	{
-		int_ptr_t ip = (int_ptr_t)lua_tointeger(L,2);
+		const char* ip = (const char*)lua_tostring(L,2);
 		ASSERT(ip);
 		int port = (int)lua_tointeger(L,3);
 		status_t ret0 = pudpsocket->SetDestIpAndPort(ip,port);
