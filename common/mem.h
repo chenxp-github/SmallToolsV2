@@ -10,11 +10,10 @@ name.SetRawBuf(__##name,size,false);\
 name.SetSize(0)\
 
 #define AUTO_LOCAL_MEM(mem,size) \
-LOCAL_MEM_WITH_SIZE(mem,16*1024);\
+LOCAL_MEM_WITH_SIZE(mem,LBUF_SIZE);\
 do{if((fsize_t)(size)> mem.GetMaxSize())\
 {\
-    mem.Destroy();\
-    mem.Init();\
+    mem.Free();\
     mem.Malloc((int_ptr_t)(size));\
 }}while(0)
 

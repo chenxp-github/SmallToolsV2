@@ -50,6 +50,7 @@ public:
 	uint64_t GetUInt64();
 
     CStream();
+	CStream(CMem *mem);
     virtual ~CStream();
     status_t InitBasic();
     status_t Init();

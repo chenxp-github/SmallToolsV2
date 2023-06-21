@@ -17,6 +17,7 @@ public:
 public:
     status_t PushFile(CFileBase *file);
     status_t Push(const char *str);
+    status_t Push(const void *data, size_t size);
     status_t LoadLines(CFileBase *file);
     status_t SaveLines(CFileBase *file);
     bool Equal(CMemStk *stk);

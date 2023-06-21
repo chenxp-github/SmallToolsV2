@@ -6,6 +6,12 @@ CStream::CStream()
 {
     this->InitBasic();
 }
+CStream::CStream(CMem *mem)
+{
+    VASSERT(mem);
+    this->SetRawBuf(mem->GetRawBuf(),mem->GetSize(),true);
+    this->Seek(0);
+}
 CStream::~CStream()
 {
     this->Destroy();
@@ -189,8 +195,7 @@ status_t CStream::GetZeroEndString(CMem *str)
     ASSERT(str);
     char ch;
     int_ptr_t size = 0;
-    str->Destroy();
-    str->Init();
+    str->Free();
 
     const char *p = GetRawBuf() + GetOffset();
     while(true)

@@ -240,6 +240,7 @@ static status_t tcpsocket_newtcpconnector(lua_State *L)
     ASSERT(server);
     int port = (int)lua_tointeger(L,2);
     int ontcpconnectorevent = CLuaVm::ToFunction(L,3);
+	
 
     BEGIN_CLOSURE_FUNC(on_connect)
     {
@@ -270,6 +271,12 @@ static status_t tcpsocket_newtcpconnector(lua_State *L)
 	ptask->Init(how_to_get_global_taskmgr(L));
 	ptask->SetServerName(server);
 	ptask->SetPort(port);
+
+	if(lua_isinteger(L,4))
+	{
+		ptask->SetTimeout(lua_tointeger(L,4));
+	}
+
 	ptask->Start();
 	ptask->Callback()->SetFunc(on_connect);
 	ptask->Callback()->SetParamInt(10,ontcpconnectorevent);

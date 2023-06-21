@@ -493,6 +493,14 @@ status_t CMemStk::Push(const char *str)
     return this->Push(&mem);
 }
 
+status_t CMemStk::Push(const void *data, size_t size)
+{
+    CMem tmp;
+    tmp.Init();
+    tmp.SetRawBuf((void*)data,size,true);
+    return this->Push(&tmp);
+}
+
 #if _UNICODE_
 status_t CMemStk::PushW(const wchar_t *str)
 {

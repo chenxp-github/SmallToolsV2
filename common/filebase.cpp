@@ -827,6 +827,7 @@ fsize_t CFileBase::SearchStr(const char *str, status_t case_sensive,status_t wor
     fsize_t flag = 0;
     
     if(str == NULL) return -1;
+    if (str[0] == 0) return -1;
     len = crt_strlen(str);
     while(!this->IsEnd())
     {
@@ -885,8 +886,11 @@ status_t CFileBase::ReplaceStr(const char *src_str, const char *des_str, status_
 
     ASSERT(new_file);
     ASSERT(new_file != this);
+    ASSERT(src_str && des_str);
 
     len1 = crt_strlen(src_str);
+    ASSERT(len1 > 0);
+
     new_file->SetSize(0);
     old_pos = this->GetOffset();
     if(old_pos > 0)
@@ -1335,6 +1339,7 @@ status_t CFileBase::ReadKeyValue(const char *key, CFileBase *file_value)
 
 status_t CFileBase::LoadFile(const char *fn)
 {
+    ASSERT(fn);
     FILE_HANDLE fp = crt_fopen(fn,"rb");
     if(!crt_is_file_handle(fp))
     {
@@ -1350,6 +1355,7 @@ fsize_t CFileBase::WriteToFile(const char *fn)
 }
 fsize_t CFileBase::WriteToFile(const char *fn,fsize_t start,fsize_t wsize)
 {
+    ASSERT(fn);
     fsize_t sum = 0;
     FILE_HANDLE fp = crt_fopen(fn , "wb+");
     if(!crt_is_file_handle(fp))

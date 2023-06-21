@@ -480,7 +480,9 @@ bool CTaskMgr::IsTask(int tid)
 
 status_t CTaskMgr::CheckDelete()
 {
-    for(int i = 0; i < this->GetLen(); i++)
+    //from tail to head, can avoid move element
+    int len = this->GetLen();
+    for(int i = len-1; i >= 0; i--)
     {
         CTask *pt = this->GetElem(i);
         ASSERT(pt);
@@ -496,10 +498,10 @@ status_t CTaskMgr::CheckDelete()
             if(p != NULL)
             {
                 this->DelElem(i);
-                i--;
             }
         }
     }
+
     return true;
 }
 
