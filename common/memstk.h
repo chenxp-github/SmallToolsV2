@@ -7,13 +7,21 @@
 #include "userfunc.h"
 #include "minibson.h"
 
+
 CLOSURE_COMMON_OBJECT_OPS_DEFINE_H(CMemStk,memstk)
+
+class CXmlNode;
 
 class CMemStk:public CUserFunc{
 public:
+    enum{
+        BSON_MODE_RAW=0,
+        BSON_MODE_STR=1,
+    };
     CMem **mIndex;
     int mTop;
     int mSize;
+    int mBsonMode;
 public:
     status_t PushFile(CFileBase *file);
     status_t Push(const char *str);
@@ -58,6 +66,7 @@ public:
     status_t Push(CMem *mem);
     int GetLen();
     ~CMemStk();
+
 #if _UNICODE_
     status_t PushW(const wchar_t *str);
 #endif
@@ -66,6 +75,13 @@ public:
     status_t SaveBson(CMem *_mem);
     status_t LoadBson(CMiniBson *_bson);
     status_t LoadBson(CFileBase *_file);
+
+    status_t LoadXml(const char *fn, const char *path);
+    status_t SaveXml(const char *fn, const char *node_name);
+    status_t LoadXml(CXmlNode *_root);
+    status_t SaveXml(CFileBase *_xml);
+
+    status_t SetBsonMode(int mode);
 
 };
 

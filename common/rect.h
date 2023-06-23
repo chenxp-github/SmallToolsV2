@@ -10,6 +10,7 @@
 #endif // _MSC_VER > 1000
 
 #include "cruntime.h"
+#include "filebase.h"
 
 class CRect{
 public:
@@ -19,6 +20,7 @@ public:
     status_t Get(int32_t *l, int32_t *t, int32_t *r, int32_t *b);   
     status_t GetCenter(int32_t *x, int32_t *y);
     status_t SetPos(int32_t x, int32_t y);
+    status_t SetSize(int32_t w, int32_t h);
     status_t SetWH(int32_t left,int32_t top,int32_t width,int32_t height);
     status_t CenterRect(int32_t w,int32_t h,CRect *rc);
     status_t Offset(int32_t x,int32_t y);
@@ -41,8 +43,14 @@ public:
     status_t Init();
     status_t Destroy();
     status_t Copy(CRect *p);
-    status_t Print();
+    status_t Print(CFileBase *_buf);
     status_t InitBasic();
+
+#if _IS_WINDOWS_
+    status_t Copy(RECT* r);
+    status_t ToRect(RECT* r);
+#endif
+
 };
 
 #endif // !defined(AFX_RECT_H__CA7AABD2_1D15_40F6_8D72_DB2611734BA3__INCLUDED_)

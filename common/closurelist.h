@@ -37,7 +37,7 @@ public:
     status_t Clear();
     status_t DelTop();
     status_t Destroy();
-    status_t Init(int init_size);
+    status_t Init(int init_size=32);
     bool IsEmpty();
     bool IsFull();
     status_t Pop(CClosure *closure);

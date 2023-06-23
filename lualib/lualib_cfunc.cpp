@@ -144,6 +144,15 @@ static status_t cfunc_generate_uuid(lua_State *L)
     return 1;
 }
 
+static status_t cfunc_inet_addr(lua_State *L)
+{
+	const char *ip = lua_tostring(L,1);
+	ASSERT(ip);
+    uint32_t int_ip = crt_inet_addr(ip);
+	lua_pushinteger(L,int_ip);
+    return 1;
+}
+
 static const luaL_Reg cfunc_lib[] = {
     {"memcmp",cfunc_memcmp},
     {"memcpy",cfunc_memcpy},
@@ -153,6 +162,7 @@ static const luaL_Reg cfunc_lib[] = {
 #endif
 	{"gethostbyname",cfunc_gethostbyname},
 	{"generate_uuid",cfunc_generate_uuid},
+	{"inet_addr",cfunc_inet_addr},
     {NULL, NULL}
 };
 

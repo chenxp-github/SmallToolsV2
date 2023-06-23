@@ -55,20 +55,32 @@ function udp_forward_thread(thread,item)
     
     printfnl("start forwarding: %s.",item_string(item));
 
-    udp_socket:SetDestIpAndPort(
-        item.remote_server,item.remote_port
-    );
+    local remote_ip = CFunc.inet_addr(item.remote_server);
+    local remote_port = item.remote_port;
 
-    local mem = new_mem(64*1024);
+    local from_ip, from_port;
 
+    local mem = new_mem();
     while true do
         for i=1,1000,1 do
             mem:SetSize(0);
             if udp_socket:RecvMsg(mem) then
+                local ip,port = udp_socket:GetSrcAddr(true);
+                
+                if ip == remote_ip and port == remote_port then
+                    if from_ip and from_port then
+                        udp_socket:SetDestIpAndPort(from_ip,from_port);
+                    end
+                else
+                    from_ip = ip;
+                    from_port = port;
+                    udp_socket:SetDestIpAndPort(remote_ip,remote_port);
+                end
+
                 udp_socket:SendMsg(mem);
             else
                 break;
-            end        
+            end
         end
         thread:Sleep(1);
     end

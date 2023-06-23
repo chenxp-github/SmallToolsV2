@@ -38,15 +38,39 @@ status_t  CRect::Destroy()
 }
 status_t  CRect::Copy(CRect *p)
 {
+    ASSERT(p);
     this->left = p->left;
     this->top = p->top;
     this->right = p->right;
     this->bottom = p->bottom;
     return OK;
 }
-status_t  CRect::Print()
+
+#if _IS_WINDOWS_
+status_t CRect::Copy(RECT* r)
 {
-    syslog_printf("[%d,%d,%d,%d]\n",left,top,right,bottom);
+    ASSERT(r);
+    this->left = r->left;
+    this->top = r->top;
+    this->right = r->right;
+    this->bottom = r->bottom;
+    return OK;
+}
+status_t CRect::ToRect(RECT* r)
+{
+    ASSERT(r);
+    r->left = this->left;
+    r->top = this->top;
+    r->right = this->right;
+    r->bottom = this->bottom;
+    return OK;
+}
+
+#endif
+
+status_t  CRect::Print(CFileBase *_buf)
+{
+    _buf->Log("[%d,%d,%d,%d]",left,top,right,bottom);
     return TRUE;
 }
 status_t CRect::Empty()
@@ -173,8 +197,7 @@ status_t CRect::Set(int32_t l, int32_t t, int32_t r, int32_t b)
     this->left = l;
     this->top = t;
     this->right = r;
-    this->bottom = b;
-    
+    this->bottom = b;    
     return OK;
 }
 status_t CRect::SetWH(int32_t left, int32_t top, int32_t width, int32_t height)
@@ -289,6 +312,11 @@ status_t CRect::SetPos(int32_t x, int32_t y)
     int32_t w = this->GetWidth();
     int32_t h = this->GetHeight();
     return this->SetWH(x,y,w,h);
+}
+
+status_t CRect::SetSize(int32_t w, int32_t h)
+{
+    return this->Set(left, top, left + w - 1, top + h - 1);
 }
 
 status_t CRect::GetCenter(int32_t *x, int32_t *y)

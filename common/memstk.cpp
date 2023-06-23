@@ -1,6 +1,8 @@
 #include "memstk.h"
 #include "mem_tool.h"
 #include "sys_log.h"
+#include "encoder.h"
+#include "xml.h"
 
 CLOSURE_COMMON_OBJECT_OPS_DEFINE_CPP(CMemStk,memstk)
 
@@ -18,6 +20,7 @@ status_t CMemStk::InitBasic()
     this->mIndex = NULL;
     this->mTop = 0;
     this->mSize = 0;    
+    this->mBsonMode = BSON_MODE_RAW;
     return OK;
 }
 status_t CMemStk::Init(int init_size)
@@ -522,13 +525,22 @@ status_t CMemStk::SaveBson(CMiniBson *_bson)
         CMem *p = this->GetElem(i);
         ASSERT(p);        
         crt_snprintf(name,sizeof(name)-1,"%d",i);
-        fsize_t _off;
-        _bson->StartDocument(name,&_off);      
-        _bson->PutString("file_name",
-            p->file_name?p->file_name:""
-        );
-        _bson->PutBinary("data",p);        
-        _bson->EndDocument(_off);
+    
+        if(mBsonMode == BSON_MODE_RAW)
+        {
+            fsize_t _off;
+            _bson->StartDocument(name,&_off);      
+            _bson->PutString("file_name",
+                p->file_name?p->file_name:""
+            );
+            _bson->PutBinary("data",p);        
+            _bson->EndDocument(_off);
+        }
+
+        if(mBsonMode == BSON_MODE_STR)
+        {
+            _bson->PutString(name,p);
+        }
     }
     _bson->EndArray(off,this->GetLen());    
 
@@ -562,28 +574,41 @@ status_t CMemStk::LoadBson(CMiniBson *_bson)
     doc.ResetPointer();
     for(int i = 0; i < len; i++)
     {
-        CMiniBson sub_doc;
-        sub_doc.Init();
-        doc.GetDocument(NULL,&sub_doc);
-
-        CMem *p=NULL;
-        NEW(p,CMem);
-        p->Init();
-
-        CMem fn,data;
-        fn.Init();
-        data.Init();
-
-        BSON_CHECK(sub_doc.GetString("file_name",&fn));
-        BSON_CHECK(sub_doc.GetBinary("data",&data));
-
-        p->Copy(&data);
-        if(fn.StrLen() > 0) //must be after Copy
+        if(mBsonMode == BSON_MODE_RAW)
         {
-            p->SetFileName(fn.CStr());
+            CMiniBson sub_doc;
+            sub_doc.Init();        
+
+            doc.GetDocument(NULL,&sub_doc);
+
+            CMem *p=NULL;
+            NEW(p,CMem);
+            p->Init();
+
+            CMem fn,data;
+            fn.Init();
+            data.Init();
+
+            BSON_CHECK(sub_doc.GetString("file_name",&fn));
+            BSON_CHECK(sub_doc.GetBinary("data",&data));
+
+            p->Copy(&data);
+            if(fn.StrLen() > 0) //must be after Copy
+            {
+                p->SetFileName(fn.CStr());
+            }
+        
+            this->PushPtr(p);      
+        }  
+
+        if(mBsonMode == BSON_MODE_STR)
+        {
+            CMem tmp;
+            tmp.Init();
+            doc.GetString(NULL,&tmp);
+            this->Push(&tmp);
         }
-    
-        this->PushPtr(p);        
+
     }
 
     return OK;
@@ -598,3 +623,80 @@ status_t CMemStk::LoadBson(CFileBase *_file)
     _bson.ResetPointer();
     return this->LoadBson(&_bson);
 }
+
+status_t CMemStk::LoadXml(const char *fn, const char *path)
+{
+    ASSERT(fn && path);
+
+    CXml xml;
+    xml.Init();
+    ASSERT(xml.LoadXml(fn));
+
+    CXmlNode *px = xml.GetNodeByPath(path);
+    ASSERT(px);
+
+    return this->LoadXml(px);
+}
+
+status_t CMemStk::SaveXml(const char *fn, const char *node_name)
+{
+    ASSERT(fn && node_name);
+
+    CMemFile mf;
+    mf.Init();
+    mf.Log("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+    mf.Log("<%s size=\"%d\">",node_name,this->GetLen());
+    mf.IncLogLevel(1);
+    this->SaveXml(&mf);
+    mf.IncLogLevel(-1);
+    mf.Log("</%s>",node_name);
+
+    return mf.WriteToFile(fn) > 0;
+}
+
+status_t CMemStk::LoadXml(CXmlNode *_root)
+{
+    ASSERT(_root);
+    CXmlNode *px;
+	
+	LOCAL_MEM(tmp);
+
+    px = _root->GetChild();
+	while(px)
+	{	
+		CMem *val = px->GetValue();
+		if(val)
+		{
+			tmp.SetSize(0);
+			tmp.Puts(val);
+			CEncoder::UnEscapeXmlStr(&tmp);
+			this->Push(&tmp);
+		}
+		px = px->GetNext();
+	}
+
+    return OK;
+}
+
+status_t CMemStk::SaveXml(CFileBase *_xml)
+{
+    ASSERT(_xml);
+    LOCAL_MEM(tmp);
+    for(int i = 0; i < this->GetLen(); i++)
+    {
+        CMem *p = this->GetElem(i);
+        ASSERT(p);
+        tmp.SetSize(0);
+        tmp.Puts(p);
+        CEncoder::EscapeXmlStr(&tmp);
+        _xml->Log("<e>%s</e>",tmp.CStr());
+    }
+    return OK;
+}
+
+status_t CMemStk::SetBsonMode(int mode)
+{
+    mBsonMode = mode;
+    return OK;
+}
+
