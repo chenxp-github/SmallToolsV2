@@ -9,6 +9,13 @@ class PeerTunnelServer{
 }
 
 
-
+[Peer pu][StartId 1000000]
+[Client UdpPeerTunnelClient 1100000]
+class UdpPeerTunnelServer{    
+    [service] (int handle, string errStr) BindRemote(int port);
+    [service] (int ws) SendData(int handle,string ip, int port,Mem data);
+    (int ws) SendData(int handle,Mem data);
+    [service] (int ret) CloseHandle(int handle);
+}
 
 
