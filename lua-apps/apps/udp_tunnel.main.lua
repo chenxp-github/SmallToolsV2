@@ -67,6 +67,10 @@ function app_main(args)
             local remote_dest_ip = v[3];
             local remote_dest_port = tonumber(v[4]);
 
+            if remote_bind_port == 0 then
+                remote_bind_port = -local_bind_port;
+            end
+
             local client = UdpPeerTunnelClient.new();
             client:InitClientSidePeer(peer_server,peer_port);
             client:SetName("client-of-"..peer_name.."-"..CFunc.generate_uuid());
