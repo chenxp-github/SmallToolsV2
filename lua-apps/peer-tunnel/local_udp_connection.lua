@@ -6,6 +6,7 @@ LocalUdpConnection = class();
 function LocalUdpConnection:ctor(host_peer)
     self.host_peer = host_peer;
     self.forwarding_thread = nil;
+	self.from_peer_name = "_";
 end
 
 function LocalUdpConnection:StartServerForwarding(socket,handle,bind_port)
@@ -24,6 +25,7 @@ function LocalUdpConnection:ServerForwardingThread(thread)
 	while self.socket do
 		for i=1,1000, 1 do
 			if self.socket:RecvMsg(mem) then
+				self.host_peer:SetDestPeerName(self.from_peer_name);
 				self.host_peer:SendData(self.handle,mem);
 			else
 				break
@@ -73,7 +75,7 @@ function LocalUdpConnection:ClientForwardingThread(thread)
 	local udp_socket = UdpSocket.new();
     udp_socket:Create();
 
-	if local_port ~= 0 then
+	if local_port > 0 then
 		if not udp_socket:Bind(local_port) then
 			printfnl("bind fail on port %d",local_port);
 			self:Close();

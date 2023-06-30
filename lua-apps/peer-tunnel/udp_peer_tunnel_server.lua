@@ -34,11 +34,11 @@ function UdpPeerTunnelServer:OnBindRemote(_context,_param)
     local port = _param.port;
 
     self:DeleteLocalConnectionByBindPort(port);
-
+    
     local udp_socket = UdpSocket.new();
     udp_socket:Create();
 
-    if port ~= 0 then
+    if port > 0 then
         if not udp_socket:Bind(port) then
             local _ret={
                 handle = 0,
@@ -50,9 +50,11 @@ function UdpPeerTunnelServer:OnBindRemote(_context,_param)
 
     local handle = self:AllocId();
     local connection = LocalUdpConnection.new(self);
+    connection.from_peer_name = _context.from;
     self.local_connections[handle] = connection;
     connection:StartServerForwarding(udp_socket,handle,port);
 
+    printfnl("create handle: %d",handle);
     local _ret={
         handle = handle,
         errStr = ""
@@ -116,6 +118,7 @@ end
 function UdpPeerTunnelServer:DeleteLocalConnectionByBindPort(bind_port)
     local handle = self:GetHandleByBindPort(bind_port);
     if handle then
+        printfnl("remove handle : %d",handle);
         local conn = self.local_connections[handle];
         conn:Close();
         self.local_connections[handle] =nil;
