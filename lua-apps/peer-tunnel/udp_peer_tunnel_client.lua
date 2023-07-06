@@ -9,6 +9,7 @@ function UdpPeerTunnelClient:ctor()
     self.from_ip = nil;
     self.from_port = nil;
     self.local_connection = nil;
+    self.total_recv = 0;
 end
 
 function UdpPeerTunnelClient:OnRequest(_context,_param)
@@ -110,17 +111,26 @@ function UdpPeerTunnelClient:CloseHandle_Async(thread, _handle)
 end
 --@@End Method CloseHandle_Async @@--
 
-
 --@@Begin Method OnSendData @@--
 function UdpPeerTunnelClient:OnSendData(_context,_param)
-    if not self.from_ip or not self.from_port then
+    local dest_ip = self.local_dest_ip;
+    local dest_port = self.local_dest_port;
+    if dest_port == 0 then
+        dest_ip = self.from_ip;
+        dest_port = self.from_port;
+    end
+
+    if not dest_ip or not dest_port then
         local _ret={
             ws = -1
         };
         self:SendReturnValue(_context,_ret);
     else
         local data = _param.data._binary_;
-        local ws = self.local_connection:SendLocalData(self.from_ip,self.from_port,data);
+        self.total_recv = self.total_recv + data:GetSize();
+
+        local ws = self.local_connection:SendLocalData(dest_ip,dest_port,data);
+
         local _ret={
             ws = ws
         };
@@ -130,8 +140,14 @@ end
 --@@End Method OnSendData @@--
 
 --@@ Insert Method Here @@--
-function UdpPeerTunnelClient:CreateLocalConnection(local_port,remote_port,dest_ip,dest_port)
-    self.local_connection = LocalUdpConnection.new(self);
-    self.local_connection:StartClientForwarding(local_port,remote_port,dest_ip,dest_port);
+function UdpPeerTunnelClient:CreateLocalConnection( local_dest_ip,local_bind_port,local_dest_port, 
+                                                    remote_dest_ip,remote_bind_port,remote_dest_port)
+    self.local_connection = LocalUdpConnection.new(self);    
+    self.local_connection:StartClientForwarding(
+        local_dest_ip,local_bind_port,local_dest_port, 
+        remote_dest_ip,remote_bind_port,remote_dest_port
+    );
+    self.local_dest_port = local_dest_port;
+    self.local_dest_ip = local_dest_ip;
 end
 

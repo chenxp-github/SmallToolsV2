@@ -17,6 +17,7 @@ local kPeerServer="--peer-server";
 local kPeerPort="--peer-port";
 local kPeerName="--peer-name";
 local kConfig="--config";
+local kStartMessageCenter="--start-message-center"
 
 function app_main(args)
     local argc = #args;
@@ -28,9 +29,10 @@ function app_main(args)
     cmd:AddKeyType(kPeerPort,TYPE_KEY_EQUAL_VALUE,MUST,"message center service port");    
     cmd:AddKeyType(kPeerName,TYPE_KEY_EQUAL_VALUE,MUST,"self message peer name");            
     cmd:AddKeyType(kConfig,TYPE_KEY_EQUAL_VALUE,MUST,"config file as client");
+    cmd:AddKeyType(kStartMessageCenter,TYPE_KEY,OPTIONAL,"start message center?");
 
     cmd:AddKeyTypeDep(kAsClient,"",kConfig);
-
+    cmd:AddKeyTypeDep(kAsClient,"",kPeerServer);
 
     cmd:LoadFromArgv(args);  
     if cmd:CheckForErrors() then
@@ -59,42 +61,56 @@ function app_main(args)
             return exit("can not find 'tunnel_table' in config file");
         end
         
+
         local client_table={};
 
         for i,v in ipairs(tunnel_table) do
-            local local_bind_port = tonumber(v[1]);
-            local remote_bind_port = tonumber(v[2]);
-            local remote_dest_ip = v[3];
-            local remote_dest_port = tonumber(v[4]);
-
+            local local_dest_ip = v[1];    
+            local local_bind_port = tonumber(v[2]);
+            local local_dest_port = tonumber(v[3]);
+        
+            local remote_dest_ip = v[4];
+            local remote_bind_port = tonumber(v[5]);    
+            local remote_dest_port = tonumber(v[6]);
+        
             if remote_bind_port == 0 then
-                remote_bind_port = -local_bind_port;
+                remote_bind_port = -local_bind_port; --负号的端口不会真正绑定，只是一个标识
             end
-
+        
+            if remote_bind_port == 0 then
+                remote_bind_port = -local_dest_port; --负号的端口不会真正绑定，只是一个标识
+            end
+            
             local client = UdpPeerTunnelClient.new();
             client:InitClientSidePeer(peer_server,peer_port);
-            client:SetName("client-of-"..peer_name.."-"..CFunc.generate_uuid());
-            client:SetDestPeerName(peer_name);
+            client:SetName("client-of-"..remote_peer_name.."-"..CFunc.generate_uuid());
+            client:SetDestPeerName(remote_peer_name);
             client:Start();        
             client:CreateLocalConnection(
-                local_bind_port,remote_bind_port,
-                remote_dest_ip,remote_dest_port
+                local_dest_ip,local_bind_port,local_dest_port,
+                remote_dest_ip,remote_bind_port,remote_dest_port
             );
-            
+        
             printfnl("new udp tunnel:%d -> %d, remote dest: %s:%d",
                 local_bind_port,remote_bind_port,
                 remote_dest_ip,remote_dest_port
             );
-
+        
             table.insert(client_table,client);
         end
-
-
     elseif is_server then
+        local start_message_center = cmd:HasKey(kStartMessageCenter);
         server = UdpPeerTunnelServer.new();
-        server:InitClientSidePeer(peer_server,peer_port);
+        if start_message_center then
+            App.StartMessageCenter(peer_port,true);
+            printfnl("start message center on port %d",peer_port);
+            server:InitServerSidePeer();
+        else
+            server:InitClientSidePeer(peer_server,peer_port);
+        end
+        
         server:SetName(peer_name);
-        server:Start();
+        server:Start();        
     end
 
     App.MainLoop();

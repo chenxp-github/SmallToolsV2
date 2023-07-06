@@ -5,6 +5,8 @@ require("linkrpc_pu_types")
 UdpPeerTunnelServer = class(PeerServiceBase);
 
 function UdpPeerTunnelServer:ctor()
+    self.from_ip = nil;
+    self.from_port = nil;
     self.auto_id = 0;
     self.local_connections = {};
 end
@@ -45,6 +47,8 @@ function UdpPeerTunnelServer:OnBindRemote(_context,_param)
                 errStr = string.format("bind fail on port %d",port);
             };
             return self:SendReturnValue(_context,_ret);
+        else
+            printfnl("bind local port %d ok",port);
         end
     end
 
@@ -72,6 +76,11 @@ function UdpPeerTunnelServer:OnSendData(_context,_param)
 
     local ws = -1;
     local connection=self.local_connections[handle];
+
+    if port == 0 and self.from_ip and self.from_port then
+        ip = self.from_ip;
+        port = self.from_port;
+    end
 
     if connection then
         ws = connection:SendLocalData(ip,port,data);
