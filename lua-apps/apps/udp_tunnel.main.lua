@@ -29,10 +29,11 @@ function app_main(args)
     cmd:AddKeyType(kPeerPort,TYPE_KEY_EQUAL_VALUE,MUST,"message center service port");    
     cmd:AddKeyType(kPeerName,TYPE_KEY_EQUAL_VALUE,MUST,"self message peer name");            
     cmd:AddKeyType(kConfig,TYPE_KEY_EQUAL_VALUE,MUST,"config file as client");
-    cmd:AddKeyType(kStartMessageCenter,TYPE_KEY,OPTIONAL,"start message center?");
+    cmd:AddKeyType(kStartMessageCenter,TYPE_KEY,MUST,"start message center?");
 
     cmd:AddKeyTypeDep(kAsClient,"",kConfig);
     cmd:AddKeyTypeDep(kAsClient,"",kPeerServer);
+    cmd:AddKeyTypeDep(kPeerServer,"",kStartMessageCenter,DEP_OP_NOT);
 
     cmd:LoadFromArgv(args);  
     if cmd:CheckForErrors() then
