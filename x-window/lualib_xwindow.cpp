@@ -565,6 +565,110 @@ static status_t xwindow_copy(lua_State *L)
     lua_pushboolean(L,ret0);
     return 1;
 }
+
+static status_t xwindow_attributes_to_lua(NativeXWindowAttributes *attr,lua_State *L, int tindex)
+{
+    ASSERT(attr);
+
+    lua_pushstring(L,"x");
+    lua_pushinteger(L,attr->x);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"y");
+    lua_pushinteger(L,attr->y);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"width");
+    lua_pushinteger(L,attr->width);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"height");
+    lua_pushinteger(L,attr->height);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"border_width");
+    lua_pushinteger(L,attr->border_width);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"depth");
+    lua_pushinteger(L,attr->depth);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"root");
+    lua_pushinteger(L,attr->root);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"c_class");
+    lua_pushinteger(L,attr->c_class);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"bit_gravity");
+    lua_pushinteger(L,attr->bit_gravity);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"win_gravity");
+    lua_pushinteger(L,attr->win_gravity);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"backing_store");
+    lua_pushinteger(L,attr->backing_store);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"backing_planes");
+    lua_pushinteger(L,attr->backing_planes);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"backing_pixel");
+    lua_pushinteger(L,attr->backing_pixel);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"save_under");
+    lua_pushboolean(L,attr->save_under);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"map_installed");
+    lua_pushboolean(L,attr->map_installed);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"map_state");
+    lua_pushinteger(L,attr->map_state);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"all_event_masks");
+    lua_pushinteger(L,attr->all_event_masks);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"your_event_mask");
+    lua_pushinteger(L,attr->your_event_mask);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"do_not_propagate_mask");
+    lua_pushinteger(L,attr->do_not_propagate_mask);
+    lua_settable(L, tindex);
+
+    lua_pushstring(L,"override_redirect");
+    lua_pushboolean(L,attr->override_redirect);
+    lua_settable(L, tindex);
+
+    return OK;
+}
+static status_t xwindow_getwindowattributes(lua_State *L)
+{
+    CxWindow *pxwindow = get_xwindow(L,1);
+    ASSERT(pxwindow);
+    
+    lua_newtable(L);
+    int tindex = lua_gettop(L);
+
+    NativeXWindowAttributes attr;
+    memset(&attr,0,sizeof(attr));
+    if(pxwindow->GetWindowAttributes(&attr))
+    {
+        xwindow_attributes_to_lua(&attr,L,tindex);
+        return 1;
+    }
+    return 0;
+}
 static const luaL_Reg xwindow_lib[] = {
     {"__gc",xwindow_gc_},
     {"__tostring",xwindow_tostring_},
@@ -616,6 +720,7 @@ static const luaL_Reg xwindow_lib[] = {
     {"GetNetWMName",xwindow_getnetwmname},
     {"SetNetWMName",xwindow_setnetwmname},    
     {"Copy",xwindow_copy},
+    {"GetWindowAttributes",xwindow_getwindowattributes},
     {NULL, NULL}
 };
 static int luaL_register_xwindow(lua_State *L)
