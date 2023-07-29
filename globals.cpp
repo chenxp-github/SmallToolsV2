@@ -39,6 +39,12 @@
 #include "lualib_commontime.h"
 #include "lualib_xfileserver.h"
 #include "lualib_icmpsocket.h"
+#include "lualib_remotedesktopclient.h"
+#include "lualib_remotedesktopclientupdater.h"
+#include "lualib_remotedesktoppixelbuffer.h"
+#include "lualib_remotedesktopserver.h"
+#include "lualib_remotedesktopsnapshottor.h"
+#include "lualib_remotedesktopsnapshottormanager.h"
 
 #include "_build_time_.h"
 
@@ -53,7 +59,10 @@
 #include "lualib_xwindow.h"
 #include "lualib_xevent.h"
 #include "lualib_xrandr.h"
+#include "lualib_remotedesktopsnapshottor_x11.h"
 #endif
+
+
 
 CGlobals g_globals;
 CGlobals *g_globals_ptr = NULL;
@@ -377,6 +386,14 @@ status_t CGlobals::InitLuaVm()
     luaopen_xfileserver(L);
     luaopen_icmpsocket(L);
     
+	luaopen_remotedesktoppixelbuffer(L);
+	luaopen_remotedesktopclient(L);
+	luaopen_remotedesktoppixelbuffer(L);
+	luaopen_remotedesktopserver(L);
+	luaopen_remotedesktopsnapshottor(L);
+	luaopen_remotedesktopsnapshottormanager(L);
+	luaopen_remotedesktopclientupdater(L);
+
 #if _IS_LINUX_
     luaopen_nativeprocess(L);
     luaopen_nativeprocessmanager(L);
@@ -388,6 +405,7 @@ status_t CGlobals::InitLuaVm()
     luaopen_xdisplay(L);
     luaopen_xevent(L);
     luaopen_xrandr(L);
+    luaopen_remotedesktopsnapshottor_x11(L);
 #endif
 
     this->StartLuaAutoGcTask();

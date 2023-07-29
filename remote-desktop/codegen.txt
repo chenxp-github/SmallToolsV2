@@ -1,0 +1,243 @@
+[Peer rd][StartId 80000]
+[Client RemoteDesktopClient 90000]
+class RemoteDesktopServer{
+    [service] status_t Login(int version);
+    [service] (string monitors[]) GetMonitorList();
+    [service] (int res,int full,int frameNo,RemoteDesktopPixelBufferList diff) GetNextScreen(string monitorName,int curFrameNo, int bytePerPixel,int full);
+    [service] (int res) SendInput(RemoteDesktopInput input);
+}
+
+
+class RemoteDesktopServer{  //for lua
+    void RemoteDesktopServer();
+	status_t SetRemoteDesktopSnapshottorManager(RemoteDesktopSnapshottorManager mgr);
+    status_t Destroy();
+    status_t InitServiceSidePeer();
+	status_t InitClientSidePeer(string server,int port);
+	status_t SetName(string name);
+    status_t Start();
+}
+
+class RemoteDesktopClient{  //for lua
+    void RemoteDesktopClient();
+    status_t Destroy();
+    status_t InitServiceSidePeer();
+	status_t InitClientSidePeer(string server,int port);
+	status_t SetName(string name);
+	status_t SetDestPeerName(string name);
+    status_t Start();
+}
+
+
+[CodeSwitch weak_ref=true,code_mark=true,bson=true]
+class RemoteDesktopPixelBuffer{
+    uint8_t pixel_data[];
+    uint8_t byte_per_pixel;
+    int width;
+    int height;
+    int offset_x;
+    int offset_y;
+    uint32_t flags;
+
+    void RemoteDesktopPixelBuffer();
+    status_t Destroy();
+    status_t Copy(RemoteDesktopPixelBuffer p);
+    int_ptr_t GetPixelData();
+    int GetPixelDataSize();
+    uint8_t GetBytePerPixel();
+    int GetWidth();
+    int GetHeight();
+    int GetOffsetX();
+    int GetOffsetY();
+    uint32_t GetFlags();
+    status_t AllocPixelData(int _len);
+    status_t SetWidth(int _width);
+    status_t SetHeight(int _height);
+    status_t SetOffsetX(int _offset_x);
+    status_t SetOffsetY(int _offset_y);
+    status_t SetFlags(uint32_t _flags);
+
+	status_t Create(int width, int height, uint8_t bpp);
+	int_ptr_t GetPixelBits(int x, int y);	
+	status_t Crop(int x, int y, int w, int h, RemoteDesktopPixelBuffer out);
+	status_t Combine(RemoteDesktopPixelBuffer pixelBuf);
+	status_t ChangeBpp(uint8_t bpp,RemoteDesktopPixelBuffer out);	
+	status_t ChangeBpp(uint8_t bpp);	
+	status_t SaveToXimage(xImage img);
+	status_t SaveToXimage(string fn);
+	status_t LoadFromXimage(xImage img);
+	status_t LoadFromXimage(string fn);
+	bool IsSame(RemoteDesktopPixelBuffer pixelBuf);	
+	status_t CompressData();
+	status_t DecompressData();	
+	status_t Transfer(RemoteDesktopPixelBuffer from);
+	status_t Ghost(RemoteDesktopPixelBuffer from);
+}
+
+[CodeSwitch weak_ref=true,code_mark=true,bson=true]
+[Stack of RemoteDesktopPixelBuffer]
+class RemoteDesktopPixelBufferList{
+}
+
+
+[CodeSwitch weak_ref=true,code_mark=true,task_container=true]
+class RemoteDesktopSnapshottor{
+    string name;
+    RemoteDesktopPixelBuffer last_frame_data;
+    int64_t last_frame_timestamp;
+    int snapshot_min_interval = 30;
+
+    status_t Destroy();
+    string GetName();
+    RemoteDesktopPixelBuffer GetLastFrameData();
+    int64_t GetLastFrameTimestamp();
+    int GetSnapshotMinInterval();
+    status_t SetName(string name);
+    status_t SetLastFrameData(RemoteDesktopPixelBuffer _last_frame_data);
+    status_t SetLastFrameTimestamp(int64_t _last_frame_timestamp);
+    status_t SetSnapshotMinInterval(int _snapshot_min_interval);
+	status_t TakeSnapshot(RemoteDesktopPixelBuffer pixelBuf);
+	status_t TakeSnapshot();
+}
+
+[BasicType HWND=uint32_t]
+[BasicType HDC=uint32_t]
+[BasicType HBITMAP=uint32_t]
+[CodeSwitch code_mark=true]
+class RemoteDesktopSnapshottor_GDI:RemoteDesktopSnapshottor{
+    HWND hwnd_to_take;
+    [noget,noset] HDC hdc_to_take,hdc_src;
+    [noget,noset] HBITMAP hbmp_to_take;
+    int src_origin_x;
+    int src_origin_y;
+    int src_width;
+    int src_height;
+    int dst_width;
+    int dst_height;
+
+    void RemoteDesktopSnapshottor_GDI();
+    int GetSrcOriginX();
+    int GetSrcOriginY();
+    int GetSrcWidth();
+    int GetSrcHeight();
+    int GetDstWidth();
+    int GetDstHeight();
+
+    status_t SetSrcOriginX(int _src_origin_x);
+    status_t SetSrcOriginY(int _src_origin_y);
+    status_t SetSrcWidth(int _src_width);
+    status_t SetSrcHeight(int _src_height);
+    status_t SetDstWidth(int _dst_width);
+    status_t SetDstHeight(int _dst_height);
+
+	status_t CreateBitmapBuffer();
+	status_t ReleaseBitmapBuffer();
+	status_t TakeSnapshot(RemoteDesktopPixelBuffer pixelBuf);
+	status_t SetSrcHdc(LuaHdc hdc);
+}
+
+
+
+[CodeSwitch code_mark=true]
+class RemoteDesktopSnapshottor_X11:RemoteDesktopSnapshottor{
+    int src_width;
+    int src_height;
+    xDisplay xDisplay;
+    xWindow xWindow;
+
+    void RemoteDesktopSnapshottor_X11();
+    status_t SetXDisplay(xDisplay xdisplay);
+    status_t SetXWindow(xWindow xwindow);
+}
+
+
+[CodeSwitch weak_ref=true,code_mark=true,task_container=true]
+[Stack of RemoteDesktopSnapshottor]
+class RemoteDesktopSnapshottorList{
+}
+
+[CodeSwitch code_mark=true]
+class RemoteDesktopSnapshottorManager:RemoteDesktopSnapshottorList{
+    void RemoteDesktopSnapshottorManager();
+    int GetLen();
+    RemoteDesktopSnapshottor GetElem(int index);
+    RemoteDesktopSnapshottor GetByName(string name);
+	status_t AddSnapshotter(RemoteDesktopSnapshottor snapshotter);
+    status_t SetIsWeakTable(bool isWeak);
+
+}
+
+[CodeSwitch weak_ref=true,code_mark=true,bson=true]
+class RemoteDesktopMouseInput{
+    int dx;
+    int dy;
+    uint32_t mouseData;
+    uint32_t dwFlags;
+}
+
+
+[CodeSwitch weak_ref=true,code_mark=true,bson=true]
+class RemoteDesktopKeybdInput{
+    uint16_t      wVk;
+    uint16_t      wScan;
+    uint32_t     dwFlags;
+}
+
+
+
+[CodeSwitch weak_ref=true,code_mark=true,bson=true]
+class RemoteDesktopInput{
+    uint32_t type;
+    [optional] RemoteDesktopMouseInput mouseInput;
+    [optional] RemoteDesktopKeybdInput keybdInput;
+}
+
+[CodeSwitch weak_ref=true,code_mark=true,task_container=true]
+class RemoteDesktopClientUpdater{ 
+    int frame_no;
+	[noset] RemoteDesktopPixelBuffer cur_screen;
+	RemoteDesktopClient *client;
+	int remote_monitor_index=0;
+    int64_t total_transfer_size;
+	[noset] MemStk  remote_monitor_names;
+
+
+    void RemoteDesktopClientUpdater();
+    status_t Destroy();
+    int GetFrameNo();
+    RemoteDesktopPixelBuffer GetCurScreen();
+    RemoteDesktopClient GetClient();
+    int GetRemoteMonitorIndex();
+    array<string> GetRemoteMonitorNames();
+    status_t SetFrameNo(int _frame_no);
+    status_t SetClient(RemoteDesktopClient client);
+    status_t SetRemoteMonitorIndex(int remote_monitor_index);
+
+	status_t StartAutoUpdateTask();
+	status_t StopAutoUpdateTask();
+	status_t SendInput(MiniBson input);
+
+    [callback] void onEvent(int event);
+    status_t SetCallback([callback] onEvent);
+	status_t SetDelayPerFrame(uint32_t ms);
+	status_t SetBytePerPixel(int bpp);
+    status_t SetTotalTransferSize(int64_t _total_transfer_size);
+    int64_t GetTotalTransferSize();
+}
+
+[CodeSwitch weak_ref=true,code_mark=true,task_container=true]
+class RemoteDesktopSession{
+    string name;
+    uint32_t flags;
+    uint32_t lifetime;
+    RemoteDesktopPixelBuffer cur_screen;
+    int frameNo;
+}
+
+
+[CodeSwitch code_mark=true,task_container=true,weak_ref=true]
+[Stack of RemoteDesktopSession]
+class RemoteDesktopSessionManager{
+}
+
+

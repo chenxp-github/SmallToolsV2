@@ -340,3 +340,12 @@ function read_pseudo_file(filename)
     mf:Destroy();
     return mem;
 end
+
+g_void_gc = {};
+function avoid_gc(...)
+    local t = table.pack(...);
+    for _,obj in ipairs(t) do
+        table.insert(g_void_gc,obj);    
+    end
+end
+
