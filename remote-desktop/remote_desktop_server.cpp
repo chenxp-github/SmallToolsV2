@@ -238,7 +238,7 @@ status_t CRemoteDesktopServer::OnGetNextScreen(CPeerMessage *_message)
 
 
 #if _IS_WINDOWS_
-static status_t SendLocaInput(CRemoteDesktopInput *input)
+static status_t SendLocaInput(CRemoteDesktopServer *self,CRemoteDesktopInput *input)
 {
 	ASSERT(input);
 
@@ -275,10 +275,78 @@ static status_t SendLocaInput(CRemoteDesktopInput *input)
 }
 
 #else
-static status_t SendLocaInput(CRemoteDesktopInput *input)
-{
+
+//#if _SUPPORT_X11_
+#include <X11/Xlib.h>
+#include <X11/extensions/XTest.h>
+#include "remote_desktop_snapshottor_x11.h"
+static status_t SendLocaInput(CRemoteDesktopServer *self,CRemoteDesktopInput *input)
+{	
+	ASSERT(input);
+	ASSERT(self);
+	ASSERT(self->m_SnapshottorManager);
+
+	CMem *monitorName = input->GetMonitorName();
+	ASSERT(monitorName);
+
+	CRemoteDesktopSnapshottorManager *snapshotManager = self->m_SnapshottorManager;
+
+	CRemoteDesktopSnapshottor *snapshottor = snapshotManager->GetByName(monitorName);
+	ASSERT(snapshottor);
+	ASSERT(snapshottor->GetType() == CRemoteDesktopSnapshottor::SNAPSHOTTOR_TYPE_X11);
+	CRemoteDesktopSnapshottor_X11 *x11_ss = (CRemoteDesktopSnapshottor_X11*)snapshottor;
+
+	CxDisplay *xdisplay = x11_ss->GetXDisplay();
+	ASSERT(xdisplay);
+	CxWindow *xwindow = x11_ss->GetXWindow();
+	ASSERT(xwindow);
+
+	if(input->GetType() == RD_INPUT_TYPE_MOUSE_INPUT)
+	{
+		CRemoteDesktopMouseInput *mouseInput = input->GetMouseInput();
+		ASSERT(mouseInput);
+
+		XTestFakeMotionEvent(
+			xdisplay->GetNativeXDisplay(),
+			-1,
+			mouseInput->GetDx(),
+			mouseInput->GetDy(),
+			CurrentTime
+		);
+
+		if(mouseInput->GetDwFlags() & RD_MOUSEEVENTF_LEFTDOWN)
+		{
+			XTestFakeButtonEvent(xdisplay->GetNativeXDisplay(),1,1,CurrentTime);
+		}
+		else if(mouseInput->GetDwFlags() & RD_MOUSEEVENTF_LEFTUP)
+		{
+			XTestFakeButtonEvent(xdisplay->GetNativeXDisplay(),1,0,CurrentTime);
+		}
+		else if(mouseInput->GetDwFlags() & RD_MOUSEEVENTF_RIGHTDOWN)
+		{
+			XTestFakeButtonEvent(xdisplay->GetNativeXDisplay(),3,1,CurrentTime);
+		}
+		else if(mouseInput->GetDwFlags() & RD_MOUSEEVENTF_RIGHTUP)
+		{
+			XTestFakeButtonEvent(xdisplay->GetNativeXDisplay(),3,0,CurrentTime);
+		}
+		else if(mouseInput->GetDwFlags() & RD_MOUSEEVENTF_WHEEL)
+		{
+			int id = 4;
+			if(mouseInput->GetMouseData()&0x80000000) //<0
+			{
+				id = 5;
+			}
+			XTestFakeButtonEvent(xdisplay->GetNativeXDisplay(),id,1,CurrentTime);
+			XTestFakeButtonEvent(xdisplay->GetNativeXDisplay(),id,0,CurrentTime);
+		}
+
+		xdisplay->Flush();
+	}
+
 	return OK;
 }
+//#endif
 
 #endif
 
@@ -299,7 +367,7 @@ status_t CRemoteDesktopServer::OnSendInput(CPeerMessage *_message)
     CRetVal_RdSendInput _ret;
     _ret.Init();
 
-	int res = SendLocaInput(_param.GetInput());
+	int res = SendLocaInput(this,_param.GetInput());
 
     _ret.SetRes(res);
     this->SendReturnValue(&_context,&_ret);

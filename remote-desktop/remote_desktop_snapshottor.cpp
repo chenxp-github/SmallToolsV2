@@ -19,6 +19,7 @@ status_t CRemoteDesktopSnapshottor::InitBasic()
     WEAK_REF_CLEAR();
     TASK_CONTAINER_CLEAR();
     this->m_name.InitBasic();
+    this->m_type = 0;
     this->m_last_frame_data.InitBasic();
     this->m_last_frame_timestamp = 0;
     this->m_snapshot_min_interval = 30;
@@ -55,6 +56,7 @@ status_t CRemoteDesktopSnapshottor::Copy(CRemoteDesktopSnapshottor *_p)
 
 /*##Begin Copy##*/
     this->m_name.Copy(&_p->m_name);
+    this->m_type = _p->m_type;
     this->m_last_frame_data.Copy(&_p->m_last_frame_data);
     this->m_last_frame_timestamp = _p->m_last_frame_timestamp;
     this->m_snapshot_min_interval = _p->m_snapshot_min_interval;
@@ -77,6 +79,7 @@ status_t CRemoteDesktopSnapshottor::Print(CFileBase *_buf)
     _buf->Log("name = %s",
         m_name.StrLen()>0?m_name.CStr():"<null>"
     );
+    _buf->Log("type = %d",m_type);
     _buf->Log("last_frame_data = {");
     _buf->IncLogLevel(1);
     this->m_last_frame_data.Print(_buf);
@@ -164,6 +167,21 @@ status_t CRemoteDesktopSnapshottor::SetSnapshotMinInterval(int _snapshot_min_int
     return OK;
 }
 /*@@End  Function SetSnapshotMinInterval@@*/
+
+/*@@Begin Function GetType@@*/
+int CRemoteDesktopSnapshottor::GetType()
+{
+    return m_type;
+}
+/*@@End  Function GetType@@*/
+
+/*@@Begin Function SetType@@*/
+status_t CRemoteDesktopSnapshottor::SetType(int _type)
+{
+    this->m_type = _type;
+    return OK;
+}
+/*@@End  Function SetType@@*/
 /*@@ Insert Function Here @@*/
 status_t CRemoteDesktopSnapshottor::TakeSnapshot(CRemoteDesktopPixelBuffer *pixelBuf)
 {

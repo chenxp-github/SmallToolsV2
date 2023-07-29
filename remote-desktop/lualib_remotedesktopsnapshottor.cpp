@@ -161,6 +161,24 @@ static status_t remotedesktopsnapshottor_takesnapshot(lua_State *L)
     return remotedesktopsnapshottor_takesnapshot_v2(L);
 }
 
+static status_t remotedesktopsnapshottor_gettype(lua_State *L)
+{
+    CRemoteDesktopSnapshottor *premotedesktopsnapshottor = get_remotedesktopsnapshottor(L,1);
+    ASSERT(premotedesktopsnapshottor);
+    int ret0 = premotedesktopsnapshottor->GetType();
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
+static status_t remotedesktopsnapshottor_settype(lua_State *L)
+{
+    CRemoteDesktopSnapshottor *premotedesktopsnapshottor = get_remotedesktopsnapshottor(L,1);
+    ASSERT(premotedesktopsnapshottor);
+    int type = (int)lua_tointeger(L,2);
+    status_t ret0 = premotedesktopsnapshottor->SetType(type);
+    lua_pushboolean(L,ret0);
+    return 1;
+}
 /****************************************************/
 static const luaL_Reg remotedesktopsnapshottor_funcs_[] = {
     {"__gc",remotedesktopsnapshottor_gc_},
@@ -176,6 +194,8 @@ static const luaL_Reg remotedesktopsnapshottor_funcs_[] = {
     {"GetSnapshotMinInterval",remotedesktopsnapshottor_getsnapshotmininterval},
     {"GetName",remotedesktopsnapshottor_getname},
     {"GetLastFrameData",remotedesktopsnapshottor_getlastframedata},
+	{"SetType",remotedesktopsnapshottor_settype},
+	{"GetType",remotedesktopsnapshottor_gettype},
     {NULL,NULL},
 };
 

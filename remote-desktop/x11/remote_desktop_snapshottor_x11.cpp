@@ -32,6 +32,7 @@ status_t CRemoteDesktopSnapshottor_X11::Init(CTaskMgr *_taskmgr)
     this->m_xWindow.Init();
 /*##End Init##*/
     CRemoteDesktopSnapshottor::Init(_taskmgr);
+    this->SetType(SNAPSHOTTOR_TYPE_X11);
     return OK;
 }
 

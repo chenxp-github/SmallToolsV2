@@ -21,6 +21,7 @@ public:
 
 public:
     uint32_t m_type;
+    CMem m_monitorName;
     CRemoteDesktopMouseInput *m_mouseInput;
     CRemoteDesktopKeybdInput *m_keybdInput;
 /*##End Members##*/
@@ -39,11 +40,15 @@ public:
 
 /*##Begin Getter_H##*/
     uint32_t GetType();
+    CMem* GetMonitorName();
+    const char* GetMonitorNameStr();
     CRemoteDesktopMouseInput* GetMouseInput();
     CRemoteDesktopKeybdInput* GetKeybdInput();
 /*##End Getter_H##*/
 /*##Begin Setter_H##*/
     status_t SetType(uint32_t _type);
+    status_t SetMonitorName(CMem *_monitorname);
+    status_t SetMonitorName(const char *_monitorname);
     status_t CreateMouseInput();
     status_t SetMouseInput(CRemoteDesktopMouseInput *_mouseinput);
     status_t CreateKeybdInput();

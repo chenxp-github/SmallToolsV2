@@ -8,10 +8,17 @@
 #include "mem.h"
 #include "memfile.h"
 
+
 class CRemoteDesktopSnapshottor
 /*##Begin Bases##*/
 /*##End Bases##*/
 {
+public:
+	enum{
+		SNAPSHOTTOR_TYPE_UNKNOWN=0,
+		SNAPSHOTTOR_TYPE_GDI,
+		SNAPSHOTTOR_TYPE_X11,
+	};
 /*##Begin Members##*/
 public:
 public:
@@ -20,6 +27,7 @@ public:
 
 public:
     CMem m_name;
+    int m_type;
     CRemoteDesktopPixelBuffer m_last_frame_data;
     int64_t m_last_frame_timestamp;
     int m_snapshot_min_interval;
@@ -39,6 +47,7 @@ public:
 /*##Begin Getter_H##*/
     CMem* GetName();
     const char* GetNameStr();
+    int GetType();
     CRemoteDesktopPixelBuffer* GetLastFrameData();
     int64_t GetLastFrameTimestamp();
     int GetSnapshotMinInterval();
@@ -46,6 +55,7 @@ public:
 /*##Begin Setter_H##*/
     status_t SetName(CMem *_name);
     status_t SetName(const char *_name);
+    status_t SetType(int _type);
     status_t SetLastFrameData(CRemoteDesktopPixelBuffer *_last_frame_data);
     status_t SetLastFrameTimestamp(int64_t _last_frame_timestamp);
     status_t SetSnapshotMinInterval(int _snapshot_min_interval);

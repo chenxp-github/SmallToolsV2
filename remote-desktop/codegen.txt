@@ -83,6 +83,7 @@ class RemoteDesktopPixelBufferList{
 [CodeSwitch weak_ref=true,code_mark=true,task_container=true]
 class RemoteDesktopSnapshottor{
     string name;
+    int type;
     RemoteDesktopPixelBuffer last_frame_data;
     int64_t last_frame_timestamp;
     int snapshot_min_interval = 30;
@@ -98,6 +99,8 @@ class RemoteDesktopSnapshottor{
     status_t SetSnapshotMinInterval(int _snapshot_min_interval);
 	status_t TakeSnapshot(RemoteDesktopPixelBuffer pixelBuf);
 	status_t TakeSnapshot();
+    int GetType();
+    status_t SetType(int type);
 }
 
 [BasicType HWND=uint32_t]
@@ -188,6 +191,7 @@ class RemoteDesktopKeybdInput{
 [CodeSwitch weak_ref=true,code_mark=true,bson=true]
 class RemoteDesktopInput{
     uint32_t type;
+    string monitorName;
     [optional] RemoteDesktopMouseInput mouseInput;
     [optional] RemoteDesktopKeybdInput keybdInput;
 }
