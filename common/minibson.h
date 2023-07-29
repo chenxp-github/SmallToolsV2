@@ -86,6 +86,7 @@ public:
     status_t GetInt64(const char *name, int64_t *pInt);
     status_t ToJson(CFileBase *json,bool bracket);
     status_t GetInt32(const char *name, int32_t *pInt);
+    status_t GetInt32(const char *name, long *pInt);
     status_t GetUInt32(const char *name, uint32_t *pInt);
     status_t GetInt16(const char *name, int16_t *pInt);
     status_t GetUInt16(const char *name, uint16_t *pInt);

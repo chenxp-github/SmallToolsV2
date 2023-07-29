@@ -569,6 +569,23 @@ status_t CFileBase::Dump()
     this->Seek(save_off);
     return OK;
 }
+
+status_t CFileBase::DumpBin(CFileBase *out)
+{
+    fsize_t save_off;
+   
+    save_off = this->GetOffset();
+    this->Seek(0);
+    while(!this->IsEnd())
+    {
+        uint8_t ch = (uint8_t)this->Getc();
+        out->Printf("%02x",ch);
+    }
+   
+    this->Seek(save_off);
+    return OK;
+}
+
 status_t CFileBase::ReadLine(CFileBase *file)
 {
     char ch;

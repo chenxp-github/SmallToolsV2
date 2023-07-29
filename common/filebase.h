@@ -124,6 +124,7 @@ public:
     static status_t IsEmptyChar(char ch);
     virtual char UnGetc();
     status_t Dump();
+    status_t DumpBin(CFileBase *out);
     status_t IsSpChar(char ch);
     fsize_t Puts(const char *str);
     status_t ReadLine(CFileBase *file);

@@ -68,7 +68,7 @@ status_t CServerSidePeer::OnInitNameMessage(CPeerMessage *msg)
 	GLOBAL_PEER_MANAGER(mgr);
 	CPeerProxy *peer = mgr->GetPeerByName(name);
 	
-	if(peer && g->InTrustMode())
+	if(peer && g->InTrustMode() && peer->IsConnectionAlive())
 	{
 		int index = mgr->NameToIndex(name);
 		if(index  >= 0)

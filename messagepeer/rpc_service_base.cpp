@@ -2,6 +2,7 @@
 #include "sys_log.h"
 #include "mem_tool.h"
 #include "peerglobals.h"
+#include "linkrpccommon.h"
 
 CRpcServiceBase::CRpcServiceBase()
 {
@@ -90,6 +91,7 @@ int CRpcServiceBase::AddCallback(CClosure *closure)
 {
     if(!closure)return 0;    
     GLOBAL_PEER_CALLBACK_MAP(map);
+    ASSERT(!this->IsCallbackMapFull());
     int callback_id = map->AllocUniqueId();
     if(!map->AddClosure(closure,callback_id))
     {
@@ -156,3 +158,14 @@ status_t CRpcServiceBase::Start()
 	}
 	return OK;
 }
+
+bool CRpcServiceBase::IsCallbackMapFull()
+{
+#if LINKRPC_LOW_MEMORY
+    GLOBAL_PEER_CALLBACK_MAP(map);   
+    return map->GetSize() >= 64;
+#else
+    return false;
+#endif
+}
+

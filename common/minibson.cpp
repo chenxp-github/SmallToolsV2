@@ -483,6 +483,14 @@ status_t CMiniBson::GetInt32(const char *name, int32_t *pInt)
     return OK;
 }
 
+status_t CMiniBson::GetInt32(const char *name, long *pInt)
+{
+    ASSERT(pInt);
+    CHECK_TYPE_AND_NAME(BSON_TYPE_INT32,name);
+    this->mData->Read(pInt,sizeof(int32_t));
+    return OK;
+}
+
 status_t CMiniBson::GetUInt32(const char *name, uint32_t *pInt)
 {
     return this->GetInt32(name,(int32_t*)pInt);
