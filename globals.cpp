@@ -98,16 +98,8 @@ static const void *get_peer_globals(lua_State *L)
     return g;
 }
 
-#define REMOVE_FROM_EPOLL(obj) (obj).m_Epoll.AutoRemoveFd(s)
-
 static status_t global_on_before_close_socket(int32_t s)
 {  
-    if(do_not_use_epoll)return OK;
-    REMOVE_FROM_EPOLL(g_globals);
-    if(g_globals_ptr)
-    {
-        REMOVE_FROM_EPOLL(*g_globals_ptr);
-    }
     return OK;
 }
 
@@ -132,7 +124,6 @@ status_t CGlobals::InitBasic()
     m_MainLuaFileList.InitBasic();
     m_LuaFilesPath.InitBasic();
 	m_Turbo = 0;
-	m_Epoll.InitBasic();
     m_PeerGlobals.InitBasic();
     return OK;
 }
@@ -145,13 +136,8 @@ static status_t on_taskmgr_event(CClosure *closure)
 	if(event == CTaskMgr::EVENT_SOCKET_CONNECTED)
 	{
 		CLOSURE_PARAM_INT(socket,1);
-        if(do_not_use_epoll)return OK;
-		CEpoll *epoll = &self->m_Epoll;
-		if(epoll->AddFd(socket))
-		{
-			XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
-                "socket %d is added to epoll.",socket);
-		}
+        XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,
+            "socket %d is added to epoll.",socket);
 	}
 	
 	return OK;
@@ -161,7 +147,6 @@ status_t CGlobals::Init()
 {
     this->InitBasic();
     SetIsInitiated(true);
-	m_Epoll.Init(1024);
     m_TaskMgr.Init(1024);
 	m_TaskMgr.Callback()->SetFunc(on_taskmgr_event);
 	m_TaskMgr.Callback()->SetParamPointer(10,this);
@@ -198,7 +183,6 @@ status_t CGlobals::Destroy()
     m_TaskMgr.Destroy();
     m_MainLuaFileList.Destroy();
     m_LuaFilesPath.Destroy();
-	m_Epoll.Destroy();
     this->InitBasic();
     return OK;
 }
@@ -215,15 +199,6 @@ status_t CGlobals::LoadEnv()
             "mainloop_sleep_time = %d(ms)",
             mainloop_sleep_time);
     }
-
-    str = getenv("DO_NOT_USE_EPOLL");
-    if(str)
-    {
-        do_not_use_epoll = atoi(str);
-        XLOG(LOG_MODULE_USER,LOG_LEVEL_INFO,
-            "do_not_use_epoll = %d",do_not_use_epoll);
-    }
-
     return OK;
 }
 
@@ -251,14 +226,7 @@ status_t CGlobals::MainLoop(lua_State *L)
             turbo ++;
         }
 
-        if(do_not_use_epoll)
-        {
-            crt_msleep(mainloop_sleep_time);
-        }
-        else if(turbo == 0)
-        {
-            m_Epoll.Wait(mainloop_sleep_time);
-        }
+        crt_msleep(mainloop_sleep_time);
     }
     return OK;
 }

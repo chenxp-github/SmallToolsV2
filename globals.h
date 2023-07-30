@@ -24,7 +24,6 @@ public:
     CMemStk m_MainLuaFileList;
     CMem m_LuaFilesPath;
 	int m_Turbo;
-	CEpoll m_Epoll;
     CPeerGlobals m_PeerGlobals;
     
 public:
