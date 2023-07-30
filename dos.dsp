@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /c
-# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "common" /I "platform" /I "lualib" /I "ximage" /I "resource_manager" /I "messagepeer" /I "lua" /I "websocket" /I "win32" /I "x-file-server" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FR /FD /c
+# ADD CPP /nologo /MT /W3 /GX /O2 /I "." /I "common" /I "platform" /I "lualib" /I "ximage" /I "resource_manager" /I "messagepeer" /I "lua" /I "websocket" /I "win32" /I "x-file-server" /I "remote-desktop" /I "remote-desktop\win32" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /FR /FD /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x804 /d "NDEBUG"
 # ADD RSC /l 0x804 /d "NDEBUG"
@@ -67,7 +67,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /Yu"stdafx.h" /FD /GZ /c
-# ADD CPP /nologo /MT /W3 /Gm /GX /ZI /Od /I "." /I "common" /I "platform" /I "lualib" /I "ximage" /I "resource_manager" /I "messagepeer" /I "lua" /I "websocket" /I "win32" /I "x-file-server" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FD /GZ /c
+# ADD CPP /nologo /MT /W3 /Gm /GX /ZI /Od /I "." /I "common" /I "platform" /I "lualib" /I "ximage" /I "resource_manager" /I "messagepeer" /I "lua" /I "websocket" /I "win32" /I "x-file-server" /I "remote-desktop" /I "remote-desktop\win32" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /FD /GZ /c
 # SUBTRACT CPP /YX /Yc /Yu
 # ADD BASE RSC /l 0x804 /d "_DEBUG"
 # ADD RSC /l 0x804 /d "_DEBUG"
@@ -602,6 +602,10 @@ SOURCE=.\lua\linit.c
 # End Source File
 # Begin Source File
 
+SOURCE=".\remote-desktop\linkrpc_rd_types.h"
+# End Source File
+# Begin Source File
+
 SOURCE=".\x-file-server\linkrpc_xfs_types.h"
 # End Source File
 # Begin Source File
@@ -882,6 +886,62 @@ SOURCE=.\lualib\lualib_queuefile.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\remote-desktop\lualib_remotedesktopclient.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktopclient.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktopclientupdater.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktopclientupdater.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktoppixelbuffer.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktoppixelbuffer.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktopserver.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktopserver.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktopsnapshottor.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktopsnapshottor.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\win32\lualib_remotedesktopsnapshottor_gdi.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\win32\lualib_remotedesktopsnapshottor_gdi.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktopsnapshottormanager.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\lualib_remotedesktopsnapshottormanager.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\lualib\lualib_resource.cpp
 # End Source File
 # Begin Source File
@@ -1127,6 +1187,30 @@ SOURCE=.\common\mutex.cpp
 # Begin Source File
 
 SOURCE=.\common\mutex.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\param_rd_get_next_screen.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\param_rd_get_next_screen.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\param_rd_login.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\param_rd_login.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\param_rd_send_input.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\param_rd_send_input.h"
 # End Source File
 # Begin Source File
 
@@ -1398,6 +1482,130 @@ SOURCE=.\common\refcnt.h
 # End Source File
 # Begin Source File
 
+SOURCE=".\remote-desktop\remote_desktop_client.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_client.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_client_messages.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_client_updater.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_client_updater.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_common.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_input.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_input.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_keybd_input.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_keybd_input.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_mouse_input.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_mouse_input.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_pixel_buffer.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_pixel_buffer.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_pixel_buffer_list.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_pixel_buffer_list.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_server.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_server.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_server_messages.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_session.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_session.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_session_manager.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_session_manager.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_snapshottor.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_snapshottor.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\win32\remote_desktop_snapshottor_gdi.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\win32\remote_desktop_snapshottor_gdi.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_snapshottor_list.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_snapshottor_list.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_snapshottor_manager.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\remote_desktop_snapshottor_manager.h"
+# End Source File
+# Begin Source File
+
 SOURCE=.\resource_manager\resource.cpp
 # End Source File
 # Begin Source File
@@ -1419,6 +1627,38 @@ SOURCE=.\resource_manager\resourcemanager.cpp
 # Begin Source File
 
 SOURCE=.\resource_manager\resourcemanager.h
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\ret_val_rd_get_monitor_list.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\ret_val_rd_get_monitor_list.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\ret_val_rd_get_next_screen.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\ret_val_rd_get_next_screen.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\ret_val_rd_login.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\ret_val_rd_login.h"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\ret_val_rd_send_input.cpp"
+# End Source File
+# Begin Source File
+
+SOURCE=".\remote-desktop\ret_val_rd_send_input.h"
 # End Source File
 # Begin Source File
 

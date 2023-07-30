@@ -23,7 +23,7 @@ bool is_remotedesktopsnapshottor(lua_State *L, int idx)
     const char* ud_names[] = {
         LUA_USERDATA_REMOTEDESKTOPSNAPSHOTTOR,
 
-#if _IS_WINDOWS
+#if _IS_WINDOWS_
 		LUA_USERDATA_REMOTEDESKTOPSNAPSHOTTOR_GDI,
 #endif
 
