@@ -348,6 +348,9 @@ status_t CRemoteDesktopClientUpdater::AutoUpdateTaskRun(CMiniTask *task, uint32_
 				if(_ret.GetRes() == OK)
 				{
 					self->OnGetNextScreen(&_ret);
+					task->Goto(STEP_GET_NEXT_SCREEN);
+					task->Sleep(self->m_delay_per_frame);
+					return OK;
 				}
 				else
 				{
@@ -359,8 +362,8 @@ status_t CRemoteDesktopClientUpdater::AutoUpdateTaskRun(CMiniTask *task, uint32_
 				XLOG(LOG_MODULE_USER,LOG_LEVEL_ERROR,"GetNextScreen:timeout");
 			}
 
-			task->Goto(STEP_GET_NEXT_SCREEN);
-			task->Sleep(self->m_delay_per_frame);
+			task->Goto(STEP_LOGIN); //when error
+			task->Sleep(2000);
 			return OK;
 		}
 		END_NEW_LINKRPC_CALLBACK(done,CRetVal_RdGetNextScreen);

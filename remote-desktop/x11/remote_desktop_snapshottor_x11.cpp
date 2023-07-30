@@ -171,7 +171,7 @@ status_t CRemoteDesktopSnapshottor_X11::TakeSnapshot(CRemoteDesktopPixelBuffer *
 
     if(attrs.width <= 0 || attrs.height <= 0)
         return ERROR;
-    
+
     m_src_width = attrs.width;
     m_src_height = attrs.height;
 

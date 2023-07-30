@@ -280,6 +280,7 @@ static status_t SendLocaInput(CRemoteDesktopServer *self,CRemoteDesktopInput *in
 #include <X11/Xlib.h>
 #include <X11/extensions/XTest.h>
 #include "remote_desktop_snapshottor_x11.h"
+#include "scancode_keycode_map_x11.h"
 static status_t SendLocaInput(CRemoteDesktopServer *self,CRemoteDesktopInput *input)
 {	
     ASSERT(input);
@@ -298,7 +299,8 @@ static status_t SendLocaInput(CRemoteDesktopServer *self,CRemoteDesktopInput *in
 
     int sh = x11_ss->GetSrcHeight();
     int sw = x11_ss->GetSrcWidth();
-    ASSERT(sw > 0 && sh > 0);
+    if(sw <= 0)return ERROR;
+    if(sh <= 0)return ERROR;
 
     CxDisplay *xdisplay = x11_ss->GetXDisplay();
     ASSERT(xdisplay);
@@ -346,6 +348,24 @@ static status_t SendLocaInput(CRemoteDesktopServer *self,CRemoteDesktopInput *in
         }
 
         xdisplay->Flush();
+    }
+    else if(input->GetType() == RD_INPUT_TYPE_KEYBOARD_INPUT)
+    {
+        CRemoteDesktopKeybdInput *keybdInput = input->GetKeybdInput();
+        ASSERT(keybdInput);
+
+        KeySym keySym = scancode_to_keycode(keybdInput->GetWScan());
+        KeyCode keyCode = XKeysymToKeycode(xdisplay->GetNativeXDisplay(),keySym);
+
+        if(keybdInput->GetDwFlags() & RD_KEYEVENTF_KEYUP)
+        {
+            XTestFakeKeyEvent(xdisplay->GetNativeXDisplay(),keyCode,0,CurrentTime);
+
+        }
+        else
+        {
+            XTestFakeKeyEvent(xdisplay->GetNativeXDisplay(),keyCode,1,CurrentTime);
+        }
     }
 
     return OK;
