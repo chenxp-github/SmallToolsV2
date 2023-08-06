@@ -336,6 +336,14 @@ static status_t SendLocaInput(CRemoteDesktopServer *self,CRemoteDesktopInput *in
         {
             XTestFakeButtonEvent(xdisplay->GetNativeXDisplay(),3,0,CurrentTime);
         }
+        else if(mouseInput->GetDwFlags() & RD_MOUSEEVENTF_MIDDLEDOWN)
+        {
+            XTestFakeButtonEvent(xdisplay->GetNativeXDisplay(),2,1,CurrentTime);
+        }
+        else if(mouseInput->GetDwFlags() & RD_MOUSEEVENTF_MIDDLEUP)
+        {
+            XTestFakeButtonEvent(xdisplay->GetNativeXDisplay(),2,0,CurrentTime);
+        }
         else if(mouseInput->GetDwFlags() & RD_MOUSEEVENTF_WHEEL)
         {
             int id = 4;

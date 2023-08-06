@@ -95,7 +95,7 @@ static struct scancode_keycode_map_entry scancode_keycode_map[]={
     {KEY_KP2,XK_KP_2},
     {KEY_KP3,XK_KP_3},
     {KEY_KP0,XK_KP_0},
-    {KEY_KPDOT,XK_KP_Decimal},
+    {KEY_KPDOT,XK_Delete},
     {KEY_F11,XK_F11},
     {KEY_F12,XK_F12},
     {KEY_KPENTER,XK_KP_Enter},
@@ -137,3 +137,4 @@ int scancode_to_keycode(int scancode)
     }
     return XK_VoidSymbol;
 }
+
