@@ -12,7 +12,6 @@ struct scancode_keycode_map_entry{
 
 
 static struct scancode_keycode_map_entry scancode_keycode_map[]={
-    {KEY_RESERVED,XK_VoidSymbol},
     {KEY_ESC,XK_Escape},
     {KEY_1,XK_1},
     {KEY_2,XK_2},
@@ -64,10 +63,10 @@ static struct scancode_keycode_map_entry scancode_keycode_map[]={
     {KEY_N,XK_N},
     {KEY_M,XK_M},
     {KEY_COMMA,XK_comma},
-    {KEY_DOT,XK_KP_Decimal},
+    {KEY_DOT,XK_greater},
     {KEY_SLASH,XK_slash},
     {KEY_RIGHTSHIFT,XK_Shift_R},
-    {KEY_KPASTERISK,XK_VoidSymbol},
+    {KEY_KPASTERISK,XK_KP_Multiply},
     {KEY_LEFTALT,XK_Alt_L},
     {KEY_SPACE,XK_space},
     {KEY_CAPSLOCK,XK_Caps_Lock},
@@ -83,18 +82,18 @@ static struct scancode_keycode_map_entry scancode_keycode_map[]={
     {KEY_F10,XK_F10},
     {KEY_NUMLOCK,XK_Num_Lock},
     {KEY_SCROLLLOCK,XK_Scroll_Lock},
-    {KEY_KP7,XK_KP_7},
-    {KEY_KP8,XK_KP_8},
-    {KEY_KP9,XK_KP_9},
+    {KEY_KP7,XK_Home},
+    {KEY_KP8,XK_Up},
+    {KEY_KP9,XK_Page_Up},
     {KEY_KPMINUS,XK_KP_Subtract},
-    {KEY_KP4,XK_KP_4},
+    {KEY_KP4,XK_Left},
     {KEY_KP5,XK_KP_5},
-    {KEY_KP6,XK_KP_6},
+    {KEY_KP6,XK_Right},
     {KEY_KPPLUS,XK_KP_Add},
-    {KEY_KP1,XK_KP_1},
-    {KEY_KP2,XK_KP_2},
-    {KEY_KP3,XK_KP_3},
-    {KEY_KP0,XK_KP_0},
+    {KEY_KP1,XK_End},
+    {KEY_KP2,XK_Down},
+    {KEY_KP3,XK_Page_Down},
+    {KEY_KP0,XK_Insert},
     {KEY_KPDOT,XK_Delete},
     {KEY_F11,XK_F11},
     {KEY_F12,XK_F12},
@@ -135,6 +134,6 @@ int scancode_to_keycode(int scancode)
         if(scancode_keycode_map[i].scancode == scancode)
             return scancode_keycode_map[i].keycode;
     }
-    return XK_VoidSymbol;
+    return XK_Escape;
 }
 
