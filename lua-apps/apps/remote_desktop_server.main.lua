@@ -48,12 +48,13 @@ function app_main(args)
     end
 
     local xdisplay = XDisplay.new();
-    if not xdisplay:OpenDisplay(display_name) then
+
+    while not xdisplay:OpenDisplay(display_name) do
         printfnl("can not open display: %s",display_name);
-        return App.QuitMainLoop();
+        App.Sleep(3000);
     end
 
-    printfnl("open display %s",display_name);
+    printfnl("open display %s ok.",display_name);
 
     local root_window = xdisplay:GetDefaultRootWindow();
     if not root_window then
