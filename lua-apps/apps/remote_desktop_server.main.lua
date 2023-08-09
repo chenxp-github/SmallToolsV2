@@ -13,6 +13,7 @@ local kAsClient="--as-client";
 local kPeerServer="--peer-server";
 local kPeerPort="--peer-port";
 local kPeerName="--peer-name";
+local kDisplay="--display";
 
 g_snapshottor_manager = nil;
 g_desktop_server = nil;
@@ -25,6 +26,7 @@ function app_main(args)
     cmd:AddKeyType(kPeerServer,TYPE_KEY_EQUAL_VALUE,MUST,"message peer server address");
     cmd:AddKeyType(kPeerPort,TYPE_KEY_EQUAL_VALUE,MUST,"message center service port");    
     cmd:AddKeyType(kPeerName,TYPE_KEY_EQUAL_VALUE,MUST,"self message peer name");            
+    cmd:AddKeyType(kDisplay,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"X11 display name, default is :0"); 
 
     cmd:AddKeyTypeDep(kAsClient,"",kPeerServer);
 
@@ -39,12 +41,19 @@ function app_main(args)
     local peer_port = tonumber(cmd:GetValueByKey(kPeerPort));
     local peer_name = cmd:GetValueByKey(kPeerName);    
 
+    local display_name = ":0";
+
+    if cmd:HasKey(kDisplay) then
+        display_name = cmd:GetValueByKey(kDisplay);
+    end
 
     local xdisplay = XDisplay.new();
-    if not xdisplay:OpenDisplay(":0") then
-        printfnl("can not open display");
+    if not xdisplay:OpenDisplay(display_name) then
+        printfnl("can not open display: %s",display_name);
         return App.QuitMainLoop();
     end
+
+    printfnl("open display %s",display_name);
 
     local root_window = xdisplay:GetDefaultRootWindow();
     if not root_window then
@@ -56,7 +65,7 @@ function app_main(args)
 
 	g_snapshottor_manager = RemoteDesktopSnapshottorManager.new();
     local snapshottor = RemoteDesktopSnapshottor_X11.new();
-    snapshottor:SetName("DISPLAY:0");
+    snapshottor:SetName(display_name);
     snapshottor:SetXDisplay(xdisplay);
     snapshottor:SetXWindow(root_window);
 
