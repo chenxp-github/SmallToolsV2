@@ -44,6 +44,8 @@ int main(int argc, char **argv)
     signal(SIGTERM,on_terminate); 
     signal(SIGHUP,on_terminate); 
     signal(SIGPIPE,SIG_IGN);
+#else
+	timeBeginPeriod(1);
 #endif
 
 #if _DEBUG_

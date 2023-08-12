@@ -73,7 +73,6 @@ CGlobals g_globals;
 CGlobals *g_globals_ptr = NULL;
 
 static int mainloop_sleep_time = 1;
-static int do_not_use_epoll = 0;
 
 static CTaskMgr* get_global_taskmgr(lua_State *L)
 {
@@ -230,8 +229,11 @@ status_t CGlobals::MainLoop(lua_State *L)
         {
             turbo ++;
         }
-
-        crt_msleep(mainloop_sleep_time);
+		
+		if(!turbo)
+        {
+			crt_msleep(mainloop_sleep_time);
+		}
     }
     return OK;
 }
