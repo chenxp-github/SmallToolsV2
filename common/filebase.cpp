@@ -563,7 +563,8 @@ status_t CFileBase::Dump()
 
     while(this->ReadLine(&mem))
     {
-        syslog_printf("%s\n",mem.CStr());
+        syslog_puts(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,mem.CStr());
+        syslog_puts(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,"\r\n");
     }
 
     this->Seek(save_off);

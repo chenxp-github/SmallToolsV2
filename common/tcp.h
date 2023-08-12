@@ -40,9 +40,15 @@ public:
 ///////////////////////////////////////////////////////////////////////////
 class CTcpServer:public CSocket{
 public:
-    struct  hostent  *ptrh;       /* pointer to a host table entry          */     
     struct  sockaddr_in sad;      /* structure to hold server's address     */   
-    struct  sockaddr_in cad;      /* structure to hold client's address     */    
+    struct  sockaddr_in cad;      /* structure to hold client's address     */  
+
+#if _SUPPORT_IPV6_
+    int ipv6_mode;
+    struct  sockaddr_in6 sad6;      /* structure to hold server's address     */   
+    struct  sockaddr_in6 cad6;      /* structure to hold client's address     */   
+#endif
+
     int32_t max_connect;          /* max connection */
 public:
     status_t GetClientIpAndPort(CFileBase *ip, int32_t *port);
@@ -50,19 +56,27 @@ public:
     int32_t Accept();
     status_t SetPort(int32_t port);
     status_t InitServer(void);
-    static bool CanBind(int port);    
+    static bool CanBind(int port, bool ipv6=false);    
     CTcpServer();
     ~CTcpServer();   
     status_t Init();
     status_t Destroy();
+
+#if _SUPPORT_IPV6_
+    status_t UseIpv6Mode(int use);
+#endif
+
 };
 ///////////////////////////////////////////////////////////////////////////
 class CTcpClient:public CSocket{
 public:
-    struct  hostent  *ptrh;   /* pointer to a host table entry       */ 
-    struct  protoent *ptrp;   /* pointer to a protocol table entry   */ 
     struct  sockaddr_in sad;  /* structure to hold an IP address     */
-    int32_t port;             /* protocol port number       */         
+
+#if _SUPPORT_IPV6_
+    int ipv6_mode;
+    struct  sockaddr_in6 sad6;  /* structure to hold an IP address     */ 
+#endif
+
 public: 
     status_t IsConnectComplete();
     status_t Destroy();
@@ -72,6 +86,11 @@ public:
     status_t SetServerIP(const char *name);
     status_t SetPort(int32_t port);
     status_t Connect();
+
+#if _SUPPORT_IPV6_
+    status_t UseIpv6Mode(int use);
+#endif
+
 };
 
 #endif

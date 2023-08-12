@@ -369,6 +369,13 @@ status_t CMiniBson::StartDocument(const char *name,fsize_t *offset)
     return this->StartDocument(&mem_name,offset);
 }
 
+status_t CMiniBson::StartDocument(int index,fsize_t *offset)
+{
+	LOCAL_MEM(mem);
+	mem.Printf("%d",index);
+	return this->StartDocument(&mem,offset);
+}
+
 status_t CMiniBson::StartArray(CMem *name,fsize_t *offset)
 {
     ASSERT(name && offset); 

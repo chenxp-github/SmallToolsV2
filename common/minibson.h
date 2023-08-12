@@ -75,6 +75,7 @@ public:
     status_t GetDocument(const char *name, CMiniBson *doc);
     status_t StartDocument(CMem *name,fsize_t *offset);
     status_t StartDocument(const char *name,fsize_t *offset);
+	status_t StartDocument(int index,fsize_t *offset);
     status_t EndDocument(fsize_t offset);
     status_t ResetPointer();
     status_t GetBinary(const char *name, CMem *bin);

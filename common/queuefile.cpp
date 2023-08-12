@@ -129,7 +129,9 @@ int_ptr_t CQueueFile::Write(const void *buf,int_ptr_t n)
 }
 status_t CQueueFile::SetSize(fsize_t ssize)
 {
-    return 0;
+    ASSERT(ssize == 0);
+    this->Clear();
+    return OK;
 }
 fsize_t CQueueFile::Seek(fsize_t off)
 {

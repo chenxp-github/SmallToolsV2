@@ -646,6 +646,17 @@ uint32_t crt_inet_addr(const char* cp)
 {
     return inet_addr(cp);
 }
+
+#if _SUPPORT_IPV6_
+
+status_t crt_inet_addr_v6(const char* cp,struct in6_addr *addr)
+{
+    return inet_pton(AF_INET6,cp,addr) > 0;
+}
+
+#endif
+
+
 ///////////////////////////////////////////////////////////////////
 #endif //#if USE_SOCKET_MODULE
 ///////////////////////////////////////////////////////////////////

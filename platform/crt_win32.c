@@ -509,7 +509,7 @@ int32_t crt_gethostname(char *name, int32_t namelen)
     return gethostname(name,namelen); 
 }
 
-static CRITICAL_SECTION mutex;
+static CRITICAL_SECTION _mutex;
 static int _init_mutex = 0;
 status_t crt_gethostbyname(const char * name, char *out)
 {
@@ -521,11 +521,11 @@ status_t crt_gethostbyname(const char * name, char *out)
 
     if(_init_mutex == 0)
     {
-        InitializeCriticalSection(&mutex);
+        InitializeCriticalSection(&_mutex);
         _init_mutex = 1;
     }
 
-    EnterCriticalSection(&mutex);
+    EnterCriticalSection(&_mutex);
     out[0] = 0;
     pHost = gethostbyname(name);
     if(pHost != NULL)
@@ -538,7 +538,7 @@ status_t crt_gethostbyname(const char * name, char *out)
         }
         ret = OK;
     }
-    LeaveCriticalSection(&mutex);
+    LeaveCriticalSection(&_mutex);
     return ret;
 }
 

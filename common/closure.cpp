@@ -310,7 +310,8 @@ status_t CClosure::SetParamString(int index, const char *str,int len)
     char *tmp;
     CHECK_INDEX_RANGE(index);
     MALLOC(tmp,char,len+1);
-    crt_strcpy(tmp,str);
+    crt_strncpy(tmp,str,len);
+    tmp[len] = 0;
     SET_PARAM(PARAM_TYPE_STRING,tmp);
     return OK;
 }

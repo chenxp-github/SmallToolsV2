@@ -220,7 +220,6 @@ bool CSocket::IsIpV6Address(CMem* str)
     return c > 0;
 }
 
-
 int32_t CSocket::GetSocketFd()
 {
     return socket_num;
@@ -237,11 +236,16 @@ CTcpServer::~CTcpServer()
 status_t CTcpServer::Init()
 {
     CSocket::Init();
-    crt_memset((void*)&this->sad,0,sizeof(struct  sockaddr_in));
-    crt_memset((void*)&this->cad,0,sizeof(struct  sockaddr_in));
-    this->ptrh = NULL;
+    crt_memset((void*)&sad,0,sizeof(sad));
+    crt_memset((void*)&cad,0,sizeof(cad));
     this->socket_num = -1;
     this->max_connect = 10;
+
+#if _SUPPORT_IPV6_
+    this->ipv6_mode = 0;
+    crt_memset((void*)&this->sad6,0,sizeof(sad6));
+    crt_memset((void*)&this->cad6,0,sizeof(cad6));
+#endif
     return OK;
 }
 status_t  CTcpServer::Destroy()
@@ -251,6 +255,23 @@ status_t  CTcpServer::Destroy()
 }
 status_t CTcpServer::InitServer()
 {
+#if _SUPPORT_IPV6_
+    if(ipv6_mode)
+    {
+        crt_memset((char *)&sad6,0,sizeof(sad6));  /* clear sockaddr structure   */
+        sad6.sin6_family = AF_INET6;            /* set family to Internet     */    
+        this->socket_num = crt_socket(AF_INET6, SOCK_STREAM, 0);
+        if (this->socket_num < 0)
+        {
+            XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
+                "crt_socket v6 creation failed!"
+            );
+            return ERROR;
+        }
+        return OK;
+    }
+#endif
+
     crt_memset((char *)&sad,0,sizeof(sad));  /* clear sockaddr structure   */
     sad.sin_family = AF_INET;            /* set family to Internet     */
     sad.sin_addr.s_addr = INADDR_ANY;    /* set the local IP address   */
@@ -258,31 +279,58 @@ status_t CTcpServer::InitServer()
     if (this->socket_num < 0)
     {
         XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "crt_socket creation failed!\r\n"
+            "crt_socket creation failed!"
         );
         return ERROR;
     }
     return OK;
 }
+
 status_t CTcpServer::SetPort(int32_t port)
 {
+
+#if _SUPPORT_IPV6_
+    if(ipv6_mode)
+    {
+        sad6.sin6_port = crt_htons((u_short)port);
+        if (crt_bind(this->socket_num, (struct sockaddr *)&sad6, sizeof(sad6)) < 0)
+        {
+            XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
+                "bind v6 failed on port %d!",port
+            );
+            return ERROR;
+        }
+
+        if (crt_listen(this->socket_num, this->max_connect) < 0)
+        {
+            XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
+                "listen v6 failed!"
+            );
+            return ERROR;
+        }
+        return OK;
+    }
+#endif
+
     sad.sin_port = crt_htons((u_short)port);
     if (crt_bind(this->socket_num, (struct sockaddr *)&sad, sizeof(sad)) < 0)
     {
         XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "bind failed on port %d!\r\n",port
+            "bind failed on port %d!",port
         );
         return ERROR;
     }
+
     if (crt_listen(this->socket_num, this->max_connect) < 0)
     {
         XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
-            "listen failed!\r\n"
+            "listen failed!"
         );
         return ERROR;
     }
     return OK;
 }
+
 int32_t CTcpServer::Accept()
 {
     int32_t alen = sizeof(cad);
@@ -309,11 +357,24 @@ status_t CTcpServer::GetClientIpAndPort(CFileBase *ip, int32_t *port)
     *port = cad.sin_port;
     return OK;
 }
-bool CTcpServer::CanBind(int port)
+bool CTcpServer::CanBind(int port,bool ipv6)
 {
     CTcpServer server;
     server.Init();
     server.InitServer();
+
+#if _SUPPORT_IPV6_
+    if(ipv6)
+    {
+        server.sad6.sin6_port = crt_htons((u_short)port);
+        if (crt_bind(server.socket_num, (struct sockaddr *)&server.sad6, sizeof(server.sad6)) < 0)
+        {
+            return false;
+        }
+        return OK;
+    }
+#endif
+
     server.sad.sin_port = crt_htons((u_short)port);
     if (crt_bind(server.socket_num, (struct sockaddr *)&server.sad, sizeof(server.sad)) < 0)
     {
@@ -321,6 +382,14 @@ bool CTcpServer::CanBind(int port)
     }
     return true;
 }
+
+#if _SUPPORT_IPV6_
+status_t CTcpServer::UseIpv6Mode(int use)
+{
+    this->ipv6_mode = use;
+    return OK;   
+}
+#endif
 /////////////////////////////////////////////
 CTcpClient::CTcpClient()
 {
@@ -335,6 +404,13 @@ status_t CTcpClient::Init()
     crt_memset((char *)&sad,0,sizeof(sad)); /* clear sockaddr structure */
     sad.sin_family = AF_INET;           /* set family to Internet*/
     this->socket_num = -1;
+
+#if _SUPPORT_IPV6_
+    this->ipv6_mode = 0;
+    crt_memset((void*)&this->sad6,0,sizeof(struct  sockaddr_in6));
+    sad6.sin6_family = AF_INET6;
+#endif
+
     return OK;
 }
 status_t CTcpClient::Destroy()
@@ -344,6 +420,22 @@ status_t CTcpClient::Destroy()
 }
 status_t CTcpClient::SetServerIP(const char *name)
 {
+    ASSERT(name);
+
+#if _SUPPORT_IPV6_
+    if(ipv6_mode)
+    {
+        if(!crt_inet_addr_v6(name,&sad6.sin6_addr))
+        {
+            XLOG(LOG_MODULE_COMMON, LOG_LEVEL_ERROR,
+                "invalidate v6 ip %s\n", name
+            );
+            return ERROR;
+        }
+        return OK;
+    }
+#endif
+
     struct in_addr addr;
     addr.s_addr = crt_inet_addr(name);
     if (addr.s_addr == INADDR_NONE)
@@ -361,20 +453,26 @@ status_t CTcpClient::SetServerIP(const char *name)
 }
 status_t CTcpClient::SetPort(int32_t _port)
 {
-    if (_port > 0)
-    {
-        sad.sin_port = crt_htons((u_short)_port);
-    }
-    else
-    {
-        return ERROR;
-    }
+    ASSERT(socket_num < 0);
+    ASSERT(_port > 0);
 
-    if(this->socket_num >= 0)
+#if _SUPPORT_IPV6_
+    if(ipv6_mode)
     {
-        return ERROR;
+        sad6.sin6_port = crt_htons((u_short)_port);
+        this->socket_num = crt_socket(AF_INET6, SOCK_STREAM, 0);
+        if (this->socket_num < 0)
+        {
+            XLOG(LOG_MODULE_COMMON,LOG_LEVEL_ERROR,
+                "crt_socket v6 creation failed!\r\n"
+            );
+            return ERROR;
+        }
+        return OK;
     }
+#endif
 
+    sad.sin_port = crt_htons((u_short)_port);
     this->socket_num = crt_socket(AF_INET, SOCK_STREAM, 0);
 
     if (this->socket_num < 0)
@@ -389,6 +487,19 @@ status_t CTcpClient::SetPort(int32_t _port)
 status_t CTcpClient::Connect()
 {
     ASSERT(this->socket_num >0);
+
+#if _SUPPORT_IPV6_
+    if(ipv6_mode)
+    {
+        int32_t ret = crt_connect(this->socket_num, (struct sockaddr *)&sad6, sizeof(sad6));
+        if(ret < 0)
+        {
+            return ERROR;
+        }
+        return OK;
+    }
+#endif
+
     int32_t ret = crt_connect(this->socket_num, (struct sockaddr *)&sad, sizeof(sad));
     if(ret < 0)
     {
@@ -401,3 +512,11 @@ status_t CTcpClient::IsConnectComplete()
     ASSERT(this->socket_num > 0);
     return crt_is_connect_complete(this->socket_num);
 }
+
+#if _SUPPORT_IPV6_
+status_t CTcpClient::UseIpv6Mode(int use)
+{
+    this->ipv6_mode = use;
+    return OK;   
+}
+#endif

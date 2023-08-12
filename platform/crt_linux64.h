@@ -7,6 +7,10 @@
 #define USE_THREAD_MODULE   1
 #define LOCAL_ENCODING      ENCODING_UTF8
 
+#ifndef _SUPPORT_IPV6_
+#define _SUPPORT_IPV6_ 1
+#endif
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
@@ -169,6 +173,11 @@ status_t crt_is_connect_complete(int32_t s);
 status_t crt_get_all_ip(char *out);
 status_t crt_is_socket_broken();
 uint32_t crt_inet_addr(const char* cp);
+
+#if _SUPPORT_IPV6_
+status_t crt_inet_addr_v6(const char* cp,struct in6_addr *addr);
+#endif
+
 ///////////////////////////////////////////////////////////////////
 #endif //#if USE_SOCKET_MODULE
 ///////////////////////////////////////////////////////////////////
