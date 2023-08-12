@@ -54,6 +54,12 @@
 #include "lualib_sharedmemory.h"
 #endif
 
+#if _IS_WINDOWS_
+#include "lualib_remotedesktopsnapshottor_gdi.h"
+#include "lualib_luahdc.h"
+#include "lualib_win32.h"
+#endif
+
 #if _SUPPORT_X11_ 
 #include "lualib_xdisplay.h"
 #include "lualib_xwindow.h"
@@ -61,7 +67,6 @@
 #include "lualib_xrandr.h"
 #include "lualib_remotedesktopsnapshottor_x11.h"
 #endif
-
 
 
 CGlobals g_globals;
@@ -362,10 +367,17 @@ status_t CGlobals::InitLuaVm()
 	luaopen_remotedesktopsnapshottormanager(L);
 	luaopen_remotedesktopclientupdater(L);
 
+
 #if _IS_LINUX_
     luaopen_nativeprocess(L);
     luaopen_nativeprocessmanager(L);
     luaopen_sharedmemory(L);
+#endif
+
+#if _IS_WINDOWS_
+	luaopen_remotedesktopsnapshottor_gdi(L);
+	luaopen_luahdc(L);
+	luaopen_win32(L);
 #endif
 
 #if _SUPPORT_X11_

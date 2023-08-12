@@ -1,5 +1,6 @@
 require("common");
 require("utils");
+require("bson")
 
 function app_short_help()
     return "remote desktop server (X11 only).";
@@ -25,8 +26,11 @@ function app_main(args)
     cmd:AddKeyType(kAsClient,TYPE_KEY,OPTIONAL,"as message peer client?");
     cmd:AddKeyType(kPeerServer,TYPE_KEY_EQUAL_VALUE,MUST,"message peer server address");
     cmd:AddKeyType(kPeerPort,TYPE_KEY_EQUAL_VALUE,MUST,"message center service port");    
-    cmd:AddKeyType(kPeerName,TYPE_KEY_EQUAL_VALUE,MUST,"self message peer name");            
-    cmd:AddKeyType(kDisplay,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"X11 display name, default is :0"); 
+    cmd:AddKeyType(kPeerName,TYPE_KEY_EQUAL_VALUE,MUST,"self message peer name");        
+    
+    if is_linux() then
+        cmd:AddKeyType(kDisplay,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"X11 display name, default is :0"); 
+    end
 
     cmd:AddKeyTypeDep(kAsClient,"",kPeerServer);
 
@@ -41,37 +45,65 @@ function app_main(args)
     local peer_port = tonumber(cmd:GetValueByKey(kPeerPort));
     local peer_name = cmd:GetValueByKey(kPeerName);    
 
-    local display_name = ":0";
+    if is_linux() then
+        local display_name = ":0";
+        if cmd:HasKey(kDisplay) then
+            display_name = cmd:GetValueByKey(kDisplay);
+        end
 
-    if cmd:HasKey(kDisplay) then
-        display_name = cmd:GetValueByKey(kDisplay);
+        local xdisplay = XDisplay.new();
+
+        while not xdisplay:OpenDisplay(display_name) do
+            printfnl("can not open display: %s",display_name);
+            App.Sleep(3000);
+        end
+
+        printfnl("open display %s ok.",display_name);
+
+        local root_window = xdisplay:GetDefaultRootWindow();
+        if not root_window then
+            printfnl("can not get default root window");
+            return App.QuitMainLoop();
+        end
+
+        avoid_gc(xdisplay,root_window);
+
+        g_snapshottor_manager = RemoteDesktopSnapshottorManager.new();
+        local snapshottor = RemoteDesktopSnapshottor_X11.new();
+        snapshottor:SetName(display_name);
+        snapshottor:SetXDisplay(xdisplay);
+        snapshottor:SetXWindow(root_window);
+
+        avoid_gc(snapshottor);
+        g_snapshottor_manager:AddSnapshotter(snapshottor);
     end
 
-    local xdisplay = XDisplay.new();
+    if is_windows() then
+        local bson = Win32.GetAllDisplayMonitors();
+        g_all_monitors = BsonToObject(bson);	
+        g_snapshottor_manager = RemoteDesktopSnapshottorManager.new();
 
-    while not xdisplay:OpenDisplay(display_name) do
-        printfnl("can not open display: %s",display_name);
-        App.Sleep(3000);
+        for _,monitor in ipairs(g_all_monitors.monitors) do
+            local hdc;
+            local snapshottor = RemoteDesktopSnapshottor_GDI.new();
+            snapshottor:SetName(monitor.szDevice);
+            printfnl("monitor=%s",monitor.szDevice);
+
+            if monitor.dwFlags & 0x01 ~= 0 then  --primary display
+                hdc = Win32.GetDC(0);
+            else
+                hdc = Hdc.new();
+                hdc:Create(nil,monitor.szDevice);
+            end
+
+            avoid_gc(hdc);
+            avoid_gc(snapshottor);
+            
+            snapshottor:SetSrcHdc(hdc);
+            snapshottor:CreateBitmapBuffer();
+            g_snapshottor_manager:AddSnapshotter(snapshottor);
+        end
     end
-
-    printfnl("open display %s ok.",display_name);
-
-    local root_window = xdisplay:GetDefaultRootWindow();
-    if not root_window then
-        printfnl("can not get default root window");
-        return App.QuitMainLoop();
-    end
-
-    avoid_gc(xdisplay,root_window);
-
-	g_snapshottor_manager = RemoteDesktopSnapshottorManager.new();
-    local snapshottor = RemoteDesktopSnapshottor_X11.new();
-    snapshottor:SetName(display_name);
-    snapshottor:SetXDisplay(xdisplay);
-    snapshottor:SetXWindow(root_window);
-
-    avoid_gc(snapshottor);
-    g_snapshottor_manager:AddSnapshotter(snapshottor);
     
     g_desktop_server = RemoteDesktopServer.new();
 

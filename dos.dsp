@@ -1022,6 +1022,14 @@ SOURCE=.\lualib\lualib_websocketserver.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\win32\lualib_win32.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\win32\lualib_win32.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\lualib\lualib_xfileserver.cpp
 # End Source File
 # Begin Source File
@@ -1179,6 +1187,14 @@ SOURCE=.\common\mmapfile.cpp
 # Begin Source File
 
 SOURCE=.\common\mmapfile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\win32\monitor_enum.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\win32\monitor_enum.h
 # End Source File
 # Begin Source File
 

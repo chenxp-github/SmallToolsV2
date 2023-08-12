@@ -2,11 +2,12 @@ require("print_buffer");
 
 local function escape_lua_string(str)
     if string.len(str) < 1024 then
-        local mf_file = new_mem();    
+        local mf_file = new_mem();
+
         mf_file:Puts("\"");
         for i=1,string.len(str),1 do    
             local b = string.byte(str,i);
-            if b == 10 then
+            if b==10 then
                 mf_file:Puts("\\n");
             elseif b == 13 then
                 mf_file:Puts("\\r");
@@ -16,7 +17,7 @@ local function escape_lua_string(str)
             else
                 mf_file:Putc(b);
             end
-        end
+        end      
         mf_file:Puts("\"");
 
         local r = mf_file:CStr();

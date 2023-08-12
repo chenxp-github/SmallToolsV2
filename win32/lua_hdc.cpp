@@ -17,6 +17,7 @@ status_t CLuaHdc::InitBasic()
     WEAK_REF_CLEAR();
     hdc = NULL;
     hwnd = NULL;
+	flags = 0;
     return OK;
 }
 
@@ -32,7 +33,14 @@ status_t CLuaHdc::Destroy()
     WEAK_REF_DESTROY();
     if(hdc)
     {
-        ::ReleaseDC(hwnd,hdc);
+		if(IsCreate())
+		{
+			::DeleteDC(hdc);
+		}
+        else
+		{
+			::ReleaseDC(hwnd,hdc);
+		}
         hdc = NULL;
     }
     this->InitBasic();
@@ -46,3 +54,11 @@ status_t CLuaHdc::Set(HWND hwnd, HDC hdc)
     this->hdc = hdc;
     return OK;
 }
+
+status_t CLuaHdc::Create(const wchar_t *lpszDriver, const wchar_t  *lpszDevice)
+{
+	this->hdc = ::CreateDCW(lpszDriver,lpszDevice,NULL,NULL);
+	this->SetIsCreate(true);
+	return this->hdc!=0;
+}
+

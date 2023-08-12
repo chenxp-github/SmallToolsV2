@@ -47,7 +47,7 @@ function super(c)
 end
 
 function print_table(root)
-    local print = print
+    local printnl = printnl
     local tconcat = table.concat
     local tinsert = table.insert
     local srep = string.rep
@@ -70,9 +70,9 @@ function print_table(root)
                 tinsert(temp,"+" .. key .. " [" .. tostring(v).."]")
             end
         end
-        return tconcat(temp,"\n"..space)
+        return tconcat(temp,"\r\n"..space)
     end
-    print(_dump(root, "",""))
+    printnl(_dump(root, "",""))
 end
 
 function clone_table(ori_tab)
@@ -97,8 +97,8 @@ end
 function string_to_table(str)
     local run_code,errors = load("return "..str);
     if not run_code then
-        print(errors); 
-        print(debug.traceback());
+        printnl(errors); 
+        printnl(debug.traceback());
         return;
     end
 
@@ -106,15 +106,15 @@ function string_to_table(str)
     local r,errors = pcall(function()
         ret_str = run_code();
     end);
-    if not r then print(errors); end
+    if not r then printnl(errors); end
     return ret_str;
 end
 
 function load_lua_lib(name)
     local r,errors = pcall(function() require(name); end);
     if not r then 
-        print(errors); 
-        print(debug.traceback());
+        printnl(errors); 
+        printnl(debug.traceback());
     end
     return r;
 end
@@ -122,8 +122,8 @@ end
 function exec_string(code,name)
     local run_code,errors = load(code,name);
     if not run_code then
-        print(errors); 
-        print(debug.traceback());
+        printnl(errors); 
+        printnl(debug.traceback());
         return;
     end
 
@@ -132,8 +132,8 @@ function exec_string(code,name)
         ret = run_code(); 
     end);
     if not r then 
-        print(errors); 
-        print(debug.traceback());
+        printnl(errors); 
+        printnl(debug.traceback());
     end
     return r,ret;
 end
@@ -141,9 +141,9 @@ end
 function exec_file(fn)
     local run_code,errors = loadfile(fn);
     if not run_code then
-        print("loadfile "..fn.." fail.");
-        print(errors); 
-        print(debug.traceback());
+        printnl("loadfile "..fn.." fail.");
+        printnl(errors); 
+        printnl(debug.traceback());
         return;
     end
 
@@ -153,9 +153,9 @@ function exec_file(fn)
     end);
 
     if not r then
-        print("exec file "..fn.." fail.");
-        print(errors); 
-        print(debug.traceback());
+        printnl("exec file "..fn.." fail.");
+        printnl(errors); 
+        printnl(debug.traceback());
     end
 
     return r,ret;

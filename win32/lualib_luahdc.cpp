@@ -1,6 +1,7 @@
 #include "lualib_luahdc.h"
 #include "mem_tool.h"
 #include "sys_log.h"
+#include "lua_helper.h"
 
 LUA_IS_VALID_USER_DATA_FUNC(CLuaHdc,luahdc)
 LUA_GET_OBJ_FROM_USER_DATA_FUNC(CLuaHdc,luahdc)
@@ -24,11 +25,33 @@ bool is_luahdc(lua_State *L, int idx)
 }
 
 /****************************************************/
+static status_t luahdc_new(lua_State *L)
+{
+    CLuaHdc *pluahdc;
+    NEW(pluahdc,CLuaHdc);
+    pluahdc->Init();
+    luahdc_new_userdata(L,pluahdc,0);
+    return 1;
+}
+
+
 static status_t luahdc_destroy(lua_State *L)
 {
     CLuaHdc *pluahdc = get_luahdc(L,1);
     ASSERT(pluahdc);
     status_t ret0 = pluahdc->Destroy();
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+static status_t luahdc_create(lua_State *L)
+{
+    CLuaHdc *pluahdc = get_luahdc(L,1);
+    ASSERT(pluahdc);
+	LOCAL_MEM(MEM1);
+	LOCAL_MEM(MEM2);
+	const wchar_t *lpszdriver = lua_to_unicode_string(L,2,&MEM1);
+	const wchar_t *lpszdevice = lua_to_unicode_string(L,3,&MEM2);
+    status_t ret0 = pluahdc->Create(lpszdriver,lpszdevice);
     lua_pushboolean(L,ret0);
     return 1;
 }
@@ -38,7 +61,9 @@ static const luaL_Reg luahdc_funcs_[] = {
     {"__gc",luahdc_gc_},
     {"__tostring",luahdc_tostring_},
     {"__is_same",luahdc_issame_},
+	{"new",luahdc_new},
     {"Destroy",luahdc_destroy},
+    {"Create",luahdc_create},
     {NULL,NULL},
 };
 
