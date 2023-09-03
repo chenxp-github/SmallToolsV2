@@ -397,26 +397,7 @@ static status_t win32_getalldisplaymonitors(lua_State *L)
     return 1;
 }
 
-
-typedef HWND (WINAPI*PROCGETCONSOLEWINDOW)();
-PROCGETCONSOLEWINDOW __GetConsoleWindow = NULL;
-
-
-HWND GetConsoleWindow()
-{
-	if(__GetConsoleWindow)
-	{
-		return __GetConsoleWindow();
-	}
-	else
-	{
-		HMODULE hKernel32=GetModuleHandle("kernel32");
-		__GetConsoleWindow=(PROCGETCONSOLEWINDOW)GetProcAddress(hKernel32, "GetConsoleWindow");
-		ASSERT(__GetConsoleWindow);
-		return __GetConsoleWindow();
-	}
-}
-
+extern HWND GetConsoleWindow();
 static status_t win32_getconsolewindow(lua_State *L)
 {
     HWND ret0 = GetConsoleWindow();

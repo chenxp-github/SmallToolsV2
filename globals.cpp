@@ -430,7 +430,7 @@ status_t CGlobals::GetSelfExePath(CMem *fullpath)
 {
     ASSERT(fullpath);
     fullpath->SetSize(0);
-#if HAVE_WINDOWS_H
+#if _IS_WINDOWS_
     int ret = GetModuleFileNameW(NULL,(wchar_t*)fullpath->GetRawBuf(),(int)(fullpath->GetMaxSize()/sizeof(wchar_t)));
     if(ret > 0)
     {
@@ -472,6 +472,41 @@ status_t CGlobals::MakeFullPathWithExe(const char *rpath, CMem *out)
     return OK;
 }
 
+
+#if _IS_WINDOWS_
+
+typedef HWND (WINAPI*PROCGETCONSOLEWINDOW)();
+PROCGETCONSOLEWINDOW __GetConsoleWindow = NULL;
+
+HWND GetConsoleWindow()
+{
+	if(__GetConsoleWindow)
+	{
+		return __GetConsoleWindow();
+	}
+	else
+	{
+		HMODULE hKernel32=GetModuleHandle("kernel32");
+		__GetConsoleWindow=(PROCGETCONSOLEWINDOW)GetProcAddress(hKernel32, "GetConsoleWindow");
+		ASSERT(__GetConsoleWindow);
+		return __GetConsoleWindow();
+	}
+}
+
+
+static bool should_hide_console(int argc, char **argv)
+{
+	ASSERT(argv);
+	for(int i = 0; i < argc; i++)
+	{
+		if(crt_stricmp(argv[i],"--hide-console-window") == 0)
+			return true;
+	}
+	return false;
+}
+
+#endif
+
 status_t CGlobals::Main(int argc, char **argv)
 {
     if(argc < 2)
@@ -480,6 +515,14 @@ status_t CGlobals::Main(int argc, char **argv)
             "%s <lua-path>",argv[0]);
         return ERROR;
     }
+
+#if _IS_WINDOWS_
+	if(should_hide_console(argc,argv))
+	{
+		HWND hwnd = GetConsoleWindow();
+		if(hwnd)ShowWindow(hwnd,SW_HIDE);
+	}
+#endif
 
     const char *rpath = argv[1];
 
