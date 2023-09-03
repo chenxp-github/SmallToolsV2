@@ -397,6 +397,42 @@ static status_t win32_getalldisplaymonitors(lua_State *L)
     return 1;
 }
 
+
+typedef HWND (WINAPI*PROCGETCONSOLEWINDOW)();
+PROCGETCONSOLEWINDOW __GetConsoleWindow = NULL;
+
+
+HWND GetConsoleWindow()
+{
+	if(__GetConsoleWindow)
+	{
+		return __GetConsoleWindow();
+	}
+	else
+	{
+		HMODULE hKernel32=GetModuleHandle("kernel32");
+		__GetConsoleWindow=(PROCGETCONSOLEWINDOW)GetProcAddress(hKernel32, "GetConsoleWindow");
+		ASSERT(__GetConsoleWindow);
+		return __GetConsoleWindow();
+	}
+}
+
+static status_t win32_getconsolewindow(lua_State *L)
+{
+    HWND ret0 = GetConsoleWindow();
+    lua_pushinteger(L,(lua_Integer)ret0);
+    return 1;
+}
+
+static status_t win32_showwindow(lua_State *L)
+{
+    HWND hwnd = (HWND)lua_tointeger(L,1);
+    uint32_t ncmdshow = (uint32_t)lua_tointeger(L,2);
+    int ret0 = ::ShowWindow(hwnd,ncmdshow);
+    lua_pushinteger(L,ret0);
+    return 1;
+}
+
 /****************************************************/
 static const luaL_Reg win32_funcs_[] = {
     {"GetAsyncKeyState",win32_getasynckeystate},
@@ -418,6 +454,8 @@ static const luaL_Reg win32_funcs_[] = {
     {"GetDeviceCaps",win32_getdevicecaps},
 	{"MoveWindow",win32_movewindow},
     {"GetAllDisplayMonitors",win32_getalldisplaymonitors},
+	{"GetConsoleWindow",win32_getconsolewindow},
+    {"ShowWindow",win32_showwindow},
     {NULL,NULL},
 };
 

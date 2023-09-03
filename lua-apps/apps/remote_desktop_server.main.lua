@@ -15,6 +15,7 @@ local kPeerServer="--peer-server";
 local kPeerPort="--peer-port";
 local kPeerName="--peer-name";
 local kDisplay="--display";
+local kHideConsole="--hide-console"
 
 g_snapshottor_manager = nil;
 g_desktop_server = nil;
@@ -30,6 +31,10 @@ function app_main(args)
     
     if is_linux() then
         cmd:AddKeyType(kDisplay,TYPE_KEY_EQUAL_VALUE,OPTIONAL,"X11 display name, default is :0"); 
+    end
+
+    if is_windows() then
+        cmd:AddKeyType(kHideConsole,TYPE_KEY,OPTIONAL,"hide console window"); 
     end
 
     cmd:AddKeyTypeDep(kAsClient,"",kPeerServer);
@@ -79,6 +84,12 @@ function app_main(args)
     end
 
     if is_windows() then
+        require("win32")
+        if cmd:HasKey(kHideConsole) then
+            local hwnd = Win32.GetConsoleWindow();
+            Win32.ShowWindow(hwnd,SW_HIDE);
+        end
+
         local bson = Win32.GetAllDisplayMonitors();
         g_all_monitors = BsonToObject(bson);	
         g_snapshottor_manager = RemoteDesktopSnapshottorManager.new();
