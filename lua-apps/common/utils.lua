@@ -130,3 +130,23 @@ function hex_file_to_bin_file(hex_file, bin_file)
     end
 end
 
+function long_text(text,strip)
+    local mf = MemFile.new();
+    mf:Puts(text);
+    local ret = "";
+    for_each_line(mf,function(line)
+        local str = line:CStr();
+        if not strip then
+            ret = ret..str..EOL;
+        else
+            ret = ret..string.sub(str,strip+1)..EOL;
+        end
+    end)
+    return ret;
+end
+
+function print_whole_file(filebase)
+    filebase:Dump();
+end
+
+
