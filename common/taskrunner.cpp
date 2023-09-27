@@ -161,14 +161,11 @@ int CTaskRunner::Schedule()
     uint32_t interval = now - m_LastTimerVal;
     m_LastTimerVal = now;
 
-    int has_zero_delay_tasks = 0;
-
-    for(int i = 0; i < m_ClosureList.GetLen(); i++)
-    {
-        m_Mutex.Lock();   
+    int i,has_zero_delay_tasks = 0;
+    int len = m_ClosureList.GetLen();
+    for(i = 0; i < len; i++)
+    { 
         CClosure *closure = m_ClosureList.GetElem(i);
-        m_Mutex.Unlock();
-        
         ASSERT(closure);
         struct closure_extra_info *ex_info = (struct closure_extra_info *)closure->user_data;
         ASSERT(ex_info);
@@ -189,13 +186,20 @@ int CTaskRunner::Schedule()
             {
                 closure->user_data = NULL;
             }        
-            m_Mutex.Lock();            
-            m_ClosureList.DelElem(i);
-            m_Mutex.Unlock();
-
-            i--;
+            m_ClosureList.DelNode(closure);
+            m_ClosureList.m_Index[i] = NULL;
         }
     }
+
+    m_Mutex.Lock();
+    for(i = len-1; i >= 0; i--)
+    {
+        if(m_ClosureList.GetElem(i) == NULL)
+        {
+            m_ClosureList.DelElem(i);
+        }
+    }   
+    m_Mutex.Unlock();
 
     return has_zero_delay_tasks;
 }

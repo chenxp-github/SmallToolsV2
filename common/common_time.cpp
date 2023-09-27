@@ -448,10 +448,24 @@ int CCommonTime::GetTimeZone()
     {
         return cached_time_zone;
     }
-	time_t time_utc = 0;
-	struct tm *p_tm_time;	
-	p_tm_time = localtime( &time_utc );
-	cached_time_zone = (p_tm_time->tm_hour > 12)?( p_tm_time->tm_hour-=24):p_tm_time->tm_hour;
+	time_t time_utc = time(NULL);
+	struct tm  local_tm,gm_tm;	
+
+	memcpy(&local_tm,localtime( &time_utc ),sizeof(local_tm));
+	memcpy(&gm_tm,gmtime(&time_utc),sizeof(gm_tm));
+
+	cached_time_zone = local_tm.tm_hour - gm_tm.tm_hour;
+
+    if (cached_time_zone > 12)
+    {
+        cached_time_zone -= 24;
+    }
+	
+    if (cached_time_zone < -12)
+    {
+        cached_time_zone += 24;
+    }
+
 	return cached_time_zone;
 }
 
