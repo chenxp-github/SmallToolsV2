@@ -45,6 +45,7 @@
 #include "lualib_remotedesktopserver.h"
 #include "lualib_remotedesktopsnapshottor.h"
 #include "lualib_remotedesktopsnapshottormanager.h"
+#include "lualib_ftpserver.h"
 
 #include "_build_time_.h"
 
@@ -368,7 +369,7 @@ status_t CGlobals::InitLuaVm()
 	luaopen_remotedesktopsnapshottor(L);
 	luaopen_remotedesktopsnapshottormanager(L);
 	luaopen_remotedesktopclientupdater(L);
-
+    luaopen_ftpserver(L);
 
 #if _IS_LINUX_
     luaopen_nativeprocess(L);

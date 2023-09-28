@@ -42,6 +42,7 @@ SRCDIRS := . common lua lualib ximage resource_manager messagepeer
 SRCDIRS += process_manager websocket
 SRCDIRS += x-file-server
 SRCDIRS += remote-desktop
+SRCDIRS += ftpserver
 
 ifneq ($(NO_X11), 1)
 SRCDIRS += x-window
@@ -61,7 +62,7 @@ SRCEXTS := .cpp .c
 # If it is a C and C++ merging program, set these flags for the C parts.
 CFLAGS := -O2 -Wall -Iplatform -I. -Icommon -Ilua -Ilualib 
 CFLAGS += -Iximage -Iresource_manager -Imessagepeer -Iprocess_manager -Iwebsocket
-CFLAGS += -Ix-file-server -Iremote-desktop
+CFLAGS += -Ix-file-server -Iremote-desktop -Iftpserver
 
 ifneq ($(NO_X11), 1) 
 CFLAGS += -DUSE_X11 -Ix-window $(shell $(PKGCONFIG) --cflags-only-I gtk+-3.0 x11 glib-2.0)

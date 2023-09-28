@@ -1,0 +1,24 @@
+[CodeSwitch weak_ref=true,code_mark=true,task_container=true,copy_comp_print=false]
+class FtpServer{
+    [noset] FtpConfigList configs;
+    [noset] uint32_t flags;
+    string fix_client_ip;
+    string fix_server_ip;
+
+    void FtpServer();
+    status_t SerAllowAnonymouse(bool allow);
+    string GetFixClientIp();
+    status_t SetFixClientIp(string fix_client_ip);
+    status_t SetFixServerIp(string fix_server_ip);
+	status_t AddConfig(string user, string pass, string root);
+	status_t Start(int port);
+    status_t SetEncoding(int encoding);
+}
+
+
+
+
+
+
+
+
