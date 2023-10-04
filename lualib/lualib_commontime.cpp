@@ -262,6 +262,12 @@ static status_t commontime_loadstring(lua_State *L)
     lua_pushboolean(L,ret0);
     return 1;
 }
+static status_t commontime_gettimezone(lua_State *L)
+{
+    int ret0 = CCommonTime::GetTimeZone();
+    lua_pushinteger(L,ret0);
+    return 1;
+}
 
 /****************************************************/
 static const luaL_Reg commontime_funcs_[] = {
@@ -292,7 +298,8 @@ static const luaL_Reg commontime_funcs_[] = {
     {"GetLong",commontime_getlong},
     {"SetSystemTime",commontime_setsystemtime},
     {"ToString",commontime_tostring},
-    {"LoadString",commontime_loadstring},    
+    {"LoadString",commontime_loadstring},
+    {"GetTimeZone",commontime_gettimezone},
     {NULL,NULL},
 };
 

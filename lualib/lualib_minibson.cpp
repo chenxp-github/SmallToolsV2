@@ -176,7 +176,7 @@ static int minibson_putdouble(lua_State *L)
     CMiniBson *pminibson = get_minibson(L,1);
     ASSERT(pminibson);
     const char* name = (const char*)lua_tostring(L,2);
-    float d = (float)lua_tonumber(L,3);
+    double d = lua_tonumber(L,3);
     int _ret_0 = (int)pminibson->PutDouble(name,d);
     lua_pushboolean(L,_ret_0);
     return 1;
@@ -663,6 +663,14 @@ static status_t minibson_getuint32(lua_State *L)
     }
     return 0;
 }
+static status_t minibson_destroy(lua_State *L)
+{
+    CMiniBson *pminibson = get_minibson(L,1);
+    ASSERT(pminibson);
+    status_t ret0 = pminibson->Destroy();
+    lua_pushboolean(L,ret0);
+    return 1;
+}
 
 static const luaL_Reg minibson_lib[] = {
 
@@ -709,6 +717,7 @@ static const luaL_Reg minibson_lib[] = {
     {"GetUInt8",minibson_getuint8},
     {"GetUInt16",minibson_getuint16},
     {"GetUInt32",minibson_getuint32},    
+    {"Destroy",minibson_destroy},
     {NULL, NULL}
 };
 static int luaL_register_minibson(lua_State *L)

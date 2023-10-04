@@ -30,25 +30,37 @@ RECT int_array_to_rect(int *a)
     r.bottom = a[3];
     return r;
 }
+
+static status_t resample_image(CxImage *img,int neww, int newh,CxImage *out)
+{
+    ASSERT(img && out);
+	
+	if(img->GetWidth() == neww && img->GetHeight()==newh)
+	{
+		out->Copy(img);
+	}
+    else if(img->GetWidth() > neww && img->GetHeight() > newh)
+    {
+        img->QIShrink(neww,newh,out,false);
+    }
+    else
+    {
+        img->Resample2(neww,newh,5,5,out,FALSE);
+    }
+    return OK;
+}
+
+
 static status_t resample_image(CxImage *img,int neww, int newh)
 {
     ASSERT(img);
-
     if(img->GetWidth() == neww && img->GetHeight() == newh)
     {
         return OK;
     }
-    
-    if(img->GetWidth() > neww && img->GetHeight() > newh)
-    {
-        img->QIShrink(neww,newh,img,false);
-    }
-    else
-    {
-        img->Resample2(neww,newh,5,5,img,FALSE);
-    }
-    return OK;
+    return resample_image(img,neww,newh,img);;
 }
+
 ////////////////////////////////////////////////
 LUA_IS_VALID_USER_DATA_FUNC(CxImage,ximage)
 LUA_GET_OBJ_FROM_USER_DATA_FUNC(CxImage,ximage)
@@ -695,12 +707,29 @@ static status_t ximage_resample_v2(lua_State *L)
     return 1;
 }
 
+static status_t ximage_resample_v3(lua_State *L)
+{
+    CxImage *pximage = get_ximage(L,1);
+    ASSERT(pximage);
+    int32_t newx = (int32_t)lua_tointeger(L,2);
+    int32_t newy = (int32_t)lua_tointeger(L,3);
+	CxImage *pout = get_ximage(L,4);
+    ASSERT(pout);
+    bool ret0 = resample_image(pximage,newx,newy,pout)!=0;
+    lua_pushboolean(L,ret0);
+    return 1;
+}
+
 static status_t ximage_resample(lua_State *L)
 {
     if(is_ximage(L,5))
     {
         return ximage_resample_v1(L);
     }    
+	else if(is_ximage(L,4))
+	{
+		return ximage_resample_v3(L);
+	}
     return ximage_resample_v2(L); 
 }
 static int ximage_rotate180(lua_State *L)

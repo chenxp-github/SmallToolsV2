@@ -240,7 +240,6 @@ static status_t tcpsocket_newtcpconnector(lua_State *L)
     ASSERT(server);
     int port = (int)lua_tointeger(L,2);
     int ontcpconnectorevent = CLuaVm::ToFunction(L,3);
-	
 
     BEGIN_CLOSURE_FUNC(on_connect)
     {
